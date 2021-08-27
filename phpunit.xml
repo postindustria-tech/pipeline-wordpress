@@ -1,0 +1,10 @@
+<phpunit>
+  <php>
+    <env name="RESOURCEKEY" value="!!YOUR_RESOURCE_KEY!!" force="true"/>
+  </php>
+  <testsuites>
+    <testsuite name="Tests">
+      <file>tests/PipelineTests.php</file>
+    </testsuite>
+  </testsuites>
+</phpunit>

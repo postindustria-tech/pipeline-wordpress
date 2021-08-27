@@ -1,0 +1,8 @@
+.fod-pipeline-status {
+    display: block; 
+    font-style: italic;
+    padding: 1em;
+}
+
+.fod-pipeline-status.good {background-color: rgba(0,255,0,0.2)}
+.fod-pipeline-status.error {background-color: rgba(255,0,0,0.5)}

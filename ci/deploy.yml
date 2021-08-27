@@ -1,0 +1,93 @@
+# Disable automatic runs of this pipeline when changes are pushed to the repository.
+trigger: none
+
+# Disable automatic runs of this pipeline when a PR is create.
+pr: none
+
+# Add the pipeline that builds the packages as a resource.
+# This allows the deployment pipeline to be triggered whenever
+# the build pipeline completes.
+# Add common-ci repo as a resource to access common templates.
+resources:
+  pipelines:
+  - pipeline: build-pipeline   # The name for the triggering build pipeline within this script
+    source: pipeline-wordpress-create-packages # Name of the pipeline
+    trigger: true 
+
+  repositories:
+  - repository: ciTemplates # Id of the repository used to reference to in this script
+    type: git
+    name: common-ci # Name of the actual repository
+    ref: 
+    
+# Include shared variables
+variables:
+- template: shared-variables.yml
+- name: targetBranch
+  value: 'refs/heads/master'
+  
+stages:
+                            
+- stage: publish_wp_plugin_manager
+  displayName: Publish to Wordpress Plugin Manager
+  condition: eq(variables['build.sourceBranch'], variables['targetBranch'])
+
+  jobs:
+  - deployment: deploy_wp_plugin_manager
+    displayName: Deploy to Wordpress Plugin Manager
+    pool:
+      vmImage: $(linuxImage)
+      workspace:
+        clean: all
+    environment: wp_plugin
+    strategy:
+      runOnce:
+        deploy:
+          steps: 
+
+          - task: Bash@3
+            displayName: 'Extract Package'
+            inputs:
+              targetType: 'inline'
+              script: 'unzip $(PIPELINE.WORKSPACE)/build-pipeline/drop/wordpress-plugin.zip -d $(Build.SourcesDirectory)/plugin-dir'
+              
+          - bash: | 
+              cd $(Build.SourcesDirectory)/plugin-dir/
+              ls -lhtr 
+            displayName: 'List Plugin Artifacts'
+            failOnStderr: true     
+
+          - bash: |
+              sudo apt-get update
+              sudo apt-get install subversion 
+              svn --version
+              if [ $? -ne 0 ]; then
+                echo "Failed to Install Subversion"
+                exit 1
+              fi  
+            displayName: 'Install Subversion'
+            failOnStderr: true  
+
+          - bash: |
+              mkdir local-svn-dir
+              svn co http://svn.wp-plugins.org/51degrees local-svn-dir
+              cd local-svn-dir/
+              svn update
+              cp -r $(Build.SourcesDirectory)/plugin-dir/* trunk
+              svn add trunk/*
+              svn ci -m "Adding new version of 51Degrees plugin" --username '$(SVNUsername)' --password '$(SVNPassword)' 
+            displayName: 'Deploy Plugin to Subversion Main Directory'
+            failOnStderr: true  
+
+          - bash: |
+              cd local-svn-dir/
+              svn cp trunk tags/$(GitVersionSemVer)
+              svn add tags/*
+              svn ci -m "tagging version $(GitVersionSemVer)" --username '$(SVNUsername)' --password '$(SVNPassword)' 
+            displayName: 'Tag Release in SVN'
+            failOnStderr: true  
+
+- template: shared-publish-github-stage.yml@ciTemplates
+  parameters:
+    imageName: $(linuxImage)
+    branchName: ${{ variables.targetBranch }}
