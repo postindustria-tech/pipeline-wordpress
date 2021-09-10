@@ -17,9 +17,10 @@
 */
 
 require(__DIR__ . "/../lib/vendor/autoload.php");
-require(__DIR__ . "/../pipeline.php");
-require(__DIR__ . "/TestPipeline.php");
+require(__DIR__ . "/../includes/pipeline.php");
+require(__DIR__ . "/TestFlowElement.php");
 
+use fiftyone\pipeline\core\PipelineBuilder;
 use PHPUnit\Framework\TestCase;
 use \Brain\Monkey\Functions;
 
@@ -71,8 +72,7 @@ class PipelineTests extends TestCase {
         $resourceKey = "XXXXXXXXXXXXXX";
         $result = Pipeline::make_pipeline($resourceKey);
 
-        $this->assertEquals($result["error"], "Cloud request engine properties list " .
-            "request returned 'XXXXXXXXXXXXXX' is not a valid resource key.");
+        $this->assertEquals($result["error"], "Cloud request engine properties list request returned 'XXXXXXXXXXXXXX' is not a valid resource key.");
 
     }
 
@@ -90,14 +90,50 @@ class PipelineTests extends TestCase {
         }
 
         $pipeline = Pipeline::make_pipeline($resourceKey);
+        Functions\expect('get_option')->once()->with('fiftyonedegrees_resource_key_pipeline')->andReturn($pipeline);
 
-        Functions\when('get_option')->justReturn($pipeline);
-        Functions\when('plugin_dir_path')->justReturn(getcwd(). "/");
-        
         $result = Pipeline::process();
         $this->assertEquals(get_class($result["flowData"]), "fiftyone\pipeline\core\FlowData");
         $this->assertTrue(isset($result["properties"]));
-        $this->assertTrue(count($result["errors"]) == 0);        
+        $this->assertTrue(count($result["errors"]) == 0);
+        
+    }
+
+    public function testGet() {
+
+        // Create a tmpfile to write errors to.
+        $capture = tmpfile();
+        $saved = ini_set('error_log', stream_get_meta_data($capture)['uri']);
+
+        $mock_pipeline   = (new PipelineBuilder())
+                            ->add(new TestFlowElement())
+                            ->build();
+        $pipeline = array("pipeline" =>  $mock_pipeline, "available_engines" => ["testElement"], "error" => null);
+
+        Functions\expect('get_option')->times(5)->with('fiftyonedegrees_resource_key_pipeline')->andReturn($pipeline);
+        Functions\when('plugin_dir_path')->justReturn(getcwd(). "/");
+
+        // Tests Pipeline::get Function.
+        $result1 = Pipeline::get("testElement", "availableProperty");
+        $this->assertEquals("Value", $result1);
+
+        $result2 = Pipeline::get("testElement", "noValueProperty");
+        $this->assertTrue(strpos(stream_get_contents($capture), "Property is not available.") !== false);
+        $this->assertNull($result2);
+
+        $result3 = Pipeline::get("testElement", "notAvailableProperty");
+        $this->assertTrue(strpos(stream_get_contents($capture), "Trying to get property") !== false);
+        $this->assertNull($result3);
+
+        $result4 = Pipeline::get("notAvailableElement", "availableProperty");
+        $this->assertTrue(strpos(stream_get_contents($capture), "There is no element data for 'notAvailableElement' against this flow data. Available element data keys are: 'testElement,jsonbundler,javascriptbuilder,set-headers") !== false);
+        $this->assertNull($result4);
+
+        // Tests Pipeline::getCategory Function.
+        $expectedResult = array('availableProperty' => "Value", 'noValueProperty' => null);
+        $categoryResult = Pipeline::getCategory("testCategory");
+        $this->assertEquals($expectedResult, $categoryResult);
+
     }
 }
     

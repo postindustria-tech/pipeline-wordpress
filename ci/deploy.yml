@@ -49,7 +49,7 @@ stages:
             displayName: 'Extract Package'
             inputs:
               targetType: 'inline'
-              script: 'unzip $(PIPELINE.WORKSPACE)/build-pipeline/drop/wordpress-plugin.zip -d $(Build.SourcesDirectory)/plugin-dir'
+              script: 'unzip $(PIPELINE.WORKSPACE)/build-pipeline/drop/pipeline-plugin.zip -d $(Build.SourcesDirectory)/plugin-dir'
               
           - bash: | 
               cd $(Build.SourcesDirectory)/plugin-dir/
@@ -74,7 +74,7 @@ stages:
               cd local-svn-dir/
               svn update
               cp -r $(Build.SourcesDirectory)/plugin-dir/* trunk
-              svn add trunk/*
+              svn add trunk/* --force
               svn ci -m "Adding new version of 51Degrees plugin" --username '$(SVNUsername)' --password '$(SVNPassword)' 
             displayName: 'Deploy Plugin to Subversion Main Directory'
             failOnStderr: true  
@@ -82,11 +82,26 @@ stages:
           - bash: |
               cd local-svn-dir/
               svn cp trunk tags/$(GitVersionSemVer)
-              svn add tags/*
-              svn ci -m "tagging version $(GitVersionSemVer)" --username '$(SVNUsername)' --password '$(SVNPassword)' 
+              svn add tags/* --force
+              svn ci -m "Tagging version $(GitVersionSemVer)" --username '$(SVNUsername)' --password '$(SVNPassword)' 
             displayName: 'Tag Release in SVN'
             failOnStderr: true  
 
+          - bash: |
+              cd local-svn-dir/
+              svn cp trunk/assets/images/ assets
+              svn add assets/ --force
+              svn ci -m "Copying latest assets to SVN" --username '$(SVNUsername)' --password '$(SVNPassword)'  
+            displayName: 'Copy assets to SVN'
+            failOnStderr: true
+
+          - bash: |
+              cd local-svn-dir/assets
+              svn propset svn:mime-type image/png *.png
+              svn ci -m "Modifying the mime-type of images" --username '$(SVNUsername)' --password '$(SVNPassword)'
+            displayName: 'Modifying the mime-type of images'
+            failOnStderr: true
+            
 - template: shared-publish-github-stage.yml@ciTemplates
   parameters:
     imageName: $(linuxImage)

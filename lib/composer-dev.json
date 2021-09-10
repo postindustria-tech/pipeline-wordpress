@@ -16,7 +16,7 @@
   ],
   "require": {
     "51degrees/fiftyone.pipeline.cloudrequestengine": "@dev",
-		"google/apiclient": "^2.10"
+	"google/apiclient": "^2.10"
     },
     "scripts": {
         "pre-autoload-dump": "Google\\Task\\Composer::cleanup"
@@ -25,8 +25,8 @@
         "google/apiclient-services": [
             "Analytics",
             "AnalyticsData",
-			"AnalyticsReporting",
-			"GoogleAnalyticsAdmin"
+            "AnalyticsReporting",
+            "GoogleAnalyticsAdmin"
         ]
     },
     "require-dev": {

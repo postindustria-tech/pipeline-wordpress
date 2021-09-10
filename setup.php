@@ -15,8 +15,6 @@
     clause in Article 5 of the EUPL shall not apply.
 -->
 
-<p>To get started visit <a href="https://configure.51degrees.com/" target="_blank">https://configure.51degrees.com/</a> to get a 51Degrees resource key for the device detection properties you want to get access to.</p>
-
 <form method="post" action="options.php">
 
     <?php settings_fields('fiftyonedegrees_options'); ?>
@@ -27,23 +25,25 @@
 
         if(!$cachedPipeline){
 
-            echo '<span class="fod-pipeline-status error">You need to enter a resource key</span>';
+            echo '<p></p><span class="fod-pipeline-status warn">Please enter a resource key.</span>';
 
         }
 
         if(isset($cachedPipeline['error'])){
 
-            echo '<span class="fod-pipeline-status error">'. $cachedPipeline['error'] .'</span>';
+            echo '<p></p><span class="fod-pipeline-status error">'. $cachedPipeline['error'] .'</span>';
 
         }
 
         if(isset($cachedPipeline['pipeline'])){
 
-            echo '<span class="fod-pipeline-status good">Resource Key is valid and gives you access to the following engines: ' . json_encode($cachedPipeline['available_engines']) .' </span>';
+            echo '<p></p><span class="fod-pipeline-status good">Resource Key is valid and gives you access to the following engines: ' . json_encode($cachedPipeline['available_engines']) .' </span>';
 
         }
 
     ?>
+
+    <p>To get started visit <a href="https://configure.51degrees.com/" target="_blank">https://configure.51degrees.com/</a> to get a 51Degrees resource key for the device detection properties you want to get access to.</p>
 
     <table class="form-table" role="presentation">
         <tbody>
@@ -56,6 +56,7 @@
         </tbody>
     </table>
 
-    <?php submit_button();?>
+    <input type="submit" class="button-primary" value="Save Changes"/>
 
-</form>
+    </form>
+

@@ -1,4 +1,4 @@
-<h2><img style="vertical-align:middle" width="200" height="auto" src="<?php echo plugin_dir_url(__FILE__) . "assets/static/logo.png";?>"/></h2>
+<h2><img style="vertical-align:middle" width="200" height="auto" src="<?php echo plugin_dir_url(__FILE__) . "assets/images/logo.png";?>"/></h2>
 
 <?php
 /*

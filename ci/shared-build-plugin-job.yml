@@ -31,6 +31,21 @@ jobs:
     submodules: recursive
     persistCredentials: true
 
+  - script: |
+      sudo apt-get update
+      sudo apt -y install software-properties-common
+      sudo add-apt-repository ppa:ondrej/php
+      sudo apt-get update
+      sudo apt -y install php7.4
+
+      sudo update-alternatives --set php /usr/bin/php7.4
+      php -version
+      if [ $? -ne 0 ]; then
+        echo "Failed to install PHP."
+        exit 1
+      fi        
+    displayName: 'Install PHP 7.4'
+    
   # Install Pipeline Dependencies based on the buildType parameter. 
   - script: |
       cd lib
@@ -52,7 +67,7 @@ jobs:
       else
         echo "Test Production Pipeline."
       fi
-      composer install --no-interaction --prefer-dist 
+      composer install
     displayName: 'Build Dependent Libraries'
 
   - script: |
@@ -83,6 +98,7 @@ jobs:
       mkdir package
       mkdir package/lib      
       cp -r assets/ package/
+      cp -r includes/ package/
       cp -r lib/vendor package/lib/
       cp -r lib/composer.json package/lib/
       cp -r conditional-group-block package/
@@ -98,7 +114,7 @@ jobs:
       rootFolderOrFile: '$(Build.SourcesDirectory)/package'
       includeRootFolder: false
       archiveType: 'zip'
-      archiveFile: '$(Build.ArtifactStagingDirectory)/wordpress-plugin.zip'
+      archiveFile: '$(Build.ArtifactStagingDirectory)/pipeline-plugin.zip'
       replaceExistingArchive: true
     displayName: 'Build Plugin'
 

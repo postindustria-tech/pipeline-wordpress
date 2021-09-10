@@ -1,9 +1,33 @@
 	
-<?php if ( !get_option( 'fiftyonedegrees_ga_access_token' ) && empty(get_option( 'fiftyonedegrees_ga_access_token' ))) { ?>
+<?php
+/*
+    This Original Work is copyright of 51 Degrees Mobile Experts Limited.
+    Copyright 2019 51 Degrees Mobile Experts Limited, 5 Charlotte Close,
+    Caversham, Reading, Berkshire, United Kingdom RG4 7BY.
+
+    This Original Work is licensed under the European Union Public Licence (EUPL) 
+    v.1.2 and is subject to its terms as set out below.
+
+    If a copy of the EUPL was not distributed with this file, You can obtain
+    one at https://opensource.org/licenses/EUPL-1.2.
+
+    The 'Compatible Licences' set out in the Appendix to the EUPL (as may be
+    amended by the European Commission) shall be deemed incompatible for
+    the purposes of the Work and the provisions of the compatibility
+    clause in Article 5 of the EUPL shall not apply.
+*/
+
+if ( !get_option( 'fiftyonedegrees_ga_access_token' ) && empty(get_option( 'fiftyonedegrees_ga_access_token' ))) { ?>
 	<form method="post" action="options.php">
 	
 	<table class="form-table">
 		<tbody>
+        <?php
+			if ( get_option( "fiftyonedegrees_ga_error" )) {
+				echo '<p></p><span class="fod-pipeline-status error">' . get_option( "fiftyonedegrees_ga_error" ) . '</span>';      
+				delete_option( "fiftyonedegrees_ga_error" );
+			}
+		?>
 		<p>Set up a liaison between 51Degrees and your Google Analytics account.</p>
 			<tr>
 				<th scope="row" ><label class="pt-20">Google Authentication</label></th>
@@ -113,4 +137,5 @@ function generate_login_url() {
 
 	return http_build_query( $url );
 }
+
 ?>

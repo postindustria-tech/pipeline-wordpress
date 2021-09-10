@@ -16,22 +16,7 @@
     clause in Article 5 of the EUPL shall not apply.
 */
 
-// Setting Global Values.
-define( 'FIFTYONEDEGREES_PROMPT', 'force' );
-define( 'FIFTYONEDEGREES_ACCESS_TYPE', 'offline' );
-define( 'FIFTYONEDEGREES_RESPONSE_TYPE', 'code' );
-define( 'FIFTYONEDEGREES_CLIENT_ID', '296335631462-e36u9us90puu4de17ct7rnklu3j8q63n.apps.googleusercontent.com');
-define( 'FIFTYONEDEGREES_CLIENT_SECRET', 'V9lcL-V3SxtGSWWcGsFW9QeI' );
-define( 'FIFTYONEDEGREES_REDIRECT', 'urn:ietf:wg:oauth:2.0:oob' );
-define( 'FIFTYONEDEGREES_SCOPE', Google_Service_Analytics::ANALYTICS_READONLY . " " .  Google_Service_Analytics::ANALYTICS_EDIT);
-define( 'FIFTYONEDEGREES_CUSTOM_DIMENSION_SCOPE', "HIT");
-
 use Google\Service\Analytics\CustomDimension;
-
-// Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
 
 /**
  * Google Analytics Service class 
@@ -43,11 +28,17 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Fiftyonedegrees_Google_Analytics {
 
+    /**
+     * Authenticate with Google Analytics.
+	 * @param string Access Code
+     * @return boolean true for successful authentication. 
+     */	
     public function google_analytics_authenticate( $key_google_token ) {
         
         try {
 
             update_option( 'fiftyonedegrees_ga_auth_code', $key_google_token );
+
             $client = $this->authenticate();
 
             if ( $client ) { 
@@ -57,16 +48,20 @@ class Fiftyonedegrees_Google_Analytics {
                 return true; 
 
             } else {
-                echo "Could not authenticate with the user.";
+                error_log("Could not authenticate with the user.");
             }
     
         } catch (Exception $e) {
     
-            echo $e->getMessage();
+            error_log($e->getMessage());
         }
         return false; 
     }
-    
+
+    /**
+     * Authenticates with backend PHP server using Google Client.
+     * @return boolean status flag
+     */	
     public function authenticate() {
 
         $client = new Google_Client();
@@ -86,21 +81,27 @@ class Fiftyonedegrees_Google_Analytics {
     
             $auth_code = get_option( 'fiftyonedegrees_ga_auth_code' );
     
-            if ( empty( $auth_code ) ) { 
+            if ( empty( $auth_code ) ) {
+                
+                update_option( "fiftyonedegrees_ga_error", "Please enter Access Code to authenticate." );
                 return false; 
             }
     
-            try {
-    
+            try {   
+                               
                 $access_token = $client->authenticate( $auth_code );
-            } catch ( Analytify_Google_Auth_Exception $e ) {
+                if( isset( $access_token["error_description"] )) {
+                    update_option( "fiftyonedegrees_ga_error", "Authentication request has returned " . $access_token["error_description"] );  
+                }
 
-                echo  $e->getMessage();
+            } catch ( Analytify_Google_Auth_Exception $e ) {
+                update_option( "fiftyonedegrees_ga_error", "Authentication request has returned an error. Please enter valid Access Code." );
+                error_log($e->getMessage());
                 return false;
 
             } catch ( Exception $e ) {
-
-                echo  $e->getMessage();
+                update_option( "fiftyonedegrees_ga_error", "Authentication request has returned an error. Please enter valid Access Code." );
+                error_log($e->getMessage());
                 return false;
 
             }
@@ -120,7 +121,12 @@ class Fiftyonedegrees_Google_Analytics {
 
         return $client;
     }
-    
+
+    /**
+     * Retrieves Google Analytics Object
+	 * @param Google_Client $client
+     * @return $service service object
+     */	
     public function get_google_analytics_service ( $client ) {
         try {
             
@@ -129,11 +135,11 @@ class Fiftyonedegrees_Google_Analytics {
              
         } catch ( Google_Service_Exception $e ) {
             
-            echo $e->getMessage();
+            error_log($e->getMessage());
 
         } catch ( Exception $e ) {
             
-            echo $e->getMessage();
+            error_log($e->getMessage());
 
         }
 
@@ -141,8 +147,10 @@ class Fiftyonedegrees_Google_Analytics {
     }
 
     /**
-     * Retrieves all properties for the authorized user.
-     */
+     * Retrieves web properties list for the authorized user.
+	 * @param Google_Service_Analytics $analytics_service
+     * @return array properties list
+     */	
     public function get_analytics_properties_list($analytics_service) {
   
         if (!get_option( 'fiftyonedegrees_ga_access_token' )) {
@@ -174,7 +182,7 @@ class Fiftyonedegrees_Google_Analytics {
                 }  
             }
             catch (Exception $e) {
-                echo $e->getMessage();
+                error_log($e->getMessage());
             }
         }
 
@@ -184,8 +192,11 @@ class Fiftyonedegrees_Google_Analytics {
     }
 
     /**
-     * Retrieves Maximum custom dimension index for the authorized user.
-     */
+     * Retrieves account id for the web property being used.
+	 * @param Google_Service_Analytics $analytics_service
+     * @param string trackingId
+     * @return string accountId 
+     */	
     public function get_account_id( $analytics_service, $trackingId ) {
 
         if( !empty( $trackingId ) ) {
@@ -203,13 +214,14 @@ class Fiftyonedegrees_Google_Analytics {
                 }
             }
             catch (apiServiceException $e) {
-                echo 'There was an Analytics API service error '
-                      . $e->getCode() . ':' . $e->getMessage();
+                error_log('There was an Analytics API service error '
+                . $e->getCode() . ':' . $e->getMessage());
                 return "";
               
             } catch (apiException $e) {
-                echo 'There was a general API error '
-                    . $e->getCode() . ':' . $e->getMessage();
+                error_log('There was a general API error '
+                . $e->getCode() . ':' . $e->getMessage());
+
                 return "";
             }
         }
@@ -217,8 +229,10 @@ class Fiftyonedegrees_Google_Analytics {
     }
 
     /**
-     * Retrieves Maximum custom dimension index for the authorized user.
-     */
+     * Retrieves custom dimensions for the authorized user.
+     * @return array array containing custom dimensions list
+     * and max available custom dimension index 
+     */	
     public function get_custom_dimensions() {
 
         $trackingId = get_option("fiftyonedegrees_ga_tracking_id");
@@ -250,21 +264,22 @@ class Fiftyonedegrees_Google_Analytics {
     
         } 
         else {
-            echo "User is not authenticated.";
+            error_log("User is not authenticated.");
         }
 
         return array( "cust_dims_map" => $custom_dimensions_map, "max_cust_dim_index" => $maxCustomDimIndex );
     }
-
+    
     /**
-     * Inserts Custom Dimension into analytics account for the authorized user.
-     */
+     * Inserts Custom Dimension into analytics account.
+     * @return int no of new custom dimensions inserted.
+     */	
     public function insert_custom_dimensions() {
 
+        $calls = 0;        
         $accountId = get_option("fiftyonedegrees_ga_account_id");
         $trackingId = get_option("fiftyonedegrees_ga_tracking_id");
         $cust_dim_map = get_option("fiftyonedegrees_ga_cust_dims_map");
-
         $client = $this->authenticate();
 
         if ( $client ) {  
@@ -286,18 +301,27 @@ class Fiftyonedegrees_Google_Analytics {
                     $customDimension->setActive(true);
 
                     try {
+
                         // Insert Custom Dimension in Google Analytics
                         $result = $service->management_customDimensions->insert($accountId, $trackingId, $customDimension);
+                        $calls = $calls + 1;
+
                     } catch (Exception $e) {
-                    echo $e->getMessage();
+
+                        $calls = -1;
+                        $jsonError = json_decode($e->getMessage(), $assoc = true);
+                        update_option( "fiftyonedegrees_ga_error", "Could not insert Custom Dimensions in Google Analytics account because" . $jsonError["error"]["message"]);
+                        error_log($e->getMessage());
                     }
                 
                 }
             }     
         }
         else {
-            echo "Could not authenticate the user.";
-        }   
+            error_log("User is not authenticated.");
+        }  
+        
+        return $calls;
     }
 }
     

@@ -23,6 +23,11 @@ if (!class_exists('WP_List_Table')) {
     require_once(ABSPATH . 'wp-admin/includes/class-wp-list-table.php');
 }
 
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Fiftyonedegrees_Custom_Dimensions extends WP_List_Table
 {       
     public function get_columns()
@@ -60,7 +65,6 @@ class Fiftyonedegrees_Custom_Dimensions extends WP_List_Table
         $currCustDimIndex = get_option("fiftyonedegrees_ga_max_cust_dim_index", 0);
         $passedDims = get_option("fiftyonedegrees_passed_dimensions");
 
-        //d($passedDims);
         foreach ($result["properties"] as $dataKey => $properties) {
             foreach ($properties as $property) {                
                 if ( strpos(strtolower($property["name"]), "javascript") === false ) {
@@ -169,6 +173,12 @@ class Fiftyonedegrees_Custom_Dimensions extends WP_List_Table
         }
     }
 
+    /**
+     * Retrieves Custom Dimension Name from Property. 
+	 * @param string datakey
+     * @param string property name
+     * @return string Custom Dimension Name
+     */
     public function get_custom_dimension_name( $datakey, $property ) {
 
 		$cust_dim_name = "51D." . strtolower($datakey) . "." . strtolower($property);
@@ -176,6 +186,12 @@ class Fiftyonedegrees_Custom_Dimensions extends WP_List_Table
         return $cust_dim_name;
     }
 
+    /**
+     * Retrieves Custom Dimension Index from Google Analytics.
+     * @param string custom dimension name
+     * @return int Google Analytic Index if dimension 
+     * already exists otherwise returns -1.
+     */
     public function get_ga_custom_dimension_index( $cust_dim_name ) {
 
         $ga_service = new Fiftyonedegrees_Google_Analytics();
@@ -190,18 +206,27 @@ class Fiftyonedegrees_Custom_Dimensions extends WP_List_Table
         return $cust_dim_index;
     }
 
+    /**
+     * Retrieves Custom Dimension list box content. 
+	 * @param string custom dimension name
+     * @return array array list containing default and
+     * existing custom dimensions.
+     */	
     public function get_custom_dimension_listbox( $cust_dim_name ) {
 
         $ga_service = new Fiftyonedegrees_Google_Analytics();
         $result = $ga_service->get_custom_dimensions();
 
         $cust_dims_list = array();
-        array_push($cust_dims_list, $cust_dim_name); 
-        
+         
         $list = array_keys($result["cust_dims_map"]);
 
+        array_push($cust_dims_list, $cust_dim_name);
+
         foreach ($list as $item) {
-            array_push($cust_dims_list, $item);
+            if($item !== $cust_dim_name) {
+                array_push($cust_dims_list, $item);
+            }
         }
 
         return $cust_dims_list;

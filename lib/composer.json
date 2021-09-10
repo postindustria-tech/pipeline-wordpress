@@ -10,7 +10,7 @@
   "license": "EUPL-1.2",
   "autoload": {
         "classmap": [
-            "../pipeline.php"
+            "../includes/pipeline.php"
         ]
     },
     "require": {
@@ -24,8 +24,8 @@
         "google/apiclient-services": [
             "Analytics",
             "AnalyticsData",
-			"AnalyticsReporting",
-			"GoogleAnalyticsAdmin"
+            "AnalyticsReporting",
+            "GoogleAnalyticsAdmin"
         ]
     },
     "require-dev": {

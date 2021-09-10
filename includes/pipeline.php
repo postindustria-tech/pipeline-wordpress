@@ -85,12 +85,12 @@ class Pipeline
      */
     public static function process()
     {
-        static $cache = null;
-
+        //static $cache = null;
+        $cache = null;
         if ($cache === null) {
     
-            require_once plugin_dir_path(__FILE__) . "lib/vendor/autoload.php";
-
+            require_once dirname(__DIR__) . "/lib/vendor/autoload.php";
+           
             $cachedPipeline = get_option('fiftyonedegrees_resource_key_pipeline');
 
             if(isset($cachedPipeline["error"]) || !$cachedPipeline){
@@ -144,12 +144,13 @@ class Pipeline
                 return $flowData->{$engine}->{$key}->value;
             }
             else {
-                return $flowData->{$engine}->{$key}->noValueMessage;
+                error_log($flowData->{$engine}->{$key}->noValueMessage);
+                return null;
             }
         }
         catch (\Exception $e) {
             error_log($e->getMessage());
-            return;
+            return null;
         }
 
     }
@@ -201,7 +202,8 @@ class Pipeline
                 $value = $property->value;
             }
             else {
-                $value = $property->noValueMessage;
+                error_log($property->noValueMessage);
+                $value = null;
             }
             $output[$key] = $value;
         }
@@ -224,6 +226,7 @@ class Pipeline
         try {
             return $flowData->javascriptbuilder->javascript;
         } catch (\Exception $e) {
+            error_log($e->getMessage());
             return "";
         }
     }

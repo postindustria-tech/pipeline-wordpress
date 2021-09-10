@@ -25,11 +25,6 @@
  * @author  Fatima Tariq
  */
 
-// Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
-
 class Fiftyonedegrees_Tracking_Gtag {
 
 	/**
@@ -52,6 +47,12 @@ class Fiftyonedegrees_Tracking_Gtag {
 
 	}
 
+    /**
+     * Retrieves Custom Dimensions from Properties Map to be used 
+	 * in gtag Javascript. 
+     * @return array array list containing dimensions, events and
+     * delayed evidence information.
+     */
 	public function get_properties_as_custom_dimensions() {
         
 		$custom_dimensions = get_option("fiftyonedegrees_ga_cust_dims_map");
@@ -79,9 +80,12 @@ class Fiftyonedegrees_Tracking_Gtag {
 		return array ("dimensions_map" => $ga_dimensions_map, "events_map" => $ga_events_map, "delayed_evidence" => $delayed_evidence);
 	}
 
+    /**
+     * Retrieves Google Analytics Tracking Code
+	 * to be added in the Theme Header.
+     * @return Javascript javascript code
+     */
 	public function output_ga_tracking_code() {
-
-		$url = plugin_dir_url(__FILE__);
 		
 		$google_trackingId = get_option("fiftyonedegrees_ga_tracking_id");
 
@@ -108,10 +112,10 @@ class Fiftyonedegrees_Tracking_Gtag {
 			js.type = "text/javascript";
 			
 			if ( property_exists ) {
-				js.src = '<?php echo $url . "assets/static/ga-integration-tracking.js"; ?>';
+				js.src = '<?php echo FIFTYONEDEGREES_PLUGIN_URL . "assets/js/ga-integration-tracking.js"; ?>';
 			}
 			else {
-				js.src = '<?php echo $url . "assets/static/ga-51d-tracking.js"; ?>';
+				js.src = '<?php echo FIFTYONEDEGREES_PLUGIN_URL . "assets/js/ga-51d-tracking.js"; ?>';
 			}
 
 			head.appendChild(js);		
@@ -120,14 +124,15 @@ class Fiftyonedegrees_Tracking_Gtag {
 		<?php		
 		echo "\r\t<!-- End 51Degrees Wordpress Plugin -->\n\n";
 		$code = ob_get_contents();
-		d($code);
 		ob_end_clean();
 		return $code;
 	}
 
 	/**
-	 * Generate gtag code.
-	 * @return $gtag_code
+	 * Generate gtag code that runs when gtag does not 
+	 * already exist in the header i.e. property is not
+	 * already been tagged.
+	 * @return Javascript $gtag_code
 	 */
 	public function output_gtag_code() {
 
@@ -146,7 +151,7 @@ class Fiftyonedegrees_Tracking_Gtag {
 			gtag('js', new Date());
 	
 			const configuration = {
-				'cookieDomain': 'none',
+				<!-- 'cookieDomain': 'none', -->
 				'send_page_view': '<?php echo $send_page_view; ?>',
 				'custom_map' : {
 					<?php
@@ -188,7 +193,7 @@ class Fiftyonedegrees_Tracking_Gtag {
 		$gtag_code = ob_get_contents();
 		ob_end_clean();
 
-		$jsFile = fopen( plugin_dir_path(__FILE__) . "assets/static/ga-51d-tracking.js", "w") or die("Unable to open file!");
+		$jsFile = fopen( FIFTYONEDEGREES_PLUGIN_DIR . "assets/js/ga-51d-tracking.js", "w") or die("Unable to open file!");
 		fwrite($jsFile, $gtag_code);
 		fclose($jsFile);
 
@@ -196,8 +201,10 @@ class Fiftyonedegrees_Tracking_Gtag {
 	}
 
 	/**
-	 * Generate gtag code.
-	 * @return $gtag_code
+	 * Generate gtag code that runs when gtag does 
+	 * already exist in the header i.e. property is
+	 * already been tagged.
+	 * @return Javascript $gtag_code
 	 */
 	public function output_gtag_code_tagged_property() {
 
@@ -265,13 +272,19 @@ class Fiftyonedegrees_Tracking_Gtag {
 		$gtag_code = ob_get_contents();
 		ob_end_clean();
 
-		$jsFile = fopen( plugin_dir_path(__FILE__) . "assets/static/ga-integration-tracking.js", "w") or die("Unable to open file!");
+		$jsFile = fopen( FIFTYONEDEGREES_PLUGIN_DIR . "assets/js/ga-integration-tracking.js", "w") or die("Unable to open file!");
 		fwrite($jsFile, $gtag_code);
 		fclose($jsFile);
 
 		return $gtag_code;
 	}
 
+	/**
+	 * Retrieves Javascript function that returns true 
+	 * if property is already been tagged in the 
+	 * header by other plugin.
+	 * @return Javascript javascript function
+	 */
 	public function check_property_exists() {
 
 		$google_trackingId = get_option("fiftyonedegrees_ga_tracking_id");
