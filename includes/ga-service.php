@@ -90,9 +90,15 @@ class Fiftyonedegrees_Google_Analytics {
             try {   
                                
                 $access_token = $client->authenticate( $auth_code );
+
                 if( isset( $access_token["error_description"] )) {
                     update_option( "fiftyonedegrees_ga_error", "Authentication request has returned " . $access_token["error_description"] );  
                 }
+                else if( isset( $access_token["scope"] ) && strpos( $access_token["scope"], Google_Service_Analytics::ANALYTICS_READONLY ) === false) {
+                    update_option( "fiftyonedegrees_ga_error", 'Please give necessary <b> See and download your Google Analytics data.</b> access while logging in to Google Analytics.' );
+                    return false;
+                }
+                
 
             } catch ( Analytify_Google_Auth_Exception $e ) {
                 update_option( "fiftyonedegrees_ga_error", "Authentication request has returned an error. Please enter valid Access Code." );

@@ -17,7 +17,8 @@
     clause in Article 5 of the EUPL shall not apply.
 */
 
-if ( !get_option( 'fiftyonedegrees_ga_access_token' ) && empty(get_option( 'fiftyonedegrees_ga_access_token' ))) { ?>
+if ( (!get_option( 'fiftyonedegrees_ga_access_token' ) && empty(get_option( 'fiftyonedegrees_ga_access_token' )))
+         || get_option( "fiftyonedegrees_ga_error" )) { ?>
 	<form method="post" action="options.php">
 	
 	<table class="form-table">

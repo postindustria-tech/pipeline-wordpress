@@ -43,7 +43,8 @@ class Pipeline
             "javascriptBuilderSettings" => [
                 "endpoint" => $appContext . "/wp-json/fiftyonedegrees/v4/json",
                 "host" => isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : $url,
-                "protocol" => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? "https" : "http"
+                "protocol" => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? "https" : "http",
+				"minify" => false
             ]
         ]);
 
