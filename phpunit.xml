@@ -1,0 +1,16 @@
+<phpunit>
+  <php>
+    <env name="RESOURCEKEY" value="!!YOUR_RESOURCE_KEY!!" force="true"/>
+    <const name="FIFTYONEDEGREES_PLUGIN_DIR" value= ""/>
+    <const name="FIFTYONEDEGREES_CUSTOM_DIMENSION_SCOPE" value= "HIT"/> 
+  </php>
+  <testsuites>
+    <testsuite name="PipelineTests">
+      <file>tests/PipelineTests.php</file>
+    </testsuite>
+    <testsuite name="GATests">
+      <file>tests/GaServiceTests.php</file>
+      <file>tests/GaTrackingGtagTests.php</file>
+    </testsuite>
+  </testsuites>
+</phpunit>

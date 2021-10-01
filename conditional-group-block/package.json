@@ -1,0 +1,17 @@
+{
+  "name": "fiftyonedegrees.conditional-block",
+  "version": "1.0.0",
+  "description": "Simple summary block",
+  "author": "Octophin Digital",
+  "scripts": {
+    "build": "wp-scripts build",
+    "lint:js": "wp-scripts lint-js",
+    "start": "wp-scripts start"
+  },
+  "devDependencies": {
+    "@wordpress/scripts": "^3.4.0"
+  },
+  "dependencies": {
+    "@wordpress/element": "^2.15.0"
+  }
+}

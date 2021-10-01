@@ -1,0 +1,34 @@
+{
+  "name": "51degrees/fiftyonedegrees.wordpress",
+  "description": "51Degrees Pipeline API",
+  "authors": [
+    {
+      "name": "Fatima Tariq",
+      "email": "fatima@51degrees.com"
+    }
+  ],
+  "license": "EUPL-1.2",
+  "autoload": {
+        "classmap": [
+            "../includes/pipeline.php"
+        ]
+    },
+    "require": {
+		"51degrees/fiftyone.pipeline.cloudrequestengine": "4.3.*",
+		"google/apiclient": "^2.10"
+    },
+    "scripts": {
+        "pre-autoload-dump": "Google\\Task\\Composer::cleanup"
+    },
+    "extra": {
+        "google/apiclient-services": [
+            "Analytics",
+            "AnalyticsData",
+            "AnalyticsReporting",
+            "GoogleAnalyticsAdmin"
+        ]
+    },
+    "require-dev": {
+		"brain/monkey": "^2.6"
+  }
+}

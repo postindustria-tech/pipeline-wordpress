@@ -1,7 +1,0 @@
-{
-    "name": "fiftyonedegrees-wordpress",
-    "require": {
-        "51degrees/fiftyone.devicedetection": "^4.1@beta"
-    },
-    "minimum-stability": "dev"
-}
