@@ -29,12 +29,12 @@ if ( (!get_option( 'fiftyonedegrees_ga_access_token' ) && empty(get_option( 'fif
 				delete_option( "fiftyonedegrees_ga_error" );
 			}
 		?>
-		<p>Set up a liaison between 51Degrees and your Google Analytics account.</p>
+		<p>It is required to <a href="https://support.google.com/analytics/answer/1008015?hl=en/" target="_blank">Set up</a> an account and a website profile at <a href="https://analytics.google.com/" target="_blank">Google Analytics</a> to send 51Degrees Custom Dimensions to Google Analytics. Once Set Up, create a connection between 51Degrees and your Google Analytics account.</p>
 			<tr>
 				<th scope="row" ><label class="pt-20">Google Authentication</label></th>
 				<td>
-					<a title="Log in with Google Analytics Account" id="fiftyonedegrees_ga_token" class="button-primary authentication_btn" href="https://accounts.google.com/o/oauth2/auth?<?php echo generate_login_url(); ?>" target="_blank">Log in with Google Analytics Account</a>
-					<p class="description">It is required to <a href="https://support.google.com/analytics/answer/1008015?hl=en/">Set up</a> your account and a website profile at <a href="https://analytics.google.com/">Google Analytics</a> to send 51Degrees Custom Dimensions to Google Analytics.<br></p>
+					<p class="description">Please ensure you allow 51Degrees access to both <b>Edit Google Analytics management entities</b> and <b>See and download your Google Analytics data</b> when logging into Google Analytics.</br></p></br>
+					<a title="Log in with Google Analytics Account" id="fiftyonedegrees_ga_token" class="button-primary authentication_btn" href="https://accounts.google.com/o/oauth2/auth?<?php echo generate_login_url(); ?>" target="_blank">Log in with Google Analytics Account</a>					
 				</td>
 			</tr>
 			<tr>
@@ -53,10 +53,6 @@ if ( (!get_option( 'fiftyonedegrees_ga_access_token' ) && empty(get_option( 'fif
 } else if ( get_option("custom_dimension_screen") ) { 
 
 	include plugin_dir_path(__FILE__) . "/ga-customdimensions.php";
-
-} else if ( get_option("fiftyonedegrees_ga_change_screen") ) { 
-
-	include plugin_dir_path(__FILE__) . "/ga-authentication.php";
 
 } else { ?>
 
@@ -100,7 +96,14 @@ if ( (!get_option( 'fiftyonedegrees_ga_access_token' ) && empty(get_option( 'fif
 									}									
 								}
 							</script>
-						</select>				
+						</select>
+						<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+						<a href="?page=51Degrees&tab=google-analytics">
+						<span class="fa-stack fa-lg" style="font-size:15px;">
+								<i class="fa fa-circle fa-stack-2x" style="color:#666666;"></i>
+								<i class="fa fa-refresh fa-stack-1x fa-inverse"></i>
+						</span>
+					    </a>			
 					<p class="description">Select your Google Analytics Property to send 51Degrees Custom Dimensions to.<br></p>
 					</td>
 				</tr>
@@ -113,7 +116,17 @@ if ( (!get_option( 'fiftyonedegrees_ga_access_token' ) && empty(get_option( 'fif
 						<?php } else { ?>
 							<input type="checkbox" id="fiftyonedegrees_ga_send_page_view" name="fiftyonedegrees_ga_send_page_view"> 
 						<?php } ?>
-						<label for="fiftyonedegrees_ga_send_page_view">Send Page View</label>
+						<label for="fiftyonedegrees_ga_send_page_view">Send Page View
+							<span class="fa-stack fa-lg" style="font-size:12px;">
+								<i class="fa fa-circle fa-stack-2x" style="color:#666666;"></i>
+								<i class="fa fa-info fa-stack-1x fa-inverse" title="Send a pageview for each page your users visit to get the information including:
+1. Time spent by the user on each page or The total time a user spends on your site.
+2. The geographic location.
+3. Information related to browser and operating system.
+4. Internal links clicked etc.">
+							</i>
+							</span>
+						</label> 
 						<p class="description">Check Send Page View to send default Page View hit with custom dimensions.<br></p>											
 					</td>
 				</tr>				

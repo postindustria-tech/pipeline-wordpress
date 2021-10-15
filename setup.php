@@ -23,12 +23,6 @@
 
         $cachedPipeline = get_option('fiftyonedegrees_resource_key_pipeline');
 
-        if(!$cachedPipeline){
-
-            echo '<p></p><span class="fod-pipeline-status warn">Please enter a resource key.</span>';
-
-        }
-
         if(isset($cachedPipeline['error'])){
 
             echo '<p></p><span class="fod-pipeline-status error">'. $cachedPipeline['error'] .'</span>';
@@ -37,14 +31,16 @@
 
         if(isset($cachedPipeline['pipeline'])){
 
-            echo '<p></p><span class="fod-pipeline-status good">Resource Key is valid and gives you access to the following engines: ' . json_encode($cachedPipeline['available_engines']) .' </span>';
+            echo '<p></p><span class="fod-pipeline-status good"><b>This resource key is valid and allows access to the custom properties selected in the following categories: ' . json_encode($cachedPipeline['available_engines']) .' </br>To continue, connect to Google Analytics via the <a href="options-general.php?page=51Degrees&tab=google-analytics">Google Analytics</a> tab. See the <a href="options-general.php?page=51Degrees&tab=properties">Properties</a> tab for a list of all the custom properties.</b></span>';
 
         }
 
     ?>
 
-    <p>To get started visit <a href="https://configure.51degrees.com/" target="_blank">https://configure.51degrees.com/</a> to get a 51Degrees resource key for the device detection properties you want to get access to.</p>
-
+    <p>To get started visit <a href="https://configure.51degrees.com/" target="_blank">https://configure.51degrees.com/</a> to get a 51Degrees resource key for the device detection properties you want to get access to.
+    </br>For more information on how to use our Configurator, view our explainer video <a href="https://51degrees.com/documentation/_concepts__configurator.html" target="_blank">here</a>.
+    </p>
+    
     <table class="form-table" role="presentation">
         <tbody>
             <tr>

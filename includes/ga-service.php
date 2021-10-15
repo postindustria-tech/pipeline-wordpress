@@ -83,7 +83,7 @@ class Fiftyonedegrees_Google_Analytics {
     
             if ( empty( $auth_code ) ) {
                 
-                update_option( "fiftyonedegrees_ga_error", "Please enter Access Code to authenticate." );
+                update_option( "fiftyonedegrees_ga_error", "<b>Please enter Access Code to authenticate.</b>" );
                 return false; 
             }
     
@@ -92,13 +92,16 @@ class Fiftyonedegrees_Google_Analytics {
                 $access_token = $client->authenticate( $auth_code );
 
                 if( isset( $access_token["error_description"] )) {
-                    update_option( "fiftyonedegrees_ga_error", "Authentication request has returned " . $access_token["error_description"] );  
+                    update_option( "fiftyonedegrees_ga_error", "<b>Authentication request has returned " . $access_token["error_description"] . "</b>");  
                 }
-                else if( isset( $access_token["scope"] ) && strpos( $access_token["scope"], Google_Service_Analytics::ANALYTICS_READONLY ) === false) {
-                    update_option( "fiftyonedegrees_ga_error", 'Please give necessary <b> See and download your Google Analytics data.</b> access while logging in to Google Analytics.' );
+                else if( isset( $access_token["scope"] ) && strpos( $access_token["scope"], Google_Service_Analytics::ANALYTICS_READONLY ) === false ) {
+                    update_option( "fiftyonedegrees_ga_error", 'Please ensure you tick the <b>See and download your Google Analytics data</b> box when logging into Google Analytics.' );
                     return false;
                 }
-                
+                else if( isset( $access_token["scope"] ) && strpos( $access_token["scope"], Google_Service_Analytics::ANALYTICS_EDIT ) === false ) { 
+                    update_option( "fiftyonedegrees_ga_error", 'Please ensure you tick the <b>Edit Google Analytics management entities</b> box when logging into Google Analytics.' );
+                    return false;
+                }                
 
             } catch ( Analytify_Google_Auth_Exception $e ) {
                 update_option( "fiftyonedegrees_ga_error", "Authentication request has returned an error. Please enter valid Access Code." );
@@ -163,34 +166,29 @@ class Fiftyonedegrees_Google_Analytics {
             echo "You must authenticate to access your Analytics Account.";
             return;
         }
-    
-        $properties = get_option( 'fiftyonedegrees_ga_properties_list' );
-    
-        if ( empty( $properties ) ) {
-    
-            try {
-                // Get the list of accounts for the authorized user.
-                $properties = $analytics_service->management_webproperties->listManagementWebproperties('~all');
-                $propertiesList = array();
-                if (count($properties->getItems()) > 0) {
-                    foreach ($properties->getItems() as $property) {
-                        $propertyId = $property->getId();
-                        $propertyName = $property->getName();
-                        $property = array();
-                        $property["id"] = $propertyId;
-                        $property["name"] = $propertyName . " (" . $propertyId . ") "; 
-                        array_push($propertiesList, $property);           
-                    }
-                }
-                else {
-                    echo 'No Properties found for this user.';
-                    return;
-                }  
-            }
-            catch (Exception $e) {
-                error_log($e->getMessage());
-            }
-        }
+      
+		try {
+			// Get the list of accounts for the authorized user.
+			$properties = $analytics_service->management_webproperties->listManagementWebproperties('~all');
+			$propertiesList = array();
+			if (count($properties->getItems()) > 0) {
+				foreach ($properties->getItems() as $property) {
+					$propertyId = $property->getId();
+					$propertyName = $property->getName();
+					$property = array();
+					$property["id"] = $propertyId;
+					$property["name"] = $propertyName . " (" . $propertyId . ") "; 
+					array_push($propertiesList, $property);           
+				}
+			}
+			else {
+				echo 'No Properties found for this user.';
+				return;
+			}  
+		}
+		catch (Exception $e) {
+			error_log($e->getMessage());
+		}
 
         update_option( 'fiftyonedegrees_ga_properties_list' , $propertiesList );
     
@@ -275,7 +273,7 @@ class Fiftyonedegrees_Google_Analytics {
 
         return array( "cust_dims_map" => $custom_dimensions_map, "max_cust_dim_index" => $maxCustomDimIndex );
     }
-    
+
     /**
      * Inserts Custom Dimension into analytics account.
      * @return int no of new custom dimensions inserted.
