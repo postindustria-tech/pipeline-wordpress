@@ -32,11 +32,12 @@
 
 <h2 class="nav-tab-wrapper">
     <a href="?page=51Degrees&tab=setup" class="nav-tab <?php echo $active_tab == 'setup' ? 'nav-tab-active' : ''; ?>">Setup</a>
-    <a href="?page=51Degrees&tab=google-analytics" class="nav-tab <?php echo $active_tab == 'google-analytics' ? 'nav-tab-active' : ''; ?>">Google Analytics</a>
-    <a href="?page=51Degrees&tab=properties" class="nav-tab <?php echo $active_tab == 'properties' ? 'nav-tab-active' : ''; ?>">Properties</a>	
+    <a href="?page=51Degrees&tab=google-analytics" class="nav-tab <?php echo $active_tab == 'google-analytics' ? 'nav-tab-active' : ''; ?>" style="<?php echo !get_option('fiftyonedegrees_resource_key') ? 'pointer-events:none;color:#C0C0C0;' : ''; ?>">Google Analytics</a>
+	
+    <a href="?page=51Degrees&tab=properties" class="nav-tab <?php echo $active_tab == 'properties' ? 'nav-tab-active' : '';  ?>" style="<?php echo !get_option('fiftyonedegrees_resource_key') ? 'pointer-events:none;color:#C0C0C0;' : ''; ?>">Properties</a>	
     <a href="?page=51Degrees&tab=help" class="nav-tab <?php echo $active_tab == 'help' ? 'nav-tab-active' : ''; ?>">Help</a>
 </h2>
-
+                  
 <?php
 
 include plugin_dir_path(__FILE__) . $active_tab . ".php";

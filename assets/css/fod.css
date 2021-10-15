@@ -24,6 +24,14 @@ margin-bottom: 0px;
   cursor: pointer;
 }
 
+.fa-refresh:hover{
+   color:DarkGray;
+}
+
+.fa-info:hover{
+   color:DarkGray;
+}
+
 /* Darker background on mouse-over */
 .btn:hover {
   background-color: #ddd;

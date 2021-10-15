@@ -1,13 +1,13 @@
 <?php
 /**
- *  Plugin Name: 51Degrees
- *  Plugin URI:  https://51degrees.com/
- *  Description: 51Degrees WordPress plugin makes use of the 51Degrees Pipeline API to deliver Data Intelligence services.
- *  Version:     0.9
+ *  Plugin Name: 51Degrees - Optimize by Device & Location
+ *  Plugin URI:  http://wordpress.org/plugins/fiftyonedegrees/
+ *  Description: Optimize your website for a range of devices and personalize your content based on your user’s location.
+    Version:     1.0.0
  *  Author:      51Degrees
  *  Author URI:  https://51degrees.com/
  *  Text Domain: fiftyonedegrees
- *  License:     EUPL
+ *  License:     EUPL-1.2
  *
  *  This Original Work is copyright of 51 Degrees Mobile Experts Limited.
  *  Copyright 2019 51 Degrees Mobile Experts Limited, 5 Charlotte Close,
@@ -176,7 +176,6 @@ class Fiftyonedegrees {
 
                 $resource_key = $_POST["fiftyonedegrees_resource_key"];
                 update_option("fiftyonedegrees_resource_key", $resource_key);
-                update_option("fiftyonedegrees_resource_key", $resource_key);
 
                 if(!isset($cachedPipeline['error'])) {
                     if ( get_option("fiftyonedegrees_ga_enable_tracking") && get_option("fiftyonedegrees_resource_key_updated")) {                    
@@ -343,26 +342,26 @@ class Fiftyonedegrees {
         }
 		
         function delete_ga_options() {
-			
-                delete_option( "fiftyonedegrees_ga_auth_code" );
-                delete_option( "fiftyonedegrees_ga_access_token" );
-                delete_option( "fiftyonedegrees_ga_properties_list" );
-                delete_option( "fiftyonedegrees_ga_tracking_id" );
-                delete_option( "fiftyonedegrees_ga_account_id" );
-                delete_option( "fiftyonedegrees_ga_max_cust_dim_index" );
-                delete_option( "fiftyonedegrees_ga_send_page_view" );
-                delete_option( "fiftyonedegrees_ga_tracking_javascript" );
-                delete_option( "fiftyonedegrees_ga_enable_tracking" );
-                delete_option( "fiftyonedegrees_ga_error" );
-                delete_option( "fiftyonedegrees_ga_auth_code" ); 
-                delete_option( "fiftyonedegrees_resource_key_updated" );
-                delete_option( "tracking_id_update_flag" );
-                delete_option( "send_page_view_update_flag" );
-                delete_option( "tracking_id_error" );
-                delete_option( "custom_dimension_screen" );
-                delete_option( "change_to_authentication_screen" );
-                delete_option( "fiftyonedegrees_passed_dimensions" );
-                delete_option( "fiftyonedegrees_passed_dimensions_updated" );				
+
+            delete_option( "fiftyonedegrees_ga_auth_code" );
+            delete_option( "fiftyonedegrees_ga_access_token" );
+            delete_option( "fiftyonedegrees_ga_properties_list" );
+            delete_option( "fiftyonedegrees_ga_tracking_id" );
+            delete_option( "fiftyonedegrees_ga_account_id" );
+            delete_option( "fiftyonedegrees_ga_max_cust_dim_index" );
+            delete_option( "fiftyonedegrees_ga_send_page_view" );
+            delete_option( "fiftyonedegrees_ga_tracking_javascript" );
+            delete_option( "fiftyonedegrees_ga_enable_tracking" );
+            delete_option( "fiftyonedegrees_ga_error" );
+            delete_option( "fiftyonedegrees_ga_auth_code" ); 
+            delete_option( "fiftyonedegrees_resource_key_updated" );
+            delete_option( "tracking_id_update_flag" );
+            delete_option( "send_page_view_update_flag" );
+            delete_option( "tracking_id_error" );
+            delete_option( "custom_dimension_screen" );
+            delete_option( "change_to_authentication_screen" );
+            delete_option( "fiftyonedegrees_passed_dimensions" );
+            delete_option( "fiftyonedegrees_passed_dimensions_updated" );				
 		}
                     
         // Add stylesheet for admin pages

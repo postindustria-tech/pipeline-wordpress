@@ -27,7 +27,7 @@
  }  else { 
      
         if ( get_option('fiftyonedegrees_resource_key_pipeline')['error']) {
-            echo '<p></p><span class="fod-pipeline-status error">Provided resourceKey does not contain any Custom Dimensions. Please enter a valid resource key. </span>';        
+            echo '<p></p><span class="fod-pipeline-status error">Provided resource key does not contain any Custom Dimensions. Please enter a valid resource key. </span>';        
         }
         else if ( get_option( "fiftyonedegrees_ga_error" ) ) {
             echo '<p></p><span class="fod-pipeline-status warn">' . get_option("fiftyonedegrees_ga_error") . '</span>';
@@ -70,7 +70,7 @@
         <tbody>
             <tr>
             
-               <td><p>Following properties are available with the provided resourcekey. Please Click <b>Enable Google Analytics Tracking</b> to send them as Custom Dimensions to <b><?php echo get_option("fiftyonedegrees_ga_tracking_id"); ?></b> Google Analytics Property or <b>Go Back</b> to change. </p></td>
+               <td><p>The following properties are available with the provided resource key. Please Click <b>Enable Google Analytics Tracking</b> to send them as Custom Dimensions to <b><?php echo get_option("fiftyonedegrees_ga_tracking_id"); ?></b> Google Analytics Property or <b>Go Back</b> to change. </p></td>
                <td><button type="submit" class="button-primary" name="fiftyonedegrees_ga_change_settings" ><span style="font-size:16px;">&laquo;</span> Go Back</i></button></td>
             
             </tr>

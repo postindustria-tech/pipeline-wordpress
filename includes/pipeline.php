@@ -203,7 +203,7 @@ class Pipeline
                 $value = $property->value;
             }
             else {
-                error_log($property->noValueMessage);
+                //error_log($property->noValueMessage);
                 $value = null;
             }
             $output[$key] = $value;
