@@ -72,7 +72,7 @@ class PipelineTests extends TestCase {
         $resourceKey = "XXXXXXXXXXXXXX";
         $result = Pipeline::make_pipeline($resourceKey);
 
-        $this->assertEquals($result["error"], "Error returned from 51Degrees cloud service: ''XXXXXXXXXXXXXX' is not a valid resource key.'");
+        $this->assertEquals($result["error"], "Error returned from 51Degrees cloud service: ''XXXXXXXXXXXXXX' is not a valid Resource Key. See http://51degrees.com/documentation/_info__error_messages.html#Resource_key_not_valid for more information.'");
 
     }
 
