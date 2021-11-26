@@ -19,6 +19,7 @@
 use fiftyone\pipeline\core\PipelineBuilder;
 use fiftyone\pipeline\cloudrequestengine\CloudRequestEngine;
 use fiftyone\pipeline\cloudrequestengine\CloudEngine;
+use fiftyone\pipeline\core\Utils;
 
 class Pipeline
 {
@@ -110,6 +111,13 @@ class Pipeline
 
             // Process flowData with evidence supplied
             $flowData->process();
+
+			// Some browsers require that extra HTTP headers are explicitly
+			// requested. So set whatever headers are required by the browser in
+			// order to return the evidence needed by the pipeline.
+			// More info on this can be found at
+			// https://51degrees.com/blog/user-agent-client-hints
+			Utils::setResponseHeader($flowData);
 
             // Get properties for each engine from pipeline.
             $properties = array();
