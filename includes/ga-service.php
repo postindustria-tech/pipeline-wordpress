@@ -83,7 +83,7 @@ class Fiftyonedegrees_Google_Analytics {
     
             if ( empty( $auth_code ) ) {
                 
-                update_option( "fiftyonedegrees_ga_error", "<b>Please enter Access Code to authenticate.</b>" );
+                update_option( "fiftyonedegrees_ga_error", "Please enter Access Code to authenticate." );
                 return false; 
             }
     

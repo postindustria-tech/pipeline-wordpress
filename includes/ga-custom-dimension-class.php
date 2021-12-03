@@ -67,7 +67,8 @@ class Fiftyonedegrees_Custom_Dimensions extends WP_List_Table
 
         foreach ($result["properties"] as $dataKey => $properties) {
             foreach ($properties as $property) {                
-                if ( strpos(strtolower($property["name"]), "javascript") === false ) {
+                if ( strpos(strtolower($property["name"]), "javascript") === false &&
+     				    strpos(strtolower($property["name"]), "setheader") === false) {
                     
                     // Get the property name.
                     $propertyName = strtolower($property["name"]);
@@ -113,19 +114,19 @@ class Fiftyonedegrees_Custom_Dimensions extends WP_List_Table
         }
 
         usort($results, function ($a, $b) {
-            $orderby = (! empty($_GET['orderby'])) ? $_GET['orderby'] : 'custom_dimension_index';
-            $order = (! empty($_GET['order'])) ? $_GET['order'] : 'asc';
+            $orderby = ( !empty( $_GET['orderby'] ) ) ? sanitize_text_field( $_GET['orderby'] ) : 'custom_dimension_index';
+            $order = ( !empty( $_GET['order'] ) ) ? sanitize_text_field( $_GET['order'] ) : 'asc';
             $result = 0;
-            if ($a[$orderby] > $b[$orderby]) {
+            if ( $a[$orderby] > $b[$orderby] ) {
                 $result = 1;
             }
-            else if ($a[$orderby] < $b[$orderby]) {
+            else if ( $a[$orderby] < $b[$orderby] ) {
                 $result = -1;
             }
-            return ($order === 'asc') ? $result : -$result;
+            return ( $order === 'asc' ) ? $result : -$result;
         });
 
-        update_option("fiftyonedegrees_ga_cust_dims_map", $ga_results);
+        update_option( "fiftyonedegrees_ga_cust_dims_map", $ga_results );
 
         $this->items = $results;
     }
@@ -134,13 +135,13 @@ class Fiftyonedegrees_Custom_Dimensions extends WP_List_Table
     {
         $records = $this->items;
 
-        foreach ($records as $i => $rec) {
-            echo '<tr id="record_' . $i . '">';
+        foreach ( $records as $i => $rec ) {
+            echo '<tr id="record_' . esc_html( $i ) . '">';
 
-            echo "<td>" . strtolower($rec["property_name"]) . "</td>";
+            echo "<td>" . esc_html( strtolower( $rec["property_name"] ) ). "</td>";
            
-            $passedDims = get_option("fiftyonedegrees_passed_dimensions");
-            $listBoxId =  "51D_" . strtolower($rec["property_name"]);
+            $passedDims = get_option( "fiftyonedegrees_passed_dimensions" );
+            $listBoxId =  "51D_" . strtolower( $rec["property_name"] );
 
             $selectedPHP = "";
             if ( isset($passedDims[$rec["property_name"]]) ) {
@@ -151,10 +152,10 @@ class Fiftyonedegrees_Custom_Dimensions extends WP_List_Table
             echo "<div class='51DPropertiesList'>";
             ?>
 
-            <select id="<?php echo $listBoxId; ?>" name = "<?php echo $listBoxId; ?>">
+            <select id="<?php echo esc_attr( $listBoxId ); ?>" name = "<?php echo esc_attr( $listBoxId ); ?>">
                 <script>
-                    var custDimsList = <?php echo json_encode($rec["custom_dimension_name"]);?>;
-                    var selectedProperty = "<?php echo $selectedPHP; ?>";    
+                    var custDimsList = <?php echo sprintf( esc_html( '%1$s'), json_encode( $rec["custom_dimension_name"] ) );?>;
+                    var selectedProperty = "<?php echo esc_html( $selectedPHP ); ?>";    
                         for(i=0; i<custDimsList.length; i++) {
                             if( selectedProperty == custDimsList[i]) {
                                 document.write('<option value="' + custDimsList[i] +'" selected>' + custDimsList[i] + '</option>');
@@ -167,7 +168,7 @@ class Fiftyonedegrees_Custom_Dimensions extends WP_List_Table
         <?php
             echo "</div>\n";
             echo "</td>\n";
-            echo "<td>" . $rec["custom_dimension_index"] . "</td>\n";           
+            echo "<td>" . esc_html( $rec["custom_dimension_index"] ). "</td>\n";           
             echo "</tr>\n";
             
         }

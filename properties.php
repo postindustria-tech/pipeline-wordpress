@@ -75,9 +75,9 @@ class Properties_List_table extends WP_List_Table
         }
 
         usort($results, function ($a, $b) {
-            $orderby = (! empty($_GET['orderby'])) ? $_GET['orderby'] : 'col_property_name';
-            $order = (! empty($_GET['order'])) ? $_GET['order'] : 'asc';
-            $result = strcmp($a[$orderby], $b[$orderby]);
+            $orderby = ( !empty( $_GET['orderby'] ) ) ? sanitize_text_field( $_GET['orderby'] ) : 'col_property_name';
+            $order = (! empty( $_GET['order'] ) ) ? sanitize_text_field( $_GET['order'] ) : 'asc';
+            $result = strcmp( $a[$orderby], $b[$orderby] );
             return ($order === 'asc') ? $result : -$result;
         });
 
@@ -89,14 +89,14 @@ class Properties_List_table extends WP_List_Table
         $records = $this->items;
 
         foreach ($records as $i => $rec) {
-            echo '<tr id="record_' . $i . '">';
+            echo '<tr id="record_' . esc_html( $i ). '">';
 
-            echo "<td>" . strtolower($rec["col_property_name"]) . "</td>";
-            echo "<td>" . $rec["col_property_category"] . "</td>";
-            echo "<td>" . $rec["col_property_type"] . "</td>";
-            echo "<td>" . $rec["col_property_engine"] . "</td>";
-            echo "<td>" . $rec["col_property_content_usage"] . "</td>";
-            echo "<td>" . $rec["col_property_php_usage"] . "</td>";
+            echo "<td>" . esc_html( strtolower($rec["col_property_name"]) ). "</td>";
+            echo "<td>" . esc_html( $rec["col_property_category"] ). "</td>";
+            echo "<td>" . esc_html( $rec["col_property_type"] ) . "</td>";
+            echo "<td>" . esc_html( $rec["col_property_engine"] ). "</td>";
+            echo "<td>" . esc_html( $rec["col_property_content_usage"] ). "</td>";
+            echo "<td>" . esc_html( $rec["col_property_php_usage"] ). "</td>";
 
             echo'</tr>';
         }

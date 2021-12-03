@@ -25,7 +25,7 @@ if ( (!get_option( 'fiftyonedegrees_ga_access_token' ) && empty(get_option( 'fif
 		<tbody>
         <?php
 			if ( get_option( "fiftyonedegrees_ga_error" )) {
-				echo '<p></p><span class="fod-pipeline-status error">' . get_option( "fiftyonedegrees_ga_error" ) . '</span>';      
+				echo '<p></p><span class="fod-pipeline-status error">' . esc_html( get_option( "fiftyonedegrees_ga_error" ) ) . '</span>';      
 				delete_option( "fiftyonedegrees_ga_error" );
 			}
 		?>
@@ -68,7 +68,7 @@ if ( (!get_option( 'fiftyonedegrees_ga_access_token' ) && empty(get_option( 'fif
 					
 					?>
 					<p></p>
-					<?php echo '<span class="fod-pipeline-status error">Please Select Analytics Property.</span>';
+					<?php echo '<span class="fod-pipeline-status error"><b>Please Select Analytics Property.</b></span>';
 				}
 				?>
 
@@ -85,8 +85,8 @@ if ( (!get_option( 'fiftyonedegrees_ga_access_token' ) && empty(get_option( 'fif
 						<select id="fiftyonedegrees_ga_tracking_id" name = "fiftyonedegrees_ga_tracking_id">
 						    <option >Select Analytics Property</option>
 							<script>
-							    var preSelectedTrackingId = "<?php echo get_option("fiftyonedegrees_ga_tracking_id"); ?>";
-								var propertiesList = <?php echo json_encode(get_option( 'fiftyonedegrees_ga_properties_list' ));?>;
+							    var preSelectedTrackingId = "<?php echo esc_html( get_option("fiftyonedegrees_ga_tracking_id") ); ?>";
+								var propertiesList = <?php echo sprintf( esc_html( '%1$s' ), json_encode(get_option( 'fiftyonedegrees_ga_properties_list' ) ) );?>;
 								for(i=0; i<propertiesList.length; i++) {
 									if(preSelectedTrackingId == propertiesList[i]["id"]) {
 										document.write('<option value="' + propertiesList[i]["id"] +'" selected>' + propertiesList[i]["name"] + '</option>');
@@ -97,8 +97,7 @@ if ( (!get_option( 'fiftyonedegrees_ga_access_token' ) && empty(get_option( 'fif
 								}
 							</script>
 						</select>
-						<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-						<a href="?page=51Degrees&tab=google-analytics">
+						<a href=<?php echo esc_url( "?page=51Degrees&tab=google-analytics" ); ?>>
 						<span class="fa-stack fa-lg" style="font-size:15px;">
 								<i class="fa fa-circle fa-stack-2x" style="color:#666666;"></i>
 								<i class="fa fa-refresh fa-stack-1x fa-inverse"></i>

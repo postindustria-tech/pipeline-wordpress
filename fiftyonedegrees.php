@@ -3,7 +3,7 @@
  *  Plugin Name: 51Degrees - Optimize by Device & Location
  *  Plugin URI:  http://wordpress.org/plugins/fiftyonedegrees/
  *  Description: Optimize your website for a range of devices and personalize your content based on your user’s location.
-    Version:     1.0.0
+    Version:     4.2.0-uach-fix.1
  *  Author:      51Degrees
  *  Author URI:  https://51degrees.com/
  *  Text Domain: fiftyonedegrees
@@ -62,7 +62,7 @@ class Fiftyonedegrees {
 		 */
 		public static function get_instance() {
 
-			if ( !isset(Fiftyonedegrees::$instance)) {
+			if ( !isset( Fiftyonedegrees::$instance ) ) {
 				self::$instance = new Fiftyonedegrees();
 			}
 			return self::$instance;
@@ -85,8 +85,8 @@ class Fiftyonedegrees {
             define( 'FIFTYONEDEGREES_CLIENT_ID', '296335631462-e36u9us90puu4de17ct7rnklu3j8q63n.apps.googleusercontent.com');
             define( 'FIFTYONEDEGREES_CLIENT_SECRET', 'V9lcL-V3SxtGSWWcGsFW9QeI' );
             define( 'FIFTYONEDEGREES_REDIRECT', 'urn:ietf:wg:oauth:2.0:oob' );
-            define( 'FIFTYONEDEGREES_SCOPE', Google_Service_Analytics::ANALYTICS_READONLY . " " .  Google_Service_Analytics::ANALYTICS_EDIT);
-            define( 'FIFTYONEDEGREES_CUSTOM_DIMENSION_SCOPE', "HIT");
+            define( 'FIFTYONEDEGREES_SCOPE', Google_Service_Analytics::ANALYTICS_READONLY . " " .  Google_Service_Analytics::ANALYTICS_EDIT );
+            define( 'FIFTYONEDEGREES_CUSTOM_DIMENSION_SCOPE', "HIT" );
         }
 
 		/**
@@ -105,8 +105,8 @@ class Fiftyonedegrees {
             require_once __DIR__ . '/includes/ga-tracking-gtag.php';
             
             // Include Custom_Dimensions class
-            if (!class_exists('Fiftyonedegrees_Custom_Dimensions')) {
-                require_once('includes/ga-custom-dimension-class.php');
+            if ( !class_exists('Fiftyonedegrees_Custom_Dimensions') ) {
+                require_once('includes/ga-custom-dimension-class.php' );
             }         
 		}
              
@@ -119,28 +119,28 @@ class Fiftyonedegrees {
 		 */
 		private function hooks() {
             
-            add_action('admin_init', array( $this, 'fiftyonedegrees_register_settings' ) );
-            add_action('admin_init', array( $this, 'fiftyonedegrees_ga_authentication' ) );
-            add_action('admin_init', array( $this, 'fiftyonedegrees_register_settings' ) );
-            add_action('admin_init', array( $this, 'fiftyonedegrees_ga_logout' ) );
-            add_action('admin_init', array( $this, 'fiftyonedegrees_ga_set_tracking_id' ) );
-            add_action('admin_init', array( $this, 'fiftyonedegrees_ga_update_cd_indices' ) );
-            add_action('admin_init', array( $this, 'fiftyonedegrees_ga_change_screen' ) );
-            add_action('admin_init', array( $this, 'fiftyonedegrees_ga_enable_tracking' ) );
+            add_action( 'admin_init', array( $this, 'fiftyonedegrees_register_settings' ) );
+            add_action( 'admin_init', array( $this, 'fiftyonedegrees_ga_authentication' ) );
+            add_action( 'admin_init', array( $this, 'fiftyonedegrees_register_settings' ) );
+            add_action( 'admin_init', array( $this, 'fiftyonedegrees_ga_logout' ) );
+            add_action( 'admin_init', array( $this, 'fiftyonedegrees_ga_set_tracking_id' ) );
+            add_action( 'admin_init', array( $this, 'fiftyonedegrees_ga_update_cd_indices' ) );
+            add_action( 'admin_init', array( $this, 'fiftyonedegrees_ga_change_screen' ) );
+            add_action( 'admin_init', array( $this, 'fiftyonedegrees_ga_enable_tracking' ) );
             
-            add_action('admin_init', array( $this, 'submit_rk_submit_action' ));
+            add_action('admin_init', array( $this, 'submit_rk_submit_action' ) );
 
             add_action( 'wp_head', array( $this, 'fiftyonedegrees_ga_add_analytics_code' ), 10 );
 
-            add_action('admin_menu', array( $this, 'fiftyonedegrees_register_options_page' ));
-            add_filter('plugin_action_links_' . plugin_basename(__FILE__), array( $this, 'fiftyonedegrees_add_plugin_page_settings_link' ));
+            add_action( 'admin_menu', array( $this, 'fiftyonedegrees_register_options_page' ) );
+            add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), array( $this, 'fiftyonedegrees_add_plugin_page_settings_link' ) );
 
-            add_action('admin_enqueue_scripts', array( $this, 'fiftyonedegrees_admin_enqueue_scripts' ));
+            add_action( 'admin_enqueue_scripts', array( $this, 'fiftyonedegrees_admin_enqueue_scripts' ));
             
             // Add Javascript
-            add_action('wp_enqueue_scripts', array( $this, 'fiftyonedegrees_javascript' ));
-            add_action('rest_api_init', array( $this, 'fiftyonedegrees_rest_api_init' ));
-            add_action('init', array( $this, 'fiftyonedegrees_init' ));          
+            add_action( 'wp_enqueue_scripts', array( $this, 'fiftyonedegrees_javascript' ) );
+            add_action( 'rest_api_init', array( $this, 'fiftyonedegrees_rest_api_init' ) );
+            add_action( 'init', array( $this, 'fiftyonedegrees_init' ) );          
             
             // Cache resource key data / pipeline after saving options page
             add_action( 'update_option', array( $this, 'fiftyonedegrees_update_option' ), 10, 10);
@@ -172,12 +172,12 @@ class Fiftyonedegrees {
 
         function submit_rk_submit_action() {
 
-            if(isset($_POST["fiftyonedegrees_resource_key"]) && isset($_POST["action"])) {
+            if( isset( $_POST["fiftyonedegrees_resource_key"] ) && isset( $_POST["action"] ) ) {
 
-                $resource_key = $_POST["fiftyonedegrees_resource_key"];
-                update_option("fiftyonedegrees_resource_key", $resource_key);
+                $resource_key = sanitize_text_field( wp_unslash( $_POST["fiftyonedegrees_resource_key"] ) );
+                update_option( "fiftyonedegrees_resource_key", $resource_key );
 
-                if(!isset($cachedPipeline['error'])) {
+                if( !isset( $cachedPipeline['error'] ) ) {
                     if ( get_option("fiftyonedegrees_ga_enable_tracking") && get_option("fiftyonedegrees_resource_key_updated")) {                    
                     
                         wp_redirect(  get_admin_url() . 'options-general.php?page=51Degrees&tab=google-analytics' );
@@ -199,8 +199,8 @@ class Fiftyonedegrees {
                 $passed_dimensions = array();
                 foreach($_POST as $key=>$dimension) {
                     if( strpos($key, "51D_") !== false) {
-                        $key = str_replace("51D_","", $key);
-                        $passed_dimensions[$key] = $dimension;
+                        $key = sanitize_text_field( wp_unslash( str_replace("51D_","", $key ) ) );
+                        $passed_dimensions[$key] = sanitize_text_field( wp_unslash( $dimension ) );
                     }
                 }
                 update_option("fiftyonedegrees_passed_dimensions", $passed_dimensions);
@@ -223,8 +223,8 @@ class Fiftyonedegrees {
         }
 
         function fiftyonedegrees_ga_add_analytics_code() {
-
-            echo get_option("fiftyonedegrees_ga_tracking_javascript");
+			
+              echo sprintf( esc_html( '%1$s' ), get_option("fiftyonedegrees_ga_tracking_javascript" ) );			  
         }
 
         function fiftyonedegrees_ga_enable_tracking() {
@@ -275,7 +275,7 @@ class Fiftyonedegrees {
 
         function fiftyonedegrees_ga_change_screen() {
 
-            if ( isset( $_POST['fiftyonedegrees_ga_change_settings'] ) /*&& "Change" === $_POST['fiftyonedegrees_ga_change_settings']*/) {
+            if ( isset( $_POST['fiftyonedegrees_ga_change_settings'] ) ) {
                
                 delete_option("custom_dimension_screen");
                 update_option("change_to_authentication_screen", "enabled");
@@ -366,8 +366,14 @@ class Fiftyonedegrees {
                     
         // Add stylesheet for admin pages
         function fiftyonedegrees_admin_enqueue_scripts (){
-            wp_enqueue_style('fiftyonedegrees_admin_styles', plugin_dir_url(__FILE__) . "assets/css/fod.css");
-        }
+            wp_enqueue_style( 'fiftyonedegrees_admin_styles', plugin_dir_url(__FILE__) . "assets/css/fod.css");
+			wp_enqueue_style( 'fiftyonedegrees_admin_styles_icons', "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
+			wp_enqueue_script(
+				'fiftyonedegrees_jQuery',
+				plugin_dir_url(__FILE__) . '/assets/js/51D.js',
+				array( 'jquery' ) #dependencies
+			);			
+		}
         
         function fiftyonedegrees_update_option($option, $old_value, $new_value){
         
@@ -481,12 +487,16 @@ class Fiftyonedegrees {
         function fiftyonedegrees_init() {
             
             // Remove Magic Quotes from auto escaped data.
-            $_GET       = array_map('stripslashes_deep', $_GET);
-            $_POST      = array_map('stripslashes_deep', $_POST);	
-            $_COOKIE    = array_map('stripslashes_deep', $_COOKIE);
-            $_SERVER    = array_map('stripslashes_deep', $_SERVER);
-            $_REQUEST   = array_map('stripslashes_deep', $_REQUEST);
-            
+			if( isset( $_SERVER['HTTP_USER_AGENT'] ) ) {
+				$_SERVER['HTTP_USER_AGENT'] = sanitize_text_field( stripslashes_deep( $_SERVER['HTTP_USER_AGENT'] ) );
+			}
+			foreach( $_SERVER as $key => $value ) {  
+				if( strpos( strtolower($key), "sec_ch") == true ) {
+					$value = sanitize_text_field( stripslashes_deep( $value ) );					
+					$_SERVER[$key] = $value;
+				}
+            }	
+			
             wp_register_script(
                 'fiftyonedegrees-conditional-group-block',
                 plugins_url( 'conditional-group-block/build/index.js' , __FILE__ ),

@@ -15,10 +15,8 @@
     clause in Article 5 of the EUPL shall not apply.
 -->
 
-<!-- Add JQuery library -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script type="text/javascript">var enabledButton = "<?php echo get_option("fiftyonedegrees_ga_enable_tracking"); ?>";</script>
-<script type="text/javascript" src= '<?php echo FIFTYONEDEGREES_PLUGIN_URL .  "assets/js/51D.js"; ?>;'></script>
+<!-- Following enabledButton variable and 51D.js needs to be populated at the load of this page only. -->
+<script type="text/javascript">var enabledButton = "<?php echo esc_html( get_option("fiftyonedegrees_ga_enable_tracking") ); ?>";</script>
 
 <?php
 
@@ -30,7 +28,7 @@
             echo '<p></p><span class="fod-pipeline-status error">Provided resource key does not contain any Custom Dimensions. Please enter a valid resource key. </span>';        
         }
         else if ( get_option( "fiftyonedegrees_ga_error" ) ) {
-            echo '<p></p><span class="fod-pipeline-status warn">' . get_option("fiftyonedegrees_ga_error") . '</span>';
+            echo '<p></p><span class="fod-pipeline-status warn">' . esc_html( get_option("fiftyonedegrees_ga_error") ) . '</span>';
             delete_option( "fiftyonedegrees_ga_error" );
         }
         else if ( get_option("fiftyonedegrees_ga_enable_tracking") ) {
@@ -70,7 +68,7 @@
         <tbody>
             <tr>
             
-               <td><p>The following properties are available with the provided resource key. Please Click <b>Enable Google Analytics Tracking</b> to send them as Custom Dimensions to <b><?php echo get_option("fiftyonedegrees_ga_tracking_id"); ?></b> Google Analytics Property or <b>Go Back</b> to change. </p></td>
+               <td><p>The following properties are available with the provided resource key. Please Click <b>Enable Google Analytics Tracking</b> to send them as Custom Dimensions to <b><?php echo esc_html( get_option("fiftyonedegrees_ga_tracking_id") ); ?></b> Google Analytics Property or <b>Go Back</b> to change. </p></td>
                <td><button type="submit" class="button-primary" name="fiftyonedegrees_ga_change_settings" ><span style="font-size:16px;">&laquo;</span> Go Back</i></button></td>
             
             </tr>
