@@ -43,7 +43,7 @@ class Pipeline
         $builder = new PipelineBuilder([
             "javascriptBuilderSettings" => [
                 "endpoint" => $appContext . "/wp-json/fiftyonedegrees/v4/json",
-                "host" => isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : $url,
+                "host" => isset($_SERVER['HTTP_HOST']) ? sanitize_text_field( $_SERVER['HTTP_HOST'] ) : $url,
                 "protocol" => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? "https" : "http",
 				"minify" => false
             ]
@@ -87,7 +87,6 @@ class Pipeline
      */
     public static function process()
     {
-        //static $cache = null;
         $cache = null;
         if ($cache === null) {
     
@@ -223,7 +222,7 @@ class Pipeline
      * Gets client side javascript from FlowData
      * @param Javascript
      */
-    public static function getJavaScript($echo = true) {
+    public static function getJavaScript() {
         $result =  Pipeline::process();
         if(isset($result["errors"]) && count($result["errors"])) {
             error_log("Errors processing Flow Data" . $result["errors"]);

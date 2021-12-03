@@ -25,13 +25,13 @@
 
         if(isset($cachedPipeline['error'])){
 
-            echo '<p></p><span class="fod-pipeline-status error">'. $cachedPipeline['error'] .'</span>';
+            echo '<p></p><span class="fod-pipeline-status error"><b>'. esc_html( $cachedPipeline['error'] ) .'</b></span>';
 
         }
 
         if(isset($cachedPipeline['pipeline'])){
 
-            echo '<p></p><span class="fod-pipeline-status good"><b>This resource key is valid and allows access to the custom properties selected in the following categories: ' . json_encode($cachedPipeline['available_engines']) .' </br>To continue, connect to Google Analytics via the <a href="options-general.php?page=51Degrees&tab=google-analytics">Google Analytics</a> tab. See the <a href="options-general.php?page=51Degrees&tab=properties">Properties</a> tab for a list of all the custom properties.</b></span>';
+            echo '<p></p><span class="fod-pipeline-status good"><b>This resource key is valid and allows access to the custom properties selected in the following categories: ' . esc_html( json_encode($cachedPipeline['available_engines'] ) ).' </br>To continue, connect to Google Analytics via the <a href="options-general.php?page=51Degrees&tab=google-analytics">Google Analytics</a> tab. See the <a href="options-general.php?page=51Degrees&tab=properties">Properties</a> tab for a list of all the custom properties.</b></span>';
 
         }
 
@@ -46,7 +46,7 @@
             <tr>
                 <th scope="row"><label for="fiftyonedegrees_resource_key">Resource Key</label></th>
                 <td>
-                    <input name="fiftyonedegrees_resource_key" type="text" id="fiftyonedegrees_resource_key" value="<?php echo get_option("fiftyonedegrees_resource_key");?>" class="regular-text">
+                    <input name="fiftyonedegrees_resource_key" type="text" id="fiftyonedegrees_resource_key" value="<?php echo esc_attr( get_option("fiftyonedegrees_resource_key") );?>" class="regular-text">
                 </td>
             </tr>
         </tbody>

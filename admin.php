@@ -1,4 +1,4 @@
-<h2><img style="vertical-align:middle" width="200" height="auto" src="<?php echo plugin_dir_url(__FILE__) . "assets/images/logo.png";?>"/></h2>
+<h2><img style="vertical-align:middle" width="200" height="auto" src="<?php echo esc_url( plugin_dir_url(__FILE__) ) . "assets/images/logo.png";?>"/></h2>
 
 <?php
 /*
@@ -20,7 +20,7 @@
 
     if(isset($_GET["tab"])){
 
-        $active_tab = $_GET["tab"];
+        $active_tab = sanitize_text_field( $_GET["tab"] );
     
     } else {
 
@@ -40,4 +40,4 @@
                   
 <?php
 
-include plugin_dir_path(__FILE__) . $active_tab . ".php";
+include plugin_dir_path(__FILE__) . esc_html( $active_tab ) . ".php";

@@ -71,7 +71,8 @@ class GaTrackingGtagTests extends TestCase {
         // Mock fiftonedegrees_tracking_id and fiftyonedegrees_send_page_view values.
         Functions\expect('get_option')->once()->with('fiftyonedegrees_ga_tracking_id')->andReturn('test-123456789-0');
         Functions\expect('get_option')->once()->with('fiftyonedegrees_ga_send_page_view')->andReturn(true);
-
+        Functions\expect('esc_html')->times(4)->andReturn('true', '%1$s', 'test-123456789-0', '%1$s' );
+		
         // Mocking get_properties_as_custom_dimensions function output.
         $ga_dimensions_map = array("dimension1" => "testproperty1", "dimension5" => "testproperty2");
         $ga_events_map =  array("testproperty1" => "data.device.testproperty1", "testproperty2" => "data.location.testproperty2");        
@@ -102,6 +103,7 @@ class GaTrackingGtagTests extends TestCase {
         "custom_dimension_ga_index" => 10, "custom_dimension_datakey" => "device");
         // Mock fiftonedegrees_tracking_id and fiftyonedegrees_send_page_view values.
         Functions\expect('get_option')->once()->with('fiftyonedegrees_ga_tracking_id')->andReturn('test-123456789-0');
+        Functions\expect('esc_html')->times(3)->andReturn('%1$s', 'test-123456789-0', '%1$s' );
         
         // Mocking get_properties_as_custom_dimensions function output.
         $ga_dimensions_map = array("dimension10" => "testproperty1");

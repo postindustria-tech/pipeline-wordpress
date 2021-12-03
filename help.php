@@ -14,7 +14,7 @@
     the purposes of the Work and the provisions of the compatibility
     clause in Article 5 of the EUPL shall not apply.
 -->
-<script src="https://player.vimeo.com/api/player.js"></script>
+<script src=<?php echo esc_url( "https://player.vimeo.com/api/player.js" ); ?>></script>
 <h3>Integration With Google Analytics</h3>
 
 <div style="padding:47.25% 0 0 0;position:relative;height:0px"><iframe src="https://player.vimeo.com/video/631017900?h=8e8c844804&badge=0&autopause=0&player_id=0&app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;" title="51Degrees WordPress Plugin explainer"></iframe></div>

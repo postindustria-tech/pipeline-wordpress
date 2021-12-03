@@ -1,27 +1,28 @@
-    window.addEventListener( "load", function() {
 
-    $("input[name='fiftyonedegrees_ga_update_cd_indices']").hide();
-    var selected_values = getSelectedListValues();
-    localStorage.removeItem('selectedValues');
-    localStorage.setItem('selectedValues', selected_values);       
-    });
+    jQuery(document).ready(function($) {
 
-    $(document).ready(function(){
+	    window.addEventListener( "load", function() {
 
-    $('.51DPropertiesList select').change(function() {
-    
-        const selected_values_str = localStorage.getItem('selectedValues');
-        var selected_values = selected_values_str.split(',');
+		$("input[name='fiftyonedegrees_ga_update_cd_indices']").hide();
+		var selected_values = getSelectedListValues();
+		localStorage.removeItem('selectedValues');
+		localStorage.setItem('selectedValues', selected_values);       
+		});
+	
+		$('.51DPropertiesList select').change(function() {
+		
+			const selected_values_str = localStorage.getItem('selectedValues');
+			var selected_values = selected_values_str.split(',');
 
-        var curr_selected_values = getSelectedListValues();
+			var curr_selected_values = getSelectedListValues();
 
-        if(enabledButton === "enabled" && arrayMatch(curr_selected_values, selected_values) === false) {
-            $("input[name='fiftyonedegrees_ga_update_cd_indices']").show();
-        }else {
-            $("input[name='fiftyonedegrees_ga_update_cd_indices']").hide();
-        }
+			if(enabledButton === "enabled" && arrayMatch(curr_selected_values, selected_values) === false) {
+				$("input[name='fiftyonedegrees_ga_update_cd_indices']").show();
+			}else {
+				$("input[name='fiftyonedegrees_ga_update_cd_indices']").hide();
+			}
 
-    }).trigger('change');
+		}).trigger('change');
     });
 
     var getSelectedListValues = function() {

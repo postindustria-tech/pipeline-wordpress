@@ -98,12 +98,12 @@ class Fiftyonedegrees_Tracking_Gtag {
 		echo "\n\t";
 		echo "<!-- This code is added by 51Degrees WordPress Plugin.-->\n\t";
 		
-		echo $property_exists_func . "\n\t\t"; 
+		echo sprintf( esc_html( '%1$s' ), $property_exists_func ) . "\n\t\t"; 
 
         echo "<!-- Global site tag (gtag.js) - Google Analytics -->\n\t\t";
 		echo "<!-- This has been generated using the guide here https://developers.google.com/analytics/devguides/collection/gtagjs/custom-dims-mets -->\n"; ?>
         
-		<script async src="https://www.googletagmanager.com/gtag/js?id=<?php echo $google_trackingId ; ?>"></script>   
+		<script async src="https://www.googletagmanager.com/gtag/js?id=<?php echo esc_html( $google_trackingId ); ?>"></script>   
 
         <script>
 			var head = document.getElementsByTagName('head')[0];
@@ -152,18 +152,18 @@ class Fiftyonedegrees_Tracking_Gtag {
 	
 			const configuration = {
 				<!-- 'cookieDomain': 'none', -->
-				'send_page_view': '<?php echo $send_page_view; ?>',
+				'send_page_view': '<?php echo esc_html( $send_page_view ); ?>',
 				'custom_map' : {
 					<?php
-					echo implode(",\r\n                    ", array_map(
+					echo sprintf( esc_html( '%1$s' ), implode(",\r\n                    ", array_map(
 						function ($v, $k) { return sprintf("'%s' : '%s'", $k, $v); },
 						$dims,
 						array_keys($dims)
-					)); ?>
+					))); ?>
 				}				
 			};
 	
-			const trackingId = '<?php echo $google_trackingId; ?>';
+			const trackingId = '<?php echo esc_html( $google_trackingId ); ?>';
 			gtag('config', trackingId, configuration);
 	
 			window.addEventListener( "load", function (){
@@ -172,11 +172,11 @@ class Fiftyonedegrees_Tracking_Gtag {
 					gtag('event', 'fod', {
 					'send_to': trackingId,
 					<?php
-						echo implode(",\r\n                        ", array_map(
+						echo sprintf( esc_html( '%1$s' ), implode(",\r\n                        ", array_map(
 							function ($v, $k) { return sprintf("'%s' : %s", $k, $v); },
 							$events,
 							array_keys($events)
-						)); ?>
+						) ) ); ?>
 					});
 				};
 
@@ -222,14 +222,14 @@ class Fiftyonedegrees_Tracking_Gtag {
 	
 			var custom_map = {
 				<?php
-				echo implode(",\r\n                    ", array_map(
+				echo sprintf( esc_html( '%1$s' ), implode(",\r\n                    ", array_map(
 					function ($v, $k) { return sprintf("'%s' : '%s'", $k, $v); },
 					$dims,
 					array_keys($dims)
-				)); ?>				
+				) ) ); ?>				
 			};
 	
-			const trackingId = '<?php echo $google_trackingId; ?>';
+			const trackingId = '<?php echo esc_html( $google_trackingId ); ?>';
 			i = len = 0;
 
 			for (i, len = window.dataLayer.length; i < len; i += 1) {
@@ -251,11 +251,11 @@ class Fiftyonedegrees_Tracking_Gtag {
 					gtag('event', 'fod', {
 					'send_to': trackingId,
 					<?php
-						echo implode(",\r\n                        ", array_map(
+						echo sprintf( esc_html( '%1$s' ), implode(",\r\n                        ", array_map(
 							function ($v, $k) { return sprintf("'%s' : %s", $k, $v); },
 							$events,
 							array_keys($events)
-						)); ?>
+						) ) ); ?>
 					});
 				};
 
@@ -302,7 +302,7 @@ class Fiftyonedegrees_Tracking_Gtag {
 
 				i = len = 0;
 				for (i, len = dataLayer.length; i < len; i += 1) {
-					if(dataLayer[i][0] == "config" && dataLayer[i][1] == "<?php echo $google_trackingId; ?>") {
+					if(dataLayer[i][0] == "config" && dataLayer[i][1] == "<?php echo esc_html( $google_trackingId); ?>") {
 						if(window.dataLayer[i].length > 2) {
 							if(window.dataLayer[i][2]["custom_map"] !== undefined) {
 								return true;
