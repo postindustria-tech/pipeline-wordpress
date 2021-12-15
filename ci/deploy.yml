@@ -70,7 +70,7 @@ stages:
 
           - bash: |
               mkdir local-svn-dir
-              svn co http://svn.wp-plugins.org/51degrees local-svn-dir
+              svn co http://svn.wp-plugins.org/51degrees-optimize-by-device-location local-svn-dir
               cd local-svn-dir/
               svn update
               cp -r $(Build.SourcesDirectory)/plugin-dir/* trunk
