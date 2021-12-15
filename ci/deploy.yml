@@ -33,8 +33,14 @@ stages:
   condition: eq(variables['build.sourceBranch'], variables['targetBranch'])
 
   jobs:
+  - template: shared-git-version-job.yml@ciTemplates
+    parameters:
+      imageName: $(linuxImage)
+
   - deployment: deploy_wp_plugin_manager
     displayName: Deploy to Wordpress Plugin Manager
+    variables:
+      GitVersionSemVer: $[ dependencies.Versioning.outputs['SetGitVersionVars.GitVersionSemVer'] ]
     pool:
       vmImage: $(linuxImage)
       workspace:
