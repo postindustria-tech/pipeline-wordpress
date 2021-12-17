@@ -38,6 +38,7 @@ stages:
       imageName: $(linuxImage)
 
   - deployment: deploy_wp_plugin_manager
+    dependsOn: [Versioning]
     displayName: Deploy to Wordpress Plugin Manager
     variables:
       GitVersionSemVer: $[ dependencies.Versioning.outputs['SetGitVersionVars.GitVersionSemVer'] ]
@@ -90,7 +91,7 @@ stages:
               svn cp trunk tags/$(GitVersionSemVer)
               svn add tags/* --force
               svn ci -m "Tagging version $(GitVersionSemVer)" --username '$(SVNUsername)' --password '$(SVNPassword)' 
-            displayName: 'Tag Release in SVN'
+            displayName: 'Tag Release $(GitVersionSemVer) in SVN'
             failOnStderr: true  
 
           - bash: |
