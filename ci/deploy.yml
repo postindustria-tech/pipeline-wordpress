@@ -103,7 +103,7 @@ stages:
             failOnStderr: true
 
           - bash: |
-              cd local-svn-dir/assets
+              cd local-svn-dir/assets/images
               svn propset svn:mime-type image/png *.png
               svn ci -m "Modifying the mime-type of images" --username '$(SVNUsername)' --password '$(SVNPassword)'
             displayName: 'Modifying the mime-type of images'
