@@ -89,7 +89,7 @@ class Pipeline
      */
     public static function process()
     {
-        if ($data === null) {
+        if (Pipeline::$data === null) {
     
             require_once dirname(__DIR__) . "/lib/vendor/autoload.php";
            
@@ -125,7 +125,7 @@ class Pipeline
                 $properties[$engine] = $pipeline->getElement($engine)->getProperties();
             }
 
-            $data = array("flowData" => $flowData, "properties" => $properties, "errors" => $flowData->errors);
+            Pipeline::$data = array("flowData" => $flowData, "properties" => $properties, "errors" => $flowData->errors);
         }
     }
 
