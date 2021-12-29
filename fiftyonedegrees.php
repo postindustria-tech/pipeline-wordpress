@@ -486,17 +486,6 @@ class Fiftyonedegrees {
         
         function fiftyonedegrees_init() {
             
-            // Remove Magic Quotes from auto escaped data.
-			if( isset( $_SERVER['HTTP_USER_AGENT'] ) ) {
-				$_SERVER['HTTP_USER_AGENT'] = sanitize_text_field( stripslashes_deep( $_SERVER['HTTP_USER_AGENT'] ) );
-			}
-			foreach( $_SERVER as $key => $value ) {  
-				if( strpos( strtolower($key), "sec_ch") == true ) {
-					$value = sanitize_text_field( stripslashes_deep( $value ) );					
-					$_SERVER[$key] = $value;
-				}
-            }	
-			
             wp_register_script(
                 'fiftyonedegrees-conditional-group-block',
                 plugins_url( 'conditional-group-block/build/index.js' , __FILE__ ),
