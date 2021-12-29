@@ -137,7 +137,7 @@ class Pipeline
      */	
     public static function get($engine, $key) {
 
-        $result =  Pipeline::data;
+        $result =  Pipeline::$data;
         if(isset($result["errors"]) && count($result["errors"])) {
             error_log("Errors processing Flow Data" . $result["errors"]);
             return;
@@ -167,7 +167,7 @@ class Pipeline
      */	
     public static function getJSON() {
 
-        $result =  Pipeline::data;
+        $result =  Pipeline::$data;
         if(isset($result["errors"]) && count($result["errors"])) {
             error_log("Errors processing Flow Data" . $result["errors"]);
             return;
@@ -190,7 +190,7 @@ class Pipeline
      */	
     public static function getCategory($category)
     {
-        $result =  Pipeline::data;
+        $result =  Pipeline::$data;
         if(isset($result["errors"]) && count($result["errors"])) {
             error_log("Errors processing Flow Data" . $result["errors"]);
             return;
@@ -221,7 +221,7 @@ class Pipeline
      * @param Javascript
      */
     public static function getJavaScript() {
-        $result =  Pipeline::data;
+        $result =  Pipeline::$data;
         if(isset($result["errors"]) && count($result["errors"])) {
             error_log("Errors processing Flow Data" . $result["errors"]);
             return;

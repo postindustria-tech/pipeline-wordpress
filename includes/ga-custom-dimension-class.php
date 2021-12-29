@@ -49,7 +49,7 @@ class Fiftyonedegrees_Custom_Dimensions extends WP_List_Table
 
     public function prepare_items()
     {
-        $result = Pipeline::data;
+        $result = Pipeline::$data;
 
         if(!$result){
 

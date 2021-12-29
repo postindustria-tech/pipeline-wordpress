@@ -524,13 +524,13 @@ class Fiftyonedegrees {
         
             Pipeline::process();
         
-            if(!Pipeline::data){
+            if(!Pipeline::$data){
         
                 return;
         
             }
              
-            foreach (Pipeline::data["properties"] as $dataKey => $engineProperties) {
+            foreach (Pipeline::$data["properties"] as $dataKey => $engineProperties) {
                 foreach ($engineProperties as $property){
                     $propertySelect[] = array(
                         "label" => strtolower($property["name"] . " (" . $dataKey . ")"),
