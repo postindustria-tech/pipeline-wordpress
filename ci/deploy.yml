@@ -96,6 +96,7 @@ stages:
 
           - bash: |
               cd local-svn-dir/
+              svn del assets/*
               svn cp trunk/assets/images/* assets/
               svn add assets/ --force
               svn ci -m "Copying latest assets to SVN" --username '$(SVNUsername)' --password '$(SVNPassword)'  
