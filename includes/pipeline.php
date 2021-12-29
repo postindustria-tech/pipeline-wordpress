@@ -23,6 +23,8 @@ use fiftyone\pipeline\core\Utils;
 
 class Pipeline
 {
+    public static $data = null;
+
    /**
 	* Makes a pipeline from a resource key that 
 	* can be serialized to the database
@@ -87,8 +89,7 @@ class Pipeline
      */
     public static function process()
     {
-        $cache = null;
-        if ($cache === null) {
+        if ($data === null) {
     
             require_once dirname(__DIR__) . "/lib/vendor/autoload.php";
            
@@ -124,11 +125,8 @@ class Pipeline
                 $properties[$engine] = $pipeline->getElement($engine)->getProperties();
             }
 
-            $result = array("flowData" => $flowData, "properties" => $properties, "errors" => $flowData->errors);
-            $cache = $result;
+            $data = array("flowData" => $flowData, "properties" => $properties, "errors" => $flowData->errors);
         }
-        
-        return $cache;
     }
 
     /**
@@ -139,7 +137,7 @@ class Pipeline
      */	
     public static function get($engine, $key) {
 
-        $result =  Pipeline::process();
+        $result =  Pipeline::data;
         if(isset($result["errors"]) && count($result["errors"])) {
             error_log("Errors processing Flow Data" . $result["errors"]);
             return;
@@ -169,7 +167,7 @@ class Pipeline
      */	
     public static function getJSON() {
 
-        $result =  Pipeline::process();
+        $result =  Pipeline::data;
         if(isset($result["errors"]) && count($result["errors"])) {
             error_log("Errors processing Flow Data" . $result["errors"]);
             return;
@@ -192,7 +190,7 @@ class Pipeline
      */	
     public static function getCategory($category)
     {
-        $result =  Pipeline::process();
+        $result =  Pipeline::data;
         if(isset($result["errors"]) && count($result["errors"])) {
             error_log("Errors processing Flow Data" . $result["errors"]);
             return;
@@ -223,7 +221,7 @@ class Pipeline
      * @param Javascript
      */
     public static function getJavaScript() {
-        $result =  Pipeline::process();
+        $result =  Pipeline::data;
         if(isset($result["errors"]) && count($result["errors"])) {
             error_log("Errors processing Flow Data" . $result["errors"]);
             return;
