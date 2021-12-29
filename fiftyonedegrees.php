@@ -547,7 +547,12 @@ class Fiftyonedegrees {
         
             if ('fiftyonedegrees/conditional-group-block' === $block['blockName']) {
         
-                if(isset($block["attrs"]["property"]) && !empty($block["attrs"]["property"]) && isset($block["attrs"]["operator"]) && !empty($block["attrs"]["operator"]) && isset($block["attrs"]["value"]) && !empty($block["attrs"]["value"])){
+                if(isset($block["attrs"]["property"]) &&
+                   !empty($block["attrs"]["property"]) &&
+                   isset($block["attrs"]["operator"]) &&
+                   !empty($block["attrs"]["operator"]) &&
+                   isset($block["attrs"]["value"]) &&
+                   !empty($block["attrs"]["value"])){
         
                     $property = $block["attrs"]["property"];
         
