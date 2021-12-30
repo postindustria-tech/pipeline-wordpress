@@ -148,13 +148,16 @@ class Pipeline
      */	
     public static function get($engine, $key) {
 
-        $result =  Pipeline::$data;
-        if(isset($result["errors"]) && count($result["errors"])) {
-            error_log("Errors processing Flow Data" . $result["errors"]);
+        $data =  Pipeline::$data;
+        if (!$data) {
+            return;
+        }
+        if(isset($data["errors"]) && count($data["errors"])) {
+            error_log("Errors processing Flow Data" . $data["errors"]);
             return;
         }
 
-        $flowData = $result["flowData"];
+        $flowData = $data["flowData"];
 
         try {
             if($flowData->{$engine}->{$key}->hasValue) {
@@ -178,13 +181,17 @@ class Pipeline
      */	
     public static function getJSON() {
 
-        $result =  Pipeline::$data;
-        if(isset($result["errors"]) && count($result["errors"])) {
-            error_log("Errors processing Flow Data" . $result["errors"]);
+        $data =  Pipeline::$data;
+
+        if (!$data) {
+            return;
+        }
+        if(isset($data["errors"]) && count($data["errors"])) {
+            error_log("Errors processing Flow Data" . $data["errors"]);
             return;
         }
 
-        $flowData = $result["flowData"];
+        $flowData = $data["flowData"];
         try {
             return $flowData->jsonbundler->json;
         }
@@ -201,13 +208,17 @@ class Pipeline
      */	
     public static function getCategory($category)
     {
-        $result =  Pipeline::$data;
-        if(isset($result["errors"]) && count($result["errors"])) {
-            error_log("Errors processing Flow Data" . $result["errors"]);
+        $data =  Pipeline::$data;
+
+        if (!$data) {
+            return;
+        }
+        if(isset($data["errors"]) && count($data["errors"])) {
+            error_log("Errors processing Flow Data" . $data["errors"]);
             return;
         }
 
-        $flowData = $result["flowData"];
+        $flowData = $data["flowData"];
 
         $categoryResults = $flowData->getWhere("category", $category);
         $output = array();
@@ -232,13 +243,16 @@ class Pipeline
      * @param Javascript
      */
     public static function getJavaScript() {
-        $result =  Pipeline::$data;
-        if(isset($result["errors"]) && count($result["errors"])) {
-            error_log("Errors processing Flow Data" . $result["errors"]);
+        $data =  Pipeline::$data;
+        if (!$data) {
+            return;
+        }
+        if(isset($data["errors"]) && count($data["errors"])) {
+            error_log("Errors processing Flow Data" . $data["errors"]);
             return;
         }
 
-        $flowData = $result["flowData"];
+        $flowData = $data["flowData"];
         
         try {
             return $flowData->javascriptbuilder->javascript;

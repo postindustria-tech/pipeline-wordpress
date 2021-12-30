@@ -535,16 +535,18 @@ class Fiftyonedegrees {
                     "value" => ""
                 ]
             ];
-            foreach (Pipeline::$data["properties"] as $dataKey => $engineProperties) {
-                foreach ($engineProperties as $property){
-                    $propertySelect[] = array(
-                        "label" => strtolower($property["name"] . " (" . $dataKey . ")"),
-                        "value" => strtolower($dataKey . "|" . $property["name"])
-                    );
+            if (Pipeline::$data) {
+                foreach (Pipeline::$data["properties"] as $dataKey => $engineProperties) {
+                    foreach ($engineProperties as $property){
+                        $propertySelect[] = array(
+                            "label" => strtolower($property["name"] . " (" . $dataKey . ")"),
+                            "value" => strtolower($dataKey . "|" . $property["name"])
+                        );
+                    }
                 }
-            }
 
-            wp_localize_script( "fiftyonedegrees-conditional-group-block", 'fiftyoneProperties', $propertySelect);
+                wp_localize_script( "fiftyonedegrees-conditional-group-block", 'fiftyoneProperties', $propertySelect);
+            }
         }
                
         function fiftyonedegrees_render_block( $block_content, $block ) {
