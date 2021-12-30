@@ -127,6 +127,7 @@ class Fiftyonedegrees {
             add_action( 'admin_init', array( $this, 'fiftyonedegrees_ga_update_cd_indices' ) );
             add_action( 'admin_init', array( $this, 'fiftyonedegrees_ga_change_screen' ) );
             add_action( 'admin_init', array( $this, 'fiftyonedegrees_ga_enable_tracking' ) );
+            add_action( 'admin_init', array( $this, 'fiftyonedegrees_setup_blocks' ) );
             
             add_action('admin_init', array( $this, 'submit_rk_submit_action' ) );
 
@@ -142,9 +143,6 @@ class Fiftyonedegrees {
             add_action( 'rest_api_init', array( $this, 'fiftyonedegrees_rest_api_init' ) );
             add_action( 'init', array( $this, 'fiftyonedegrees_init' ) );          
 
-            // Editor setup
-            add_action( 'editor_init', array( $this, 'fiftyonedegrees_editor_init' ) );
-            
             // Cache resource key data / pipeline after saving options page
             add_action( 'update_option', array( $this, 'fiftyonedegrees_update_option' ), 10, 10);
 
@@ -500,7 +498,7 @@ class Fiftyonedegrees {
             }
         }
 
-        function fiftyonedegrees_editor_init() {
+        function fiftyonedegrees_setup_blocks() {
 
             wp_register_script(
                 'fiftyonedegrees-conditional-group-block',
