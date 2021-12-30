@@ -141,6 +141,9 @@ class Fiftyonedegrees {
             add_action( 'wp_enqueue_scripts', array( $this, 'fiftyonedegrees_javascript' ) );
             add_action( 'rest_api_init', array( $this, 'fiftyonedegrees_rest_api_init' ) );
             add_action( 'init', array( $this, 'fiftyonedegrees_init' ) );          
+
+            // Editor setup
+            add_action( 'editor_init', array( $this, 'fiftyonedegrees_editor_init' ) );
             
             // Cache resource key data / pipeline after saving options page
             add_action( 'update_option', array( $this, 'fiftyonedegrees_update_option' ), 10, 10);
@@ -486,6 +489,19 @@ class Fiftyonedegrees {
         
         function fiftyonedegrees_init() {
             
+        
+            Pipeline::process();
+        
+            if(!Pipeline::$data){
+        
+                //todo error_log() ?
+                return;
+        
+            }
+        }
+
+        function fiftyonedegrees_editor_init() {
+
             wp_register_script(
                 'fiftyonedegrees-conditional-group-block',
                 plugins_url( 'conditional-group-block/build/index.js' , __FILE__ ),
@@ -521,15 +537,6 @@ class Fiftyonedegrees {
                     "value" => ""
                 ]
             ];
-        
-            Pipeline::process();
-        
-            if(!Pipeline::$data){
-        
-                return;
-        
-            }
-             
             foreach (Pipeline::$data["properties"] as $dataKey => $engineProperties) {
                 foreach ($engineProperties as $property){
                     $propertySelect[] = array(
@@ -538,9 +545,8 @@ class Fiftyonedegrees {
                     );
                 }
             }
-            
+
             wp_localize_script( "fiftyonedegrees-conditional-group-block", 'fiftyoneProperties', $propertySelect);
-        
         }
                
         function fiftyonedegrees_render_block( $block_content, $block ) {
