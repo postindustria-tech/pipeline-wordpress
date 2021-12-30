@@ -100,7 +100,11 @@ class Pipeline
            
             $cachedPipeline = get_option('fiftyonedegrees_resource_key_pipeline');
 
-            if(isset($cachedPipeline["error"]) || !$cachedPipeline){
+            if (!$cachedPipeline) {
+                return;
+            }
+
+            if(isset($cachedPipeline["error"])) {
                 error_log("Error occurred while initializing the 51Degrees "
                 ."plugin: '".$cachedPipeline["error"]."'");
                 return;
