@@ -82,6 +82,11 @@ class Pipeline
 
     }
 
+    public static function getFlowData()
+    {
+        return $data->flowData;
+    }
+
     /**
      * process function sets the evidence from web request in flowData and
 	 * runs the process function on each attached FlowElement
@@ -96,6 +101,8 @@ class Pipeline
             $cachedPipeline = get_option('fiftyonedegrees_resource_key_pipeline');
 
             if(isset($cachedPipeline["error"]) || !$cachedPipeline){
+                error_log("Error occurred while initializing the 51Degrees "
+                ."plugin: '".$cachedPipeline["error"]."'");
                 return;
             }
 
