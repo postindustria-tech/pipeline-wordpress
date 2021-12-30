@@ -13,7 +13,7 @@ The best plugin for WordPress to send Device properties as Custom Dimensions to 
 
 == Description ==
 
-Integrating 51Degrees Device Detection with your website will allow you to make informed decisions about what content a user engages with and how it is displayed. Combining the information learned from your analytics data with real-time enhanced device data on your website will empower you to produce a page built for that specific device’s needs. Taking this one step further, you have an additional 224 device properties available to enhance your user's user experience. The possibilities are endless as to what you can do with the information - it’s remarkably powerful.
+Integrating 51Degrees Device Detection with your website will allow you to make informed decisions about what content a user engages with and how it is displayed. Combining the information learned from your analytics data with real-time enhanced device data on your website will empower you to produce a page built for that specific device’s needs. Taking this one step further, you have an additional 280+ device properties available to enhance your user's user experience. The possibilities are endless as to what you can do with the information - it’s remarkably powerful.
 
 This plugin makes use of the 51Degrees Pipeline API to deliver various data intelligence [services](https://51degrees.com/services). You can also add custom dimensions to your Google Analytics solution which will enhance your analytical data. With 51Degrees you can capture data that Google Analytics doesn't readily collect, such as detailed information on specific device hardware.
 
@@ -82,7 +82,7 @@ You can continue using your existing installed plugins to send Custom Dimensions
 
 = Where should I submit my support request? =
 
-If you're experiencing any issues, use the WordPress.org [support forums](https://wordpress.org/support/plugin/fiftyonedegrees). If you have a technical issue with the plugin where you already have more insight on how to fix it, you can also open an issue on [GitHub](https://github.com/51Degrees/pipeline-wordpress/issues).
+If you're experiencing any issues, use the WordPress.org [support forums](https://wordpress.org/support/plugin/51degrees-optimize-by-device-location/). If you have a technical issue with the plugin where you already have more insight on how to fix it, you can also open an issue on [GitHub](https://github.com/51Degrees/pipeline-wordpress/issues).
 
 == Changelog ==
  

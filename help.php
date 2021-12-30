@@ -53,4 +53,4 @@
 
 <h3>Use in templates and advanced features</h3>
 
-<p>Please visit our <a href="https://51degrees.com/documentation/_info__wordpress.html" target="_blank">documentation</a> page for more information on advanced features including Value Replacement and Conditional Blocks.</p>
+<p>Please visit our <a href="https://51degrees.com/documentation/4.3/_info__word_press.html" target="_blank">documentation</a> page for more information on advanced features including Value Replacement and Conditional Blocks.</p>
