@@ -113,6 +113,8 @@ class PipelineTests extends TestCase {
         Functions\expect('get_option')->times(5)->with('fiftyonedegrees_resource_key_pipeline')->andReturn($pipeline);
         Functions\when('plugin_dir_path')->justReturn(getcwd(). "/");
 
+        Pipeline::process();
+
         // Tests Pipeline::get Function.
         $result1 = Pipeline::get("testElement", "availableProperty");
         $this->assertEquals("Value", $result1);
