@@ -92,6 +92,7 @@ class PipelineTests extends TestCase {
         $pipeline = Pipeline::make_pipeline($resourceKey);
         Functions\expect('get_option')->once()->with('fiftyonedegrees_resource_key_pipeline')->andReturn($pipeline);
 
+        Pipeline::process();
         $result = Pipeline::$data;
         $this->assertEquals(get_class($result["flowData"]), "fiftyone\pipeline\core\FlowData");
         $this->assertTrue(isset($result["properties"]));
