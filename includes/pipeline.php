@@ -82,11 +82,6 @@ class Pipeline
 
     }
 
-    public static function getFlowData()
-    {
-        return $data->flowData;
-    }
-
     /**
      * process function sets the evidence from web request in flowData and
 	 * runs the process function on each attached FlowElement
