@@ -25,7 +25,7 @@ This plugin makes use of the 51Degrees Pipeline API to deliver various data inte
 
 ## Advanced Features and Developer Info
 
-For advanced feature usage, including in-page value replacement and shortcodes, conditional display based on property values, and access to 51 Degrees property data from PHP and JavaScript, see the project [GitHub](https://github.com/51Degrees/pipeline-wordpress/) repository.
+For advanced feature usage, including in-page value replacement and shortcodes, conditional display based on property values, and access to 51Degrees property data from PHP and JavaScript, see the project [GitHub](https://github.com/51Degrees/pipeline-wordpress/) repository.
 
 
 ## Reporting
