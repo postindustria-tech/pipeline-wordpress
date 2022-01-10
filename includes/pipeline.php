@@ -37,16 +37,18 @@ class Pipeline
         $url = get_site_url();
 		$appContext = Pipeline::getAppContext($url);
 		
-        // Prepare PipelineBuilder and add the JavaScript settings for the JavaScriptBuilder,
-		// in this case an endpoint to call back to to retrieve additional
-		// properties populated by client side evidence
+        // Prepare PipelineBuilder and add the JavaScript settings for the
+        // JavaScriptBuilder, in this case an endpoint to call back to to
+        // retrieve additional properties populated by client side evidence
 		// this ?json endpoint is used later to serve results from a special
 		// json engine automatically included in the pipeline		
         $builder = new PipelineBuilder([
             "javascriptBuilderSettings" => [
                 "endpoint" => $appContext . "/wp-json/fiftyonedegrees/v4/json",
-                "host" => isset($_SERVER['HTTP_HOST']) ? sanitize_text_field( $_SERVER['HTTP_HOST'] ) : $url,
-                "protocol" => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? "https" : "http",
+                "host" => isset($_SERVER['HTTP_HOST']) ?
+                    sanitize_text_field($_SERVER['HTTP_HOST']) : $url,
+                "protocol" => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ?
+                    "https" : "http",
 				"minify" => false
             ]
         ]);
@@ -57,7 +59,10 @@ class Pipeline
         }
         catch (Exception $e) {
             $error = $e->getMessage();
-            return array("pipeline" =>  null, "available_engines" => null, "error" => $error);
+            return array(
+                "pipeline" =>  null,
+                "available_engines" => null,
+                "error" => $error);
         }
         
 
@@ -78,8 +83,10 @@ class Pipeline
         // Build the pipeline
         $pipeline = $builder->build();
 
-        return array("pipeline" =>  $pipeline, "available_engines" => $engines, "error" => $error);
-
+        return array(
+            "pipeline" =>  $pipeline,
+            "available_engines" => $engines,
+            "error" => $error);
     }
 
     /**
@@ -87,10 +94,16 @@ class Pipeline
 	 * runs the process function on each attached FlowElement
      * @return array, containing FlowData, properties and errors.
      */
-    public static function process()
-    {
+    public static function process() {
+        
         if (Pipeline::$data === null) {
     
+            if (session_status() == PHP_SESSION_ACTIVE &&
+                isset($_SESSION["fiftyonedegrees_data"])) {
+                Pipeline::$data = $_SESSION["fiftyonedegrees_data"];
+                return;
+            }
+
             require_once dirname(__DIR__) . "/lib/vendor/autoload.php";
            
             $cachedPipeline = get_option('fiftyonedegrees_resource_key_pipeline');
@@ -100,8 +113,8 @@ class Pipeline
             }
 
             if(isset($cachedPipeline["error"])) {
-                error_log("Error occurred while initializing the 51Degrees "
-                ."plugin: '".$cachedPipeline["error"]."'");
+                error_log("Error occurred while initializing the 51Degrees " .
+                    "plugin: '" . $cachedPipeline["error"] . "'");
                 return;
             }
 
@@ -119,8 +132,8 @@ class Pipeline
             $flowData->process();
 
 			// Some browsers require that extra HTTP headers are explicitly
-			// requested. So set whatever headers are required by the browser in
-			// order to return the evidence needed by the pipeline.
+			// requested. So set whatever headers are required by the browser
+			// in order to return the evidence needed by the pipeline.
 			// More info on this can be found at
 			// https://51degrees.com/blog/user-agent-client-hints
 			Utils::setResponseHeader($flowData);
@@ -128,10 +141,18 @@ class Pipeline
             // Get properties for each engine from pipeline.
             $properties = array();
             foreach ($engines as $engine) {
-                $properties[$engine] = $pipeline->getElement($engine)->getProperties();
+                $properties[$engine] =
+                    $pipeline->getElement($engine)->getProperties();
             }
 
-            Pipeline::$data = array("flowData" => $flowData, "properties" => $properties, "errors" => $flowData->errors);
+            Pipeline::$data = array(
+                "flowData" => $flowData,
+                "properties" => $properties,
+                "errors" => $flowData->errors);
+
+            if (session_status() == PHP_SESSION_ACTIVE) {
+                $_SESSION["fiftyonedegrees_data"] = Pipeline::$data;
+            }
         }
     }
 
@@ -144,9 +165,11 @@ class Pipeline
     public static function get($engine, $key) {
 
         $data =  Pipeline::$data;
+
         if (!$data) {
             return;
         }
+
         if(isset($data["errors"]) && count($data["errors"])) {
             error_log("Errors processing Flow Data" . $data["errors"]);
             return;
@@ -155,7 +178,7 @@ class Pipeline
         $flowData = $data["flowData"];
 
         try {
-            if($flowData->{$engine}->{$key}->hasValue) {
+            if ($flowData->{$engine}->{$key}->hasValue) {
                 return $flowData->{$engine}->{$key}->value;
             }
             else {
@@ -181,12 +204,13 @@ class Pipeline
         if (!$data) {
             return;
         }
-        if(isset($data["errors"]) && count($data["errors"])) {
+        if (isset($data["errors"]) && count($data["errors"])) {
             error_log("Errors processing Flow Data" . $data["errors"]);
             return;
         }
 
         $flowData = $data["flowData"];
+
         try {
             return $flowData->jsonbundler->json;
         }
@@ -201,14 +225,15 @@ class Pipeline
 	 * @param string Category
      * @return Array Properties List
      */	
-    public static function getCategory($category)
-    {
+    public static function getCategory($category) {
+
         $data =  Pipeline::$data;
 
         if (!$data) {
             return;
         }
-        if(isset($data["errors"]) && count($data["errors"])) {
+
+        if (isset($data["errors"]) && count($data["errors"])) {
             error_log("Errors processing Flow Data" . $data["errors"]);
             return;
         }
@@ -225,7 +250,6 @@ class Pipeline
                 $value = $property->value;
             }
             else {
-                //error_log($property->noValueMessage);
                 $value = null;
             }
             $output[$key] = $value;
@@ -238,11 +262,14 @@ class Pipeline
      * @param Javascript
      */
     public static function getJavaScript() {
+
         $data =  Pipeline::$data;
+
         if (!$data) {
             return;
         }
-        if(isset($data["errors"]) && count($data["errors"])) {
+
+        if (isset($data["errors"]) && count($data["errors"])) {
             error_log("Errors processing Flow Data" . $data["errors"]);
             return;
         }
@@ -251,7 +278,8 @@ class Pipeline
         
         try {
             return $flowData->javascriptbuilder->javascript;
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             error_log($e->getMessage());
             return "";
         }
@@ -262,8 +290,12 @@ class Pipeline
      * @param URL
      */
     public static function getAppContext($url) {
-        $urlParts = explode("/", str_replace("https://", "", str_replace("http://", "", $url)));
-		if(count($urlParts) > 1) {
+
+        $urlParts = explode(
+            "/",
+            str_replace("https://", "", str_replace("http://", "", $url)));
+
+		if (count($urlParts) > 1) {
 			$appContext = "/" . end($urlParts);
 		}
 		else { 
@@ -271,5 +303,4 @@ class Pipeline
 		}
 		return $appContext;
     }
-
 }
