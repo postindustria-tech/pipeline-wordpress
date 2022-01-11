@@ -21,6 +21,8 @@ use fiftyone\pipeline\cloudrequestengine\CloudRequestEngine;
 use fiftyone\pipeline\cloudrequestengine\CloudEngine;
 use fiftyone\pipeline\core\Utils;
 
+require_once __DIR__ . '/../constants.php';
+
 class Pipeline
 {
     public static $data = null;
