@@ -44,8 +44,9 @@ class Fiftyonedegrees {
 
     /**
      * [__construct description]
+     * @access private
      */
-    function __construct() {
+    private function __construct() {
         $this->includes();
         $this->setup_constants();			
         $this->hooks();
