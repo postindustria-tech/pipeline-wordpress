@@ -434,7 +434,7 @@ class Fiftyonedegrees {
         // Get Google analytics Tracking Javascript to be added to the
         // header. 
         $gtag_code = $this->gtag_tracking_inst->output_ga_tracking_code();
-        update_option(Constants::GA_JS), $gtag_code);
+        update_option(Constants::GA_JS, $gtag_code);
 
         // Insert Custom Dimensions in Google Analytics
         $this->ga_service->insert_custom_dimensions();
