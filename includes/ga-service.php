@@ -37,7 +37,7 @@ class Fiftyonedegrees_Google_Analytics {
         
         try {
 
-            update_option('fiftyonedegrees_ga_auth_code', $key_google_token);
+            update_option(Constants::GA_AUTH_CODE, $key_google_token);
 
             $client = $this->authenticate();
 
@@ -73,7 +73,7 @@ class Fiftyonedegrees_Google_Analytics {
         $client->setRedirectUri(FIFTYONEDEGREES_REDIRECT);
         $client->setScopes(Google_Service_Analytics::ANALYTICS_READONLY);
         
-        $ga_google_authtoken = get_option('fiftyonedegrees_ga_access_token');
+        $ga_google_authtoken = get_option(Constants::GA_TOKEN);
     
         if (!empty($ga_google_authtoken)) {
     
@@ -81,12 +81,12 @@ class Fiftyonedegrees_Google_Analytics {
         }
         else {
     
-            $auth_code = get_option('fiftyonedegrees_ga_auth_code');
+            $auth_code = get_option(Constants::GA_AUTH_CODE);
     
             if (empty($auth_code)) {
                 
                 update_option(
-                    "fiftyonedegrees_ga_error",
+                    Constants::GA_ERROR,
                     "Please enter Access Code to authenticate.");
                 return false; 
             }
@@ -97,7 +97,7 @@ class Fiftyonedegrees_Google_Analytics {
 
                 if (isset($access_token["error_description"])) {
                     update_option(
-                        "fiftyonedegrees_ga_error",
+                        Constants::GA_ERROR,
                         "<b>Authentication request has returned " .
                         $access_token["error_description"] . "</b>");  
                 }
@@ -106,7 +106,7 @@ class Fiftyonedegrees_Google_Analytics {
                         $access_token["scope"],
                         Google_Service_Analytics::ANALYTICS_READONLY) === false) {
                     update_option(
-                        "fiftyonedegrees_ga_error",
+                        Constants::GA_ERROR,
                         'Please ensure you tick the <b>See and download your ' .
                         'Google Analytics data</b> box when logging into ' .
                         'Google Analytics.');
@@ -117,7 +117,7 @@ class Fiftyonedegrees_Google_Analytics {
                         $access_token["scope"],
                         Google_Service_Analytics::ANALYTICS_EDIT) === false) {
                     update_option(
-                        "fiftyonedegrees_ga_error",
+                        Constants::GA_ERROR,
                         'Please ensure you tick the <b>Edit Google Analytics ' .
                         'management entities</b> box when logging into ' .
                         'Google Analytics.');
@@ -127,7 +127,7 @@ class Fiftyonedegrees_Google_Analytics {
             }
             catch (Analytify_Google_Auth_Exception $e) {
                 update_option(
-                    "fiftyonedegrees_ga_error",
+                    Constants::GA_ERROR,
                     "Authentication request has returned an error. " .
                     "Please enter valid Access Code.");
                 error_log($e->getMessage());
@@ -135,7 +135,7 @@ class Fiftyonedegrees_Google_Analytics {
             }
             catch (Exception $e) {
                 update_option(
-                    "fiftyonedegrees_ga_error",
+                    Constants::GA_ERROR,
                     "Authentication request has returned an error. " .
                     "Please enter valid Access Code.");
                 error_log($e->getMessage());
@@ -146,7 +146,7 @@ class Fiftyonedegrees_Google_Analytics {
     
                 $client->setAccessToken($access_token);
     
-                update_option('fiftyonedegrees_ga_access_token', $access_token);
+                update_option(Constants::GA_TOKEN, $access_token);
                 update_option(
                     'fiftyonedegrees_ga_auth_date',
                     date( 'l jS F Y h:i:s A' ) . date_default_timezone_get());
@@ -191,7 +191,7 @@ class Fiftyonedegrees_Google_Analytics {
      */	
     public function get_analytics_properties_list($analytics_service) {
   
-        if (!get_option( 'fiftyonedegrees_ga_access_token' )) {
+        if (!get_option(Constants::GA_TOKEN)) {
             echo "You must authenticate to access your Analytics Account.";
             return;
         }
@@ -219,7 +219,7 @@ class Fiftyonedegrees_Google_Analytics {
 			error_log($e->getMessage());
 		}
 
-        update_option('fiftyonedegrees_ga_properties_list' , $propertiesList);
+        update_option(Constants::GA_PROPERTIES , $propertiesList);
     
         return $propertiesList;
     }
@@ -269,8 +269,8 @@ class Fiftyonedegrees_Google_Analytics {
      */	
     public function get_custom_dimensions() {
 
-        $trackingId = get_option("fiftyonedegrees_ga_tracking_id");
-        $maxCustomDimIndex = get_option("fiftyonedegrees_ga_max_cust_dim_index");
+        $trackingId = get_option(Constants::GA_TRACKING_ID);
+        $maxCustomDimIndex = get_option(Constants::GA_MAX_DIMENSIONS);
         $client = $this->authenticate();
 
         if ($client) {
@@ -279,7 +279,7 @@ class Fiftyonedegrees_Google_Analytics {
 
             // Get accountId from tracking Id
             $accountId = $this->get_account_id($service, $trackingId);
-            update_option("fiftyonedegrees_ga_account_id", $accountId);
+            update_option(Constants::GA_ACCOUNT_ID, $accountId);
 
             // Get the list of custom dimensions for the web property.
             $customDimensions = $service->management_customDimensions->listManagementCustomDimensions($accountId, $trackingId);
@@ -294,9 +294,7 @@ class Fiftyonedegrees_Google_Analytics {
 
             // Get Maximum Custom Dimension Index
             $maxCustomDimIndex = count($customDimensions->getItems());
-            update_option(
-                "fiftyonedegrees_ga_max_cust_dim_index",
-                $maxCustomDimIndex);       
+            update_option(Constants::GA_MAX_DIMENSIONS, $maxCustomDimIndex);
     
         } 
         else {
@@ -316,7 +314,7 @@ class Fiftyonedegrees_Google_Analytics {
 
         $calls = 0;        
         $accountId = get_option("fiftyonedegrees_ga_account_id");
-        $trackingId = get_option("fiftyonedegrees_ga_tracking_id");
+        $trackingId = get_option(Constants::GA_TRACKING_ID);
         $cust_dim_map = get_option("fiftyonedegrees_ga_cust_dims_map");
         $client = $this->authenticate();
 
@@ -350,7 +348,7 @@ class Fiftyonedegrees_Google_Analytics {
                         $calls = -1;
                         $jsonError = json_decode($e->getMessage(), $assoc = true);
                         update_option(
-                            "fiftyonedegrees_ga_error",
+                            Constants::GA_ERROR,
                             "Could not insert Custom Dimensions in Google " .
                             "Analytics account because" .
                             $jsonError["error"]["message"]);

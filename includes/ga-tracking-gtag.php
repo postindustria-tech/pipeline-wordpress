@@ -94,7 +94,7 @@ class Fiftyonedegrees_Tracking_Gtag {
      */
 	public function output_ga_tracking_code() {
 		
-		$google_trackingId = get_option("fiftyonedegrees_ga_tracking_id");
+		$google_trackingId = get_option(Constants::GA_TRACKING_ID);
 
 		$property_exists_func = $this->check_property_exists();
 		$gtag_code = $this->output_gtag_code();
@@ -144,8 +144,8 @@ class Fiftyonedegrees_Tracking_Gtag {
 	 */
 	public function output_gtag_code() {
 
-		$google_trackingId = get_option("fiftyonedegrees_ga_tracking_id");
-		$send_page_view = get_option("fiftyonedegrees_ga_send_page_view") ?
+		$google_trackingId = get_option(Constants::GA_TRACKING_ID);
+		$send_page_view = get_option(Constants::GA_SEND_PAGE_VIEW) ?
 			'true' : 'false';
 		$maps = $this->get_properties_as_custom_dimensions();
 		$dims = $maps["dimensions_map"];
@@ -218,7 +218,7 @@ class Fiftyonedegrees_Tracking_Gtag {
 	 */
 	public function output_gtag_code_tagged_property() {
 
-		$google_trackingId = get_option("fiftyonedegrees_ga_tracking_id");	
+		$google_trackingId = get_option(Constants::GA_TRACKING_ID);	
 		$maps = $this->get_properties_as_custom_dimensions();
 		$dims = $maps["dimensions_map"];
 		$events = $maps["events_map"];
@@ -298,7 +298,7 @@ class Fiftyonedegrees_Tracking_Gtag {
 	 */
 	public function check_property_exists() {
 
-		$google_trackingId = get_option("fiftyonedegrees_ga_tracking_id");
+		$google_trackingId = get_option(Constants::GA_TRACKING_ID);
 
 		ob_start();
 		?>

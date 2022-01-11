@@ -106,7 +106,7 @@ class Pipeline
 
             require_once dirname(__DIR__) . "/lib/vendor/autoload.php";
            
-            $cachedPipeline = get_option('fiftyonedegrees_resource_key_pipeline');
+            $cachedPipeline = get_option(Constants::PIPELINE);
 
             if (!$cachedPipeline) {
                 return;

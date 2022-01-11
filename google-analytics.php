@@ -17,19 +17,19 @@
     clause in Article 5 of the EUPL shall not apply.
 */
 
-if ((!get_option( 'fiftyonedegrees_ga_access_token' ) &&
-	empty(get_option( 'fiftyonedegrees_ga_access_token'))) ||
-	get_option( "fiftyonedegrees_ga_error" )) { ?>
+if ((!get_option(Constants::GA_TOKEN) &&
+	empty(get_option(Constants::GA_TOKEN))) ||
+	get_option(Constants::GA_ERROR)) { ?>
 	<form method="post" action="options.php">
 	
 		<table class="form-table">
 			<tbody>
 				<?php
-					if (get_option("fiftyonedegrees_ga_error")) {
+					if (get_option(Constants::GA_ERROR)) {
 						echo '<p></p><span class="fod-pipeline-status error">' .
-							esc_html(get_option("fiftyonedegrees_ga_error")) .
+							esc_html(get_option(Constants::GA_ERROR)) .
 							'</span>';
-						delete_option("fiftyonedegrees_ga_error");
+						delete_option(Constants::GA_ERROR);
 					}
 				?>
 				<p>
@@ -121,8 +121,8 @@ else { ?>
 						<select id="fiftyonedegrees_ga_tracking_id" name = "fiftyonedegrees_ga_tracking_id">
 						    <option >Select Analytics Property</option>
 							<script>
-							    var preSelectedTrackingId = "<?php echo esc_html(get_option("fiftyonedegrees_ga_tracking_id")); ?>";
-								var propertiesList = <?php echo sprintf(esc_html('%1$s'), json_encode(get_option('fiftyonedegrees_ga_properties_list')));?>;
+							    var preSelectedTrackingId = "<?php echo esc_html(get_option(Constants::GA_TRACKING_ID)); ?>";
+								var propertiesList = <?php echo sprintf(esc_html('%1$s'), json_encode(get_option(Constants::GA_PROPERTIES)));?>;
 								for (i = 0; i<propertiesList.length; i++) {
 									if (preSelectedTrackingId == propertiesList[i]["id"]) {
 										document.write('<option value="' +
@@ -162,7 +162,7 @@ else { ?>
 						</label>
 					</th>
 					<td>
-					    <?php if( get_option("fiftyonedegrees_ga_send_page_view")) { ?>
+					    <?php if (get_option(Constants::GA_SEND_PAGE_VIEW)) { ?>
 						    <input type="checkbox" id="fiftyonedegrees_ga_send_page_view" name="fiftyonedegrees_ga_send_page_view" checked>
 						<?php } else { ?>
 							<input type="checkbox" id="fiftyonedegrees_ga_send_page_view" name="fiftyonedegrees_ga_send_page_view"> 

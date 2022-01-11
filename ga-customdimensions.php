@@ -20,28 +20,28 @@
 
 <?php
 
-if (!get_option('fiftyonedegrees_ga_access_token') &&
-    empty(get_option( 'fiftyonedegrees_ga_access_token' ))) {
+if (!get_option(Constants::GA_TOKEN) &&
+    empty(get_option(Constants::GA_TOKEN))) {
         echo '<span class="fod-pipeline-status error">' .
             'Please Authenticate with Google Analytics first.</span>';
 }
 else { 
     
-    if ( get_option('fiftyonedegrees_resource_key_pipeline')['error']) {
+    if (get_option(Constants::PIPELINE)['error']) {
         echo '<p></p><span class="fod-pipeline-status error">' .
             'Provided resource key does not contain any Custom Dimensions.' .
             ' Please enter a valid resource key. </span>';        
     }
-    else if (get_option("fiftyonedegrees_ga_error")) {
+    else if (get_option(Constants::GA_ERROR)) {
         echo '<p></p><span class="fod-pipeline-status warn">' .
-            esc_html( get_option("fiftyonedegrees_ga_error") ) . '</span>';
-        delete_option("fiftyonedegrees_ga_error");
+            esc_html(get_option(Constants::GA_ERROR)) . '</span>';
+        delete_option(Constants::GA_ERROR);
     }
-    else if (get_option("fiftyonedegrees_ga_enable_tracking")) {
-        if (get_option("fiftyonedegrees_resource_key_updated") ||
+    else if (get_option(Constants::ENABLE_GA)) {
+        if (get_option(Constants::RESOURCE_KEY_UPDATED) ||
             get_option("tracking_id_update_flag") ||
             get_option("send_page_view_update_flag") ||
-            get_option("fiftyonedegrees_passed_dimensions_updated")) {
+            get_option(Constants::GA_DIMENSIONS)) {
 
             // Include Fiftyonedegrees class
             if (!class_exists('Fiftyonedegrees')) {
@@ -51,16 +51,16 @@ else {
             $instance = Fiftyonedegrees::get_instance();
             $instance->execute_ga_tracking_steps();
 
-            if (get_option("fiftyonedegrees_resource_key_updated")) {
+            if (get_option(Constants::RESOURCE_KEY_UPDATED)) {
                 echo '<p></p><span class="fod-pipeline-status good">' .
                     'Google Analytics Tracking is enabled for the Properties' .
                     ' available in the new resource key. </span>';      
-                delete_option( "fiftyonedegrees_resource_key_updated" );
+                delete_option(Constants::RESOURCE_KEY_UPDATED);
             }
-            else if (get_option("fiftyonedegrees_passed_dimensions_updated")) {
+            else if (get_option(Constants::GA_DIMENSIONS_UPDATED)) {
                 echo '<p></p><span class="fod-pipeline-status good">' .
                 'Google Analytics Custom Dimensions mapping has been updated.</span>';
-                delete_option("fiftyonedegrees_passed_dimensions_updated");
+                delete_option(Constants::GA_DIMENSIONS_UPDATED);
             }                    
             else {
                 echo '<p></p><span class="fod-pipeline-status good">' .
@@ -77,7 +77,7 @@ else {
         }            
     }
     
-    if ( !get_option('fiftyonedegrees_resource_key_pipeline')['error']) {
+    if (!get_option(Constants::PIPELINE)['error']) {
 ?>
             
 <form method="post" action="options.php">	
@@ -91,7 +91,7 @@ else {
                         <b>Enable Google Analytics Tracking</b> to send them as
                         Custom Dimensions to
                         <b>
-                            <?php echo esc_html(get_option("fiftyonedegrees_ga_tracking_id"));?>
+                            <?php echo esc_html(get_option(Constants::GA_TRACKING_ID));?>
                         </b>
                         Google Analytics Property or <b>Go Back</b> to change.
                     </p>
@@ -122,7 +122,7 @@ else {
     <table style="width: 100%">
         <tbody>
             <tr>         
-            <?php if ( "enabled" !== get_option("fiftyonedegrees_ga_enable_tracking")) { ?>
+            <?php if ("enabled" !== get_option(Constants::ENABLE_GA)) { ?>
                 <td style="width: 90%">
                     <input type="submit" class="button-primary" value="Enable Google Analytics Tracking" name="fiftyonedegrees_ga_enable_tracking" />
                 </td>

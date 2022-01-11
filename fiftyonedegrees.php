@@ -3,7 +3,7 @@
  *  Plugin Name: 51Degrees - Optimize by Device & Location
  *  Plugin URI:  https://51degrees.com/
  *  Description: Optimize your website for a range of devices and personalize your content based on your user’s location.
-    Version:     4.2.0-uach-fix.1
+ *  Version:     1.0.11
  *  Author:      51Degrees
  *  Author URI:  https://51degrees.com/
  *  Text Domain: fiftyonedegrees
@@ -29,7 +29,13 @@
 if (!defined('ABSPATH')) { exit; }
 
 /**
- * Main Fiftyonedegrees class
+ * Main Fiftyonedegrees class.
+ * 
+ * This is the bulk of the plugin, and where everything else is referenced
+ * from.
+ * 
+ * This class should be used as a singleton, the single instance of this
+ * class is returned via the static method get_instance().
  *
  * @since       1.0.0
  */
@@ -43,19 +49,25 @@ class Fiftyonedegrees {
     private $gtag_tracking_inst;
 
     /**
-     * [__construct description]
+     * Constructor.
+     * Initializes the instance of this plugin.
+     * 
      * @access private
      */
     private function __construct() {
-        $this->includes();
+        $this->load_includes();
         $this->setup_constants();			
-        $this->hooks();
+        $this->setup_wp_actions();
+        $this->setup_wp_filters();
         $this->ga_service = new Fiftyonedegrees_Google_Analytics();
         $this->gtag_tracking_inst = new Fiftyonedegrees_Tracking_Gtag();
     }
 
     /**
-     * Get active instance
+     * Get active instance.
+     * 
+     * This class is lazily loaded, to the first request to this method
+     * will construct the singleton instance.
      *
      * @access      public
      * @since       1.0.0
@@ -70,7 +82,9 @@ class Fiftyonedegrees {
     }
 
     /**
-     * Setup plugin constants
+     * Setup plugin constants.
+     * 
+     * All constants are global, so must be prefixed with "FIFTYONEDEGREES_".
      *
      * @access      private
      * @since       1.0.0
@@ -97,19 +111,20 @@ class Fiftyonedegrees {
     }
 
     /**
-     * Include necessary files
+     * Include necessary files.
      *
      * @access      private
-     * @since       1.0.0
+     * @since       1.0.11
      * @return      void
      */
-    private function includes() {
+    private function load_includes() {
 
         // Load the Google API PHP Client Library.
         include_once __DIR__ . '/lib/vendor/autoload.php';
         require_once __DIR__ . '/includes/pipeline.php';
         require_once __DIR__ . '/includes/ga-service.php';
         require_once __DIR__ . '/includes/ga-tracking-gtag.php';
+        require_once __DIR__ . '/constants.php';
         
         // Include Custom_Dimensions class
         if (!class_exists('Fiftyonedegrees_Custom_Dimensions')) {
@@ -118,14 +133,25 @@ class Fiftyonedegrees {
     }
             
     /**
-     * Run action and filter hooks
+     * Setup action hooks for the plugin. These hooks are handled
+     * by wordpress.
+     * 
+     * See available actions:
+     * https://codex.wordpress.org/Plugin_API/Action_Reference
      *
      * @access      private
-     * @since       1.0.0
+     * @since       1.0.11
      * @return      void
      */
-    private function hooks() {
+    private function setup_wp_actions() {
         
+        // The main init action. This runs the processing.
+        add_action(
+            'init',
+            array($this, 'fiftyonedegrees_init'));     
+
+        // Admin actions. These are initialization actions to run before
+        // loading the admin interface.
         add_action(
             'admin_init',
             array($this, 'fiftyonedegrees_register_settings'));
@@ -153,37 +179,42 @@ class Fiftyonedegrees {
         add_action(
             'admin_init',
             array($this, 'fiftyonedegrees_setup_blocks'));
-        
         add_action(
             'admin_init',
             array($this, 'submit_rk_submit_action'));
 
+        // Head actions. These are actions to run before generating an HTML
+        // head section.
         add_action(
             'wp_head',
             array($this, 'fiftyonedegrees_ga_add_analytics_code'),
             10);
 
+        // Admin menu actions. These are actions run before the admin
+        // menu is written.
         add_action(
             'admin_menu',
             array($this, 'fiftyonedegrees_register_options_page'));
+
+        // Plugin page settings actions.
         add_filter(
             'plugin_action_links_' . plugin_basename(__FILE__),
             array($this, 'fiftyonedegrees_add_plugin_page_settings_link'));
 
+        // Enqueue scripts actions for admin.
         add_action(
             'admin_enqueue_scripts',
             array($this, 'fiftyonedegrees_admin_enqueue_scripts'));
         
-        // Add Javascript
+        // Add Javascript to the enqueued scripts.
         add_action(
             'wp_enqueue_scripts',
             array($this, 'fiftyonedegrees_javascript'));
+
+        // Add the JSON rest endpoint.
         add_action(
             'rest_api_init',
-            array($this, 'fiftyonedegrees_rest_api_init'));
-        add_action(
-            'init',
-            array($this, 'fiftyonedegrees_init'));          
+            array($this, 'fiftyonedegrees_rest_api_init'));     
 
         // Cache resource key data / pipeline after saving options page
         add_action(
@@ -191,7 +222,21 @@ class Fiftyonedegrees {
             array($this, 'fiftyonedegrees_update_option'),
             10,
             10);
-
+    }
+    
+    /**
+     * Setup filter hooks for the plugin. These hooks are handled
+     * by wordpress.
+     * 
+     * See available filters:
+     * https://codex.wordpress.org/Plugin_API/Filter_Reference
+     *
+     * @access      private
+     * @since       1.0.11
+     * @return      void
+     */
+    private function setup_wp_filters() {
+        
         // Add block filter
         add_filter(
             'render_block',
@@ -208,18 +253,32 @@ class Fiftyonedegrees {
             array($this, 'fiftyonedegrees_render_block'),
             10,
             2);
-
     }
 
-    function fiftyonedegrees_register_settings()
-    {
-        add_option("fiftyonedegrees_resource_key_pipeline");
-        add_option("fiftyonedegrees_resource_key");
+    /**
+     * Register the settings used by the plugin.
+     * 
+     * @return void
+     */
+    function fiftyonedegrees_register_settings() {
+        // This is the cached pipeline for the current resource key.
+        add_option(Constants::PIPELINE);
+        // This is the resource key set by the user to be used to access
+        // cloud services.
+        add_option(Constants::RESOURCE_KEY);
+
+        // Register the new settings with wordpress.
         register_setting(
-            'fiftyonedegrees_options',
-            'fiftyonedegrees_resource_key');
+            Constants::OPTIONS,
+            Constants::RESOURCE_KEY);
     }
 
+    /**
+     * Register the JSON endpoint for the pipeline. This is where the
+     * JavaScript will callback to instead of the 51Degrees domain.
+     * 
+     * @return void
+     */
     function fiftyonedegrees_rest_api_init() {	
         register_rest_route('fiftyonedegrees/v4', "json", array(
             'methods' => 'POST',
@@ -229,18 +288,25 @@ class Fiftyonedegrees {
         ));
     }
 
+    /**
+     * Checks if the resource key has been changed, and stores the new one
+     * if it has. When the new option has been updated, the pipeline will be
+     * rebuilt.
+     */
     function submit_rk_submit_action() {
 
-        if (isset( $_POST["fiftyonedegrees_resource_key"]) &&
-            isset( $_POST["action"])) {
+        if (isset($_POST[Constants::RESOURCE_KEY]) &&
+            isset($_POST["action"]) &&
+            $_POST[Constants::RESOURCE_KEY] !==
+            get_option(Constants::RESOURCE_KEY)) {
 
             $resource_key = sanitize_text_field(wp_unslash(
-                $_POST["fiftyonedegrees_resource_key"]));
-            update_option("fiftyonedegrees_resource_key", $resource_key);
+                $_POST[Constants::RESOURCE_KEY]));
+            update_option(Constants::RESOURCE_KEY, $resource_key);
 
-            if (!isset( $cachedPipeline['error'])) {
-                if (get_option("fiftyonedegrees_ga_enable_tracking") &&
-                    get_option("fiftyonedegrees_resource_key_updated")) {                    
+            if (!isset($cachedPipeline['error'])) {
+                if (get_option(Constants::ENABLE_GA) &&
+                    get_option(Constants::RESOURCE_KEY_UPDATED)) {
                 
                     wp_redirect(get_admin_url() .
                         'options-general.php?page=51Degrees&tab=google-analytics');
@@ -256,13 +322,23 @@ class Fiftyonedegrees {
         }
     }
 
-    function populate_selected_dimensions() {
+    /**
+     * Construct a list of Google Analytics custom dimensions and store in
+     * an option.
+     * 
+     * This is called either when GA is enabled, or when the custom dimensions
+     * are updated.
+     * 
+     * @param cachedPipeline 51Degrees pipeline
+     * @return void
+     */
+    function populate_selected_dimensions($cachedPipeline) {
 
-        if(!isset($cachedPipeline['error'])) {
+        if (!isset($cachedPipeline['error'])) {
                     
             $passed_dimensions = array();
-            foreach($_POST as $key=>$dimension) {
-                if( strpos($key, "51D_") !== false) {
+            foreach ($_POST as $key=>$dimension) {
+                if (strpos($key, "51D_") !== false) {
                     $key = sanitize_text_field(wp_unslash(
                         str_replace("51D_","", $key)));
                     $passed_dimensions[$key] =
@@ -270,25 +346,28 @@ class Fiftyonedegrees {
                 }
             }
             update_option(
-                "fiftyonedegrees_passed_dimensions",
+                Constants::GA_DIMENSIONS,
                 $passed_dimensions);
             update_option(
-                "fiftyonedegrees_passed_dimensions_updated",
+                Constants::GA_DIMENSIONS_UPDATED,
                 true);
         }
     }
 
+    /**
+     * If a POST has been made with new Google Analytics custom dimensions,
+     * then update them within the plugin.
+     * 
+     * @return void
+     */
     function fiftyonedegrees_ga_update_cd_indices() {
 
-        if (isset($_POST["fiftyonedegrees_ga_update_cd_indices"])) {
+        if (isset($_POST[Constants::GA_UPDATE_DIMENSIONS_POST])) {
 
             if ("Update Custom Dimension Mappings" ===
-                $_POST["fiftyonedegrees_ga_update_cd_indices"]) {
-
-                $cachedPipeline =
-                    get_option('fiftyonedegrees_resource_key_pipeline');
-
-                $this->populate_selected_dimensions();
+                $_POST[Constants::GA_UPDATE_DIMENSIONS_POST]) {
+                $this->populate_selected_dimensions(
+                    get_option(Constants::PIPELINE));
 
             }
             wp_redirect(get_admin_url() .
@@ -296,39 +375,50 @@ class Fiftyonedegrees {
         }       
     }
 
+    /**
+     * Add Google Analytics JavaScript to the page.
+     * 
+     * @return void
+     */
     function fiftyonedegrees_ga_add_analytics_code() {
         
-            echo sprintf(
-                esc_html('%1$s'),
-                get_option("fiftyonedegrees_ga_tracking_javascript"));			  
+        echo sprintf(
+            esc_html('%1$s'),
+            get_option(Constants::GA_JS));			  
     }
 
+    /**
+     * If a POST has been made to enable/disable Google Analytics,
+     * then enable it and update the custom dimensions within the plugin.
+     * 
+     * @return void
+     */
     function fiftyonedegrees_ga_enable_tracking() {
 
-        if (isset($_POST["fiftyonedegrees_ga_enable_tracking"])) {
+        if (isset($_POST[Constants::ENABLE_GA])) {
 
             if ("Enable Google Analytics Tracking" ===
-                $_POST["fiftyonedegrees_ga_enable_tracking"]) {
+                $_POST[Constants::ENABLE_GA]) {
 
                 $cachedPipeline =
-                    get_option('fiftyonedegrees_resource_key_pipeline');
-                $this->populate_selected_dimensions();
+                    get_option(Constants::PIPELINE);
+                $this->populate_selected_dimensions($cachedPipeline);
 
                 if (!isset($cachedPipeline['error'])) {
 
-                    $this->execute_ga_tracking_steps();                    
+                    $this->execute_ga_tracking_steps();
                 }
                 
             }
             else {
-                delete_option("fiftyonedegrees_ga_tracking_javascript");
-                delete_option("fiftyonedegrees_ga_enable_tracking");            
+                delete_option(Constants::GA_JS);
+                delete_option(Constants::ENABLE_GA);            
             }
 
-            delete_option("fiftyonedegrees_resource_key_updated");
+            delete_option(Constants::RESOURCE_KEY_UPDATED);
             delete_option("tracking_id_update_flag");
             delete_option("send_page_view_update_flag");
-            delete_option("fiftyonedegrees_passed_dimensions_updated");
+            delete_option(Constants::GA_DIMENSIONS_UPDATED);
             wp_redirect(get_admin_url() .
                 'options-general.php?page=51Degrees&tab=google-analytics');
         }
@@ -344,18 +434,18 @@ class Fiftyonedegrees {
         // Get Google analytics Tracking Javascript to be added to the
         // header. 
         $gtag_code = $this->gtag_tracking_inst->output_ga_tracking_code();
-        update_option("fiftyonedegrees_ga_tracking_javascript", $gtag_code);
+        update_option(Constants::GA_JS), $gtag_code);
 
         // Insert Custom Dimensions in Google Analytics
         $this->ga_service->insert_custom_dimensions();
         
         // Mark tracking is enabled.
-        update_option("fiftyonedegrees_ga_enable_tracking", "enabled");
+        update_option(Constants::ENABLE_GA, "enabled");
     }
 
     function fiftyonedegrees_ga_change_screen() {
 
-        if (isset( $_POST['fiftyonedegrees_ga_change_settings'])) {
+        if (isset($_POST[Constants::GA_CHANGE])) {
             
             delete_option("custom_dimension_screen");
             update_option("change_to_authentication_screen", "enabled");
@@ -366,37 +456,38 @@ class Fiftyonedegrees {
 
 
     function fiftyonedegrees_ga_set_tracking_id() {         
-        if (get_option("fiftyonedegrees_ga_access_token")) {
-            if (isset( $_POST['submit'] ) &&
+        if (get_option(Constants::GA_TOKEN)) {
+            if (isset($_POST['submit']) &&
                 "Save Changes" === $_POST['submit']) {
 
                 delete_option("tracking_id_error");
                 update_option("custom_dimension_screen", "enabled");
 
-                if (isset( $_POST['fiftyonedegrees_ga_tracking_id']) &&
+                if (isset($_POST[Constants::GA_TOKEN]) &&
                     "Select Analytics Property" ===
-                    $_POST['fiftyonedegrees_ga_tracking_id']) {
+                    $_POST[Constants::GA_TOKEN]) {
 
                     update_option("tracking_id_error", true);
                     delete_option("custom_dimension_screen");                        
-                } else if (isset($_POST['fiftyonedegrees_ga_tracking_id'])) {
+                }
+                else if (isset($_POST[Constants::GA_TOKEN])) {
 
                     $ga_tracking_id = sanitize_text_field(wp_unslash(
-                        $_POST['fiftyonedegrees_ga_tracking_id']));
+                        $_POST[Constants::GA_TOKEN]));
                     
                     update_option(
-                        "fiftyonedegrees_ga_tracking_id",
-                        $ga_tracking_id );                   
+                        Constants::GA_TOKEN,
+                        $ga_tracking_id);
 
-                    if (isset($_POST['fiftyonedegrees_ga_send_page_view']) &&
-                        "on" === $_POST['fiftyonedegrees_ga_send_page_view']) {
+                    if (isset($_POST[Constants::GA_SEND_PAGE_VIEW]) &&
+                        "on" === $_POST[Constants::GA_SEND_PAGE_VIEW]) {
                         update_option(
-                            "fiftyonedegrees_ga_send_page_view",
+                            Constants::GA_SEND_PAGE_VIEW,
                             'true');
                         update_option("send_page_view_val", "On");
                     }  
                     else {
-                        delete_option("fiftyonedegrees_ga_send_page_view");
+                        delete_option(Constants::GA_SEND_PAGE_VIEW);
                         update_option("send_page_view_val", "Off");                      
                     }
                     
@@ -409,11 +500,11 @@ class Fiftyonedegrees {
 
     function fiftyonedegrees_ga_authentication() {
 
-        if (isset($_POST['fiftyonedegrees_ga_code']) &&
+        if (isset($_POST[Constants::GA_CODE]) &&
             isset($_POST['submit'])) {
             
             $key_google_token = sanitize_text_field(wp_unslash(
-                    $_POST['fiftyonedegrees_ga_code']));
+                    $_POST[Constants::GA_CODE]));
             $this->ga_service->google_analytics_authenticate(
                 $key_google_token);
             delete_option("tracking_id_error");
@@ -436,45 +527,44 @@ class Fiftyonedegrees {
 
     function delete_ga_options() {
 
-        delete_option( "fiftyonedegrees_ga_auth_code" );
-        delete_option( "fiftyonedegrees_ga_access_token" );
-        delete_option( "fiftyonedegrees_ga_properties_list" );
-        delete_option( "fiftyonedegrees_ga_tracking_id" );
-        delete_option( "fiftyonedegrees_ga_account_id" );
-        delete_option( "fiftyonedegrees_ga_max_cust_dim_index" );
-        delete_option( "fiftyonedegrees_ga_send_page_view" );
-        delete_option( "fiftyonedegrees_ga_tracking_javascript" );
-        delete_option( "fiftyonedegrees_ga_enable_tracking" );
-        delete_option( "fiftyonedegrees_ga_error" );
-        delete_option( "fiftyonedegrees_ga_auth_code" ); 
-        delete_option( "fiftyonedegrees_resource_key_updated" );
-        delete_option( "tracking_id_update_flag" );
-        delete_option( "send_page_view_update_flag" );
-        delete_option( "tracking_id_error" );
-        delete_option( "custom_dimension_screen" );
-        delete_option( "change_to_authentication_screen" );
-        delete_option( "fiftyonedegrees_passed_dimensions" );
-        delete_option( "fiftyonedegrees_passed_dimensions_updated" );
+        delete_option(Constants::GA_AUTH_CODE);
+        delete_option(Constants::GA_TOKEN);
+        delete_option(Constants::GA_PROPERTIES);
+        delete_option(Constants::GA_TRACKING_ID);
+        delete_option(Constants::GA_ACCOUNT_ID);
+        delete_option(Constants::GA_MAX_DIMENSIONS);
+        delete_option(Constants::GA_SEND_PAGE_VIEW);
+        delete_option(Constants::GA_JS);
+        delete_option(Constants::ENABLE_GA);
+        delete_option(Constants::GA_ERROR);
+        delete_option(Constants::RESOURCE_KEY_UPDATED);
+        delete_option(Constants::GA_DIMENSIONS);
+        delete_option(Constants::GA_DIMENSIONS_UPDATED);
+        delete_option("tracking_id_update_flag");
+        delete_option("send_page_view_update_flag");
+        delete_option("tracking_id_error");
+        delete_option("custom_dimension_screen");
+        delete_option("change_to_authentication_screen");
     }
                 
     // Add stylesheet for admin pages
     function fiftyonedegrees_admin_enqueue_scripts () {
         wp_enqueue_style(
-            'fiftyonedegrees_admin_styles',
+            Constants::ADMIN_STYLES,
             plugin_dir_url(__FILE__) . "assets/css/fod.css");
         wp_enqueue_style(
-            'fiftyonedegrees_admin_styles_icons',
+            Constants::ADMIN_ICONS,
             "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
         wp_enqueue_script(
-            'fiftyonedegrees_jQuery',
+            Constants::JQUERY,
             plugin_dir_url(__FILE__) . '/assets/js/51D.js',
-            array( 'jquery' ) #dependencies
+            array('jquery') #dependencies
         );			
     }
 
     function fiftyonedegrees_update_option($option, $old_value, $new_value) {
 
-        if ($option === "fiftyonedegrees_resource_key") {
+        if ($option === Constants::RESOURCE_KEY) {
 
             // Remove the cached flowdata from the session.
             if (session_status() === PHP_SESSION_ACTIVE &&
@@ -486,24 +576,24 @@ class Fiftyonedegrees {
 
             if ($pipeline) {
                 update_option(
-                    "fiftyonedegrees_resource_key_pipeline",
+                    Constants::PIPELINE,
                     $pipeline);
             }
 
             if ($old_value !== $new_value) {
-                update_option("fiftyonedegrees_resource_key_updated", true);
-                delete_option("fiftyonedegrees_passed_dimensions");
+                update_option(Constants::RESOURCE_KEY_UPDATED, true);
+                delete_option(Constants::GA_DIMENSIONS);
             }
             else {
-                delete_option("fiftyonedegrees_resource_key_updated");
+                delete_option(Constants::RESOURCE_KEY_UPDATED);
             }
             
         }
 
-        if ($option === "fiftyonedegrees_ga_tracking_id" &&
+        if ($option === Constants::GA_TRACKING_ID &&
             $old_value !== $new_value) {
             update_option("tracking_id_update_flag", true);
-            delete_option("fiftyonedegrees_passed_dimensions");
+            delete_option(Constants::GA_DIMENSIONS);
         }
 
         if ($option === "send_page_view_val" && $old_value !== $new_value) {
@@ -517,7 +607,7 @@ class Fiftyonedegrees {
             '51Degrees',
             'manage_options',
             '51Degrees',
-            array( $this, 'fiftyonedegrees_admin_page'));
+            array($this, 'fiftyonedegrees_admin_page'));
     }
 
 
@@ -755,6 +845,6 @@ register_uninstall_hook(__FILE__, 'fiftyonedegrees_deactivate'); // delete
 function fiftyonedegrees_deactivate() {
 
     Fiftyonedegrees::get_instance()->delete_ga_options();
-    delete_option("fiftyonedegrees_resource_key");
-    delete_option("fiftyonedegrees_resource_key_pipeline");
+    delete_option(Constants::RESOURCE_KEY);
+    delete_option(Constants::PIPELINE);
 }

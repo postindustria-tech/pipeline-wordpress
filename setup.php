@@ -17,11 +17,11 @@
 
 <form method="post" action="options.php">
 
-    <?php settings_fields('fiftyonedegrees_options'); ?>
+    <?php settings_fields(Constants::OPTIONS); ?>
 
     <?php
 
-        $cachedPipeline = get_option('fiftyonedegrees_resource_key_pipeline');
+        $cachedPipeline = get_option(Constants::PIPELINE);
 
         if (isset($cachedPipeline['error'])) {
             echo '<p></p><span class="fod-pipeline-status error"><b>' .
@@ -64,7 +64,7 @@
                     <label for="fiftyonedegrees_resource_key">Resource Key</label>
                 </th>
                 <td>
-                    <input name="fiftyonedegrees_resource_key" type="text" id="fiftyonedegrees_resource_key" value="<?php echo esc_attr(get_option("fiftyonedegrees_resource_key"));?>" class="regular-text">
+                    <input name="fiftyonedegrees_resource_key" type="text" id="fiftyonedegrees_resource_key" value="<?php echo esc_attr(get_option(Constants::RESOURCE_KEY));?>" class="regular-text">
                 </td>
             </tr>
         </tbody>
