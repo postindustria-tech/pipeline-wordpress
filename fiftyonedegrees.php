@@ -568,7 +568,7 @@ class Fiftyonedegrees {
 
             // Remove the cached flowdata from the session.
             if (session_status() === PHP_SESSION_ACTIVE &&
-                isset($_SESSION["fiftyonedegrees_data"]) {
+                isset($_SESSION["fiftyonedegrees_data"])) {
                 unset($_SESSION["fiftyonedegrees_data"]);
             }
 
