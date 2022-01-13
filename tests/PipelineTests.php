@@ -26,10 +26,6 @@ use \Brain\Monkey\Functions;
 
 class PipelineTests extends TestCase {
 
-    protected function setUp() : void {
-        Pipeline::$data = null;
-    }
-    
     // Data Provider for testGetAppContext
 	public function provider_testGetAppContext()
     {
@@ -118,6 +114,7 @@ class PipelineTests extends TestCase {
         Functions\expect('get_option')->times(5)->with('fiftyonedegrees_resource_key_pipeline')->andReturn($pipeline);
         Functions\when('plugin_dir_path')->justReturn(getcwd(). "/");
 
+        Pipeline::$data = null;
         Pipeline::process();
 
         // Tests Pipeline::get Function.
