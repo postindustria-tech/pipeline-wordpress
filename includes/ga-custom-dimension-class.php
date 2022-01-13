@@ -181,8 +181,8 @@ class Fiftyonedegrees_Custom_Dimensions extends WP_List_Table
 
     /**
      * Retrieves Custom Dimension Name from Property. 
-	 * @param string datakey
-     * @param string property name
+	 * @param string $datakey
+     * @param string $property name
      * @return string Custom Dimension Name
      */
     public function get_custom_dimension_name($datakey, $property) {
@@ -196,7 +196,7 @@ class Fiftyonedegrees_Custom_Dimensions extends WP_List_Table
 
     /**
      * Retrieves Custom Dimension Index from Google Analytics.
-     * @param string custom dimension name
+     * @param string $cust_dim_name custom dimension name
      * @return int Google Analytic Index if dimension 
      * already exists otherwise returns -1.
      */
@@ -216,7 +216,7 @@ class Fiftyonedegrees_Custom_Dimensions extends WP_List_Table
 
     /**
      * Retrieves Custom Dimension list box content. 
-	 * @param string custom dimension name
+     * @param string $cust_dim_name custom dimension name
      * @return array array list containing default and
      * existing custom dimensions.
      */	

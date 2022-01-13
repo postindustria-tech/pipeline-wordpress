@@ -292,6 +292,8 @@ class Fiftyonedegrees {
      * Checks if the resource key has been changed, and stores the new one
      * if it has. When the new option has been updated, the pipeline will be
      * rebuilt.
+     * 
+     * @return void
      */
     function submit_rk_submit_action() {
 
@@ -329,7 +331,7 @@ class Fiftyonedegrees {
      * This is called either when GA is enabled, or when the custom dimensions
      * are updated.
      * 
-     * @param cachedPipeline 51Degrees pipeline
+     * @param array $cachedPipeline 51Degrees pipeline
      * @return void
      */
     function populate_selected_dimensions($cachedPipeline) {
@@ -469,7 +471,7 @@ class Fiftyonedegrees {
      * the relevant options.
      * 
      * @return void
-0     */
+     */
     function fiftyonedegrees_ga_set_tracking_id() {         
         if (get_option(Constants::GA_TOKEN)) {
             if (isset($_POST['submit']) &&
@@ -662,7 +664,7 @@ class Fiftyonedegrees {
     /**
      * Set the link to settings for this plugin.
      * 
-     * @param links array of links to add to.
+     * @param string[] $links array of links to add to.
      * @return string[] updated array of links.
      */
     function fiftyonedegrees_add_plugin_page_settings_link($links) {
@@ -700,8 +702,8 @@ class Fiftyonedegrees {
      * Block filter function to replace tokens in the format
      * '{Pipeline::get("engine","property")}'.
      * 
-     * @param block_content the existing blocb content to parse
-     * @param block not used in this function
+     * @param string $block_content the existing blocb content to parse
+     * @param object $block not used in this function
      * @return string the updated block content
      */
     function fiftyonedegrees_block_filter($block_content, $block) {
@@ -750,7 +752,7 @@ class Fiftyonedegrees {
      * Add a '51Degrees' category to the list of block categories
      * available in the editor.
      * 
-     * @param categories the existing list of categories
+     * @param array $categories the existing list of categories
      * @return object the updated categories including the 51Degrees category
      */
     function fiftyonedegrees_block_categories($categories) {
@@ -853,9 +855,10 @@ class Fiftyonedegrees {
      * operator specified in the block. If the result is true then the block
      * is rendered, otherwise not.
      * 
-     * @param block_content content of the block to potentially be displayed
-     * @param block the block itself, containing the options used to determine
-     * whether to display the content
+     * @param string $block_content content of the block to potentially be
+     * displayed
+     * @param object $block the block itself, containing the options used to
+     * determine whether to display the content
      * @return string|void either the value of $block_content if the condition
      * is met, otherwise a void
      */

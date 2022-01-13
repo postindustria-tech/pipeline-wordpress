@@ -30,7 +30,7 @@ class Fiftyonedegrees_Google_Analytics {
 
     /**
      * Authenticate with Google Analytics.
-	 * @param string Access Code
+	 * @param string $key_google_token Access Code
      * @return boolean true for successful authentication. 
      */	
     public function google_analytics_authenticate($key_google_token) {
@@ -163,7 +163,7 @@ class Fiftyonedegrees_Google_Analytics {
     /**
      * Retrieves Google Analytics Object
 	 * @param Google_Client $client
-     * @return $service service object
+     * @return Google_Service_Analytics service service object
      */	
     public function get_google_analytics_service ($client) {
         try {
@@ -227,12 +227,12 @@ class Fiftyonedegrees_Google_Analytics {
     /**
      * Retrieves account id for the web property being used.
 	 * @param Google_Service_Analytics $analytics_service
-     * @param string trackingId
+     * @param string $trackingId
      * @return string accountId 
      */	
-    public function get_account_id( $analytics_service, $trackingId ) {
+    public function get_account_id($analytics_service, $trackingId) {
 
-        if(!empty($trackingId)) {
+        if (!empty($trackingId)) {
 
             try {
                 // Get the list of accounts and web properties.
@@ -264,6 +264,7 @@ class Fiftyonedegrees_Google_Analytics {
 
     /**
      * Retrieves custom dimensions for the authorized user.
+     * 
      * @return array array containing custom dimensions list
      * and max available custom dimension index 
      */	
@@ -308,7 +309,8 @@ class Fiftyonedegrees_Google_Analytics {
 
     /**
      * Inserts Custom Dimension into analytics account.
-     * @return int no of new custom dimensions inserted.
+     * 
+     * @return int number of new custom dimensions inserted.
      */	
     public function insert_custom_dimensions() {
 

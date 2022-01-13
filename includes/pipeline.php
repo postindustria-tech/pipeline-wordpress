@@ -25,13 +25,19 @@ require_once __DIR__ . '/../constants.php';
 
 class Pipeline
 {
+    /**
+     * Single instance of processed flow data.
+     * This is populated by the process() method, and is only populated
+     * once per request.
+     */
     public static $data = null;
 
    /**
 	* Makes a pipeline from a resource key that 
-	* can be serialized to the database
-	* @param resourceKey Resource Key
-	* @return Array containing pipeline and engines
+	* can be serialized to the database.
+    *
+	* @param string $resourceKey Resource Key
+	* @return array an array containing pipeline and engines
 	*/
     public static function make_pipeline($resourceKey) {
 
@@ -92,14 +98,18 @@ class Pipeline
     }
 
     /**
-     * process function sets the evidence from web request in flowData and
+     * Process function sets the evidence from web request in flowData and
 	 * runs the process function on each attached FlowElement
-     * @return array, containing FlowData, properties and errors.
+     * 
+     * @return void
      */
     public static function process() {
         
+        // Only process if the data has not already been populated.
         if (Pipeline::$data === null) {
     
+            // Fetch the data from the session if it's enabled and is already
+            // there.
             if (session_status() == PHP_SESSION_ACTIVE &&
                 isset($_SESSION["fiftyonedegrees_data"])) {
                 Pipeline::$data = $_SESSION["fiftyonedegrees_data"];
@@ -108,13 +118,15 @@ class Pipeline
 
             require_once dirname(__DIR__) . "/lib/vendor/autoload.php";
            
+            // Get the preconstructed pipeline from the cached option.
             $cachedPipeline = get_option(Constants::PIPELINE);
 
             if (!$cachedPipeline) {
+                // There is no pipeline, so return null.
                 return;
             }
 
-            if(isset($cachedPipeline["error"])) {
+            if (isset($cachedPipeline["error"])) {
                 error_log("Error occurred while initializing the 51Degrees " .
                     "plugin: '" . $cachedPipeline["error"] . "'");
                 return;
@@ -152,6 +164,7 @@ class Pipeline
                 "properties" => $properties,
                 "errors" => $flowData->errors);
 
+            // If session cache is enabled then store the result in it.
             if (session_status() == PHP_SESSION_ACTIVE) {
                 $_SESSION["fiftyonedegrees_data"] = Pipeline::$data;
             }
@@ -159,22 +172,26 @@ class Pipeline
     }
 
     /**
-     * Retrieves property by engine and property key
-     * @param string FlowElementDataKey
-	 * @param string Property Key
-     * @return String Property Value
+     * Retrieves property by engine and property key. If there is no flow data
+     * available, or it contains errors, then null is returned.
+     * 
+     * @param string $engine FlowElementDataKey e.g. device
+	 * @param string $key Property Key e.g. browsername
+     * @return string|null Property Value
      */	
     public static function get($engine, $key) {
 
         $data =  Pipeline::$data;
 
         if (!$data) {
-            return;
+            // There is no processed flow data.
+            return null;
         }
 
         if(isset($data["errors"]) && count($data["errors"])) {
+            // There were errors from processing.
             error_log("Errors processing Flow Data" . $data["errors"]);
-            return;
+            return null;
         }
 
         $flowData = $data["flowData"];
@@ -196,8 +213,9 @@ class Pipeline
     }
 
     /**
-     * Retrieves flowData properties JSON object
-     * @return JSON Object
+     * Retrieves processed flow data as a JSON object.
+     * 
+     * @return object flow data as a JSON Object
      */	
     public static function getJSON() {
 
@@ -223,9 +241,10 @@ class Pipeline
     }
 
     /**
-     * Retrieves properties list by category
-	 * @param string Category
-     * @return Array Properties List
+     * Retrieves a properties list for the specified category.
+     * 
+	 * @param string $category the category name to get properties for
+     * @return array the list of properties
      */	
     public static function getCategory($category) {
 
@@ -260,8 +279,9 @@ class Pipeline
     }
 
     /**
-     * Gets client side javascript from FlowData
-     * @param Javascript
+     * Gets client side javascript from FlowData.
+     * 
+     * @return string the Javascript for the requesting device
      */
     public static function getJavaScript() {
 
@@ -289,7 +309,8 @@ class Pipeline
  
     /**
      * Gets AppContext from the URL
-     * @param URL
+     * @param string $url
+     * @return string the app context
      */
     public static function getAppContext($url) {
 
