@@ -26,6 +26,10 @@ use \Brain\Monkey\Functions;
 
 class PipelineTests extends TestCase {
 
+    protected function setUp() : void {
+        Pipeline::$data = null;
+    }
+    
     // Data Provider for testGetAppContext
 	public function provider_testGetAppContext()
     {
