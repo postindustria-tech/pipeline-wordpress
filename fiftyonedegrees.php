@@ -425,6 +425,11 @@ class Fiftyonedegrees {
                             
     }
 
+    /**
+     * Sets up the options needed to add custom dimentions to Google Analytics.
+     * 
+     * @return void
+     */
     function execute_ga_tracking_steps() {
 
         //Prepare Custom Dimensions
@@ -443,6 +448,11 @@ class Fiftyonedegrees {
         update_option(Constants::ENABLE_GA, "enabled");
     }
 
+    /**
+     * Run if a POST is recieved to update Google Analytics options.
+     * 
+     * @return void
+     */
     function fiftyonedegrees_ga_change_screen() {
 
         if (isset($_POST[Constants::GA_CHANGE])) {
@@ -454,7 +464,12 @@ class Fiftyonedegrees {
         }          
     }   
 
-
+    /**
+     * If a change is made to the Google Analytics token, then update all
+     * the relevant options.
+     * 
+     * @return void
+0     */
     function fiftyonedegrees_ga_set_tracking_id() {         
         if (get_option(Constants::GA_TOKEN)) {
             if (isset($_POST['submit']) &&
@@ -498,6 +513,13 @@ class Fiftyonedegrees {
         }
     }
 
+    /**
+     * If a new Google Analytics token is set in the admin interface, then
+     * authenticate it in the Google Analytics service. This will then set
+     * the GA_TOKEN option.
+     * 
+     * @return void
+     */
     function fiftyonedegrees_ga_authentication() {
 
         if (isset($_POST[Constants::GA_CODE]) &&
@@ -514,6 +536,12 @@ class Fiftyonedegrees {
         }
     }
 
+    /**
+     * If logout from Google Analytics is requested in the admin interface,
+     * then remove all existing options relating to Google Analytics.
+     * 
+     * @return void
+     */
     function fiftyonedegrees_ga_logout() {
 
         if (isset($_POST['ga_log_out'])) {
@@ -525,6 +553,10 @@ class Fiftyonedegrees {
         }
     }
 
+    /**
+     * Delete all the options relating to Google Analytics. This will disable
+     * the Google Analytics feature.
+     */
     function delete_ga_options() {
 
         delete_option(Constants::GA_AUTH_CODE);
@@ -547,7 +579,11 @@ class Fiftyonedegrees {
         delete_option("change_to_authentication_screen");
     }
                 
-    // Add stylesheet for admin pages
+    /**
+     * Add stylesheet for admin pages.
+     * 
+     * @return void
+     */
     function fiftyonedegrees_admin_enqueue_scripts () {
         wp_enqueue_style(
             Constants::ADMIN_STYLES,
@@ -562,6 +598,13 @@ class Fiftyonedegrees {
         );			
     }
 
+    /**
+     * After any option is updated, check if the option was something that
+     * needs to be taken care of. For resource key, the flow data needs to
+     * be removed from the session cache, and a new pipeline created.
+     * 
+     * @return void
+     */
     function fiftyonedegrees_update_option($option, $old_value, $new_value) {
 
         if ($option === Constants::RESOURCE_KEY) {
@@ -601,6 +644,11 @@ class Fiftyonedegrees {
         }
     }
 
+    /**
+     * Register the options page for the plugin.
+     * 
+     * @return void
+     */
     function fiftyonedegrees_register_options_page() {
         add_options_page(
             '51Degrees',
@@ -611,6 +659,12 @@ class Fiftyonedegrees {
     }
 
 
+    /**
+     * Set the link to settings for this plugin.
+     * 
+     * @param links array of links to add to.
+     * @return string[] updated array of links.
+     */
     function fiftyonedegrees_add_plugin_page_settings_link($links) {
         $links[] = '<a href="' .
             admin_url('options-general.php?page=51Degrees') .
@@ -618,11 +672,20 @@ class Fiftyonedegrees {
         return $links;
     }
 
+    /**
+     * Inlude the admin page for this plugin.
+     * 
+     * @return void
+     */
     function fiftyonedegrees_admin_page() {
         include plugin_dir_path(__FILE__) . "/admin.php";
     }
 
-    // Add JavaScript
+    /**
+     * Add the 51Degrees JavaScript to the page.
+     * 
+     * @return void
+     */
     function fiftyonedegrees_javascript() {
         wp_enqueue_script(
             "fiftyonedegrees",
@@ -633,7 +696,14 @@ class Fiftyonedegrees {
             "before");
     }
 
-    // Add block filter
+    /**
+     * Block filter function to replace tokens in the format
+     * '{Pipeline::get("engine","property")}'.
+     * 
+     * @param block_content the existing blocb content to parse
+     * @param block not used in this function
+     * @return string the updated block content
+     */
     function fiftyonedegrees_block_filter($block_content, $block) {
         $content = $block_content;
         $pattern = '/\{Pipeline::get\("[A-Za-z]+",[ ]*"[A-Za-z]+"\)\}/';
@@ -675,7 +745,14 @@ class Fiftyonedegrees {
         }
         return $content;
     }
-            
+    
+    /**
+     * Add a '51Degrees' category to the list of block categories
+     * available in the editor.
+     * 
+     * @param categories the existing list of categories
+     * @return object the updated categories including the 51Degrees category
+     */
     function fiftyonedegrees_block_categories($categories) {
         $category_slugs = wp_list_pluck($categories, 'slug');
 
@@ -693,18 +770,25 @@ class Fiftyonedegrees {
         );
     }
 
+    /**
+     * Main initialization function. This calls the pipeline to process the
+     * request. If there is a problem processing, then an error is logged.
+     * 
+     * @return void
+     */
     function fiftyonedegrees_init() {
 
+        // Error logging happens inside process().
         Pipeline::process();
 
-        if (!Pipeline::$data) {
-
-            //todo error_log() ?
-            return;
-
-        }
     }
 
+    /**
+     * Setup everything needed for editing 51Degrees blocks. For example,
+     * a list of properties is initialized to be used in a drop down list.
+     * 
+     * @return void
+     */
     function fiftyonedegrees_setup_blocks() {
 
         wp_register_script(
@@ -761,7 +845,20 @@ class Fiftyonedegrees {
                 $propertySelect);
         }
     }
-            
+    
+    /**
+     * Handles conditional blocks.
+     * Compares the target property value set in the block with the actual
+     * property value from the flow data for the requesting device using the
+     * operator specified in the block. If the result is true then the block
+     * is rendered, otherwise not.
+     * 
+     * @param block_content content of the block to potentially be displayed
+     * @param block the block itself, containing the options used to determine
+     * whether to display the content
+     * @return string|void either the value of $block_content if the condition
+     * is met, otherwise a void
+     */
     function fiftyonedegrees_render_block($block_content, $block) {
 
         if ('fiftyonedegrees/conditional-group-block' === $block['blockName']) {
