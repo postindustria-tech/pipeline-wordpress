@@ -8,6 +8,9 @@
     <testsuite name="PipelineTests">
       <file>tests/PipelineTests.php</file>
     </testsuite>
+    <testsuite name="PluginTests">
+      <file>tests/HookTests.php</file>
+    </testsuite>
     <testsuite name="GATests">
       <file>tests/GaServiceTests.php</file>
       <file>tests/GaTrackingGtagTests.php</file>
