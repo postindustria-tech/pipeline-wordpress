@@ -111,7 +111,7 @@ class Pipeline
         
         // Only process if the data has not already been populated.
         if (Pipeline::$data === null) {
-    
+
             // Fetch the data from the session if it's enabled and is already
             // there.
             if (session_status() == PHP_SESSION_ACTIVE &&
@@ -219,18 +219,18 @@ class Pipeline
     /**
      * Retrieves processed flow data as a JSON object.
      * 
-     * @return object flow data as a JSON Object
+     * @return object|null flow data as a JSON Object
      */	
     public static function getJSON() {
 
         $data =  Pipeline::$data;
 
         if (!$data) {
-            return;
+            return null;
         }
         if (isset($data["errors"]) && count($data["errors"])) {
             error_log("Errors processing Flow Data" . $data["errors"]);
-            return;
+            return null;
         }
 
         $flowData = $data["flowData"];
@@ -240,7 +240,7 @@ class Pipeline
         }
         catch (\Exception $e) {
             error_log($e->getMessage());
-            return;
+            return null;
         }       
     }
 
@@ -248,19 +248,19 @@ class Pipeline
      * Retrieves a properties list for the specified category.
      * 
 	 * @param string $category the category name to get properties for
-     * @return array the list of properties
+     * @return array|null the list of properties
      */	
     public static function getCategory($category) {
 
         $data =  Pipeline::$data;
 
         if (!$data) {
-            return;
+            return null;
         }
 
         if (isset($data["errors"]) && count($data["errors"])) {
             error_log("Errors processing Flow Data" . $data["errors"]);
-            return;
+            return null;
         }
 
         $flowData = $data["flowData"];
@@ -285,19 +285,19 @@ class Pipeline
     /**
      * Gets client side javascript from FlowData.
      * 
-     * @return string the Javascript for the requesting device
+     * @return string|null the Javascript for the requesting device
      */
     public static function getJavaScript() {
 
         $data =  Pipeline::$data;
 
         if (!$data) {
-            return;
+            return null;
         }
 
         if (isset($data["errors"]) && count($data["errors"])) {
             error_log("Errors processing Flow Data" . $data["errors"]);
-            return;
+            return null;
         }
 
         $flowData = $data["flowData"];

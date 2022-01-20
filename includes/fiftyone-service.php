@@ -472,8 +472,8 @@ class FiftyoneService {
      * displayed
      * @param object $block the block itself, containing the options used to
      * determine whether to display the content
-     * @return string|void either the value of $block_content if the condition
-     * is met, otherwise a void
+     * @return string|null either the value of $block_content if the condition
+     * is met, otherwise null
      */
     function fiftyonedegrees_render_block($block_content, $block) {
 
@@ -504,7 +504,7 @@ class FiftyoneService {
                 $compareValue = $block["attrs"]["value"];
 
                 if (empty($compareValue)) {
-                    return;       
+                    return null;       
                 }
 
                 $operator = $block["attrs"]["operator"];
@@ -526,11 +526,11 @@ class FiftyoneService {
                 }
                 
                 if (!$show) {
-                    return;
+                    return null;
                 }
 
-            } else {       
-                return;       
+            } else {
+                return null;
             }
             
         }
