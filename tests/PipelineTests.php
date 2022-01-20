@@ -23,15 +23,26 @@ require(__DIR__ . "/TestFlowElement.php");
 use fiftyone\pipeline\core\PipelineBuilder;
 use PHPUnit\Framework\TestCase;
 use \Brain\Monkey\Functions;
+use \Brain\Monkey\Filters;
 
 class PipelineTests extends TestCase {
 
+	public function setUp(): void {
+        Pipeline::reset();
+		parent::setUp();
+		Brain\Monkey\setUp();
+	}
+
+	public function tearDown(): void {
+		Brain\Monkey\tearDown();
+		parent::tearDown();
+	}
+
     // Data Provider for testGetAppContext
-	public function provider_testGetAppContext()
-    {
+	public function provider_testGetAppContext() {
         return array(
-        array("http://localhost/testsite", "/testsite"),
-        array("https://test.domain.com", ""),
+            array("http://localhost/testsite", "/testsite"),
+            array("https://test.domain.com", ""),
         );
     }
 
@@ -45,6 +56,10 @@ class PipelineTests extends TestCase {
         $this->assertEquals($expectedValue, $result);
     }
 
+    /**
+     * Test that a pipeline is successfully created for a valid
+     * resource key.
+     */
     public function testMakePipeline_ValidResourceKey() {
 
         //A fake get_site_url() that always return 'http://localhost/testsite'
@@ -61,9 +76,13 @@ class PipelineTests extends TestCase {
         $result = Pipeline::make_pipeline($resourceKey);
 
         $this->assertEquals(get_class($result["pipeline"]), "fiftyone\pipeline\core\Pipeline");
-        $this->assertEquals('device', $result["available_engines"][0]);
+        $this->assertTrue(in_array('device', $result["available_engines"]));
     }
 
+    /**
+     * Test that an invalid resource key results in an error being added to the
+     * pipeline.
+     */
     public function testMakePipeline_InValidResourceKey() {
 
         //A fake get_site_url() that always return 'http://localhost/testsite'
@@ -76,6 +95,9 @@ class PipelineTests extends TestCase {
 
     }
 
+    /**
+     * Test that the process method returns the expected result.
+     */
     public function testProcess() {
 
         //A fake get_site_url() that always return 'http://localhost/testsite'
@@ -100,6 +122,9 @@ class PipelineTests extends TestCase {
         
     }
 
+    /**
+     * Test the methods of getting values from the pipeline.
+     */
     public function testGet() {
 
         // Create a tmpfile to write errors to.
@@ -111,7 +136,7 @@ class PipelineTests extends TestCase {
                             ->build();
         $pipeline = array("pipeline" =>  $mock_pipeline, "available_engines" => ["testElement"], "error" => null);
 
-        Functions\expect('get_option')->times(5)->with('fiftyonedegrees_resource_key_pipeline')->andReturn($pipeline);
+        Functions\expect('get_option')->times(1)->with('fiftyonedegrees_resource_key_pipeline')->andReturn($pipeline);
         Functions\when('plugin_dir_path')->justReturn(getcwd(). "/");
 
         Pipeline::$data = null;
@@ -139,5 +164,6 @@ class PipelineTests extends TestCase {
         $this->assertEquals($expectedResult, $categoryResult);
 
     }
+
 }
     

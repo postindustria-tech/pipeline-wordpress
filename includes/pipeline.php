@@ -32,6 +32,10 @@ class Pipeline
      */
     public static $data = null;
 
+    public static function reset() {
+        Pipeline::$data = null;
+    }
+
    /**
 	* Makes a pipeline from a resource key that 
 	* can be serialized to the database.

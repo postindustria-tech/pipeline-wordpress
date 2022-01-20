@@ -18,7 +18,7 @@
     clause in Article 5 of the EUPL shall not apply.
 */
 
-    if(isset($_GET["tab"])){
+    if (isset($_GET["tab"])) {
 
         $active_tab = sanitize_text_field( $_GET["tab"] );
     

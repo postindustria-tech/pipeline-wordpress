@@ -27,7 +27,6 @@
 
 require_once __DIR__ . '/pipeline.php';
 
-
 class FiftyoneService {
 
     /**
@@ -213,7 +212,7 @@ class FiftyoneService {
      * 
      * @return void
      */
-    function fiftyonedegrees_admin_enqueue_scripts () {
+    function fiftyonedegrees_admin_enqueue_scripts() {
         wp_enqueue_style(
             Constants::ADMIN_STYLES,
             plugin_dir_url(__FILE__) . "assets/css/fod.css");
@@ -334,7 +333,6 @@ class FiftyoneService {
      * @return string the updated block content
      */
     public function fiftyonedegrees_block_filter($block_content, $block) {
-        echo "RENDERING>>>>>>>>>\n";
         $content = $block_content;
         $pattern = '/\{Pipeline::get\("[A-Za-z]+",[ ]*"[A-Za-z]+"\)\}/';
         preg_match_all(

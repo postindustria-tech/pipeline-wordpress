@@ -10,6 +10,8 @@
     </testsuite>
     <testsuite name="PluginTests">
       <file>tests/HookTests.php</file>
+      <file>tests/RenderTests.php</file>
+      <file>tests/EditorTests.php</file>
     </testsuite>
     <testsuite name="GATests">
       <file>tests/GaServiceTests.php</file>
