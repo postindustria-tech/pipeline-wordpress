@@ -617,7 +617,7 @@ class Fiftyonedegrees_Google_Analytics {
             delete_option("tracking_id_error");
             wp_redirect(get_admin_url() .
                 'options-general.php?page=51Degrees&tab=google-analytics' );
-            exit;
+            if (defined('ABSPATH')) { exit; }
         }
     }
 

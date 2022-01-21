@@ -37,7 +37,10 @@ class HookTests extends TestCase {
         $mock_pipeline = (new PipelineBuilder())
             ->add(new TestFlowElement())
             ->build();
-        HookTests::$pipeline = array("pipeline" =>  $mock_pipeline, "available_engines" => ["testElement"], "error" => null);
+        HookTests::$pipeline = array(
+            "pipeline" =>  $mock_pipeline,
+            "available_engines" => ["testElement"],
+            "error" => null);
         Functions\when('get_option')->alias(function($arg) {
             if ($arg === 'fiftyonedegrees_resource_key_pipeline') {
                 return HookTests::$pipeline;

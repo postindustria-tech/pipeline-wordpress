@@ -20,10 +20,20 @@ require(__DIR__ . "/../lib/vendor/autoload.php");
 require(__DIR__ . "/../includes/ga-service.php");
 require(__DIR__ . "/Mock_Google_Service_Analytics.php");
 
-use PHPUnit\Framework\TestCase;
+use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 use \Brain\Monkey\Functions;
 
 class GaServiceTests extends TestCase {
+
+	public function set_up() {
+		parent::set_up();
+        Brain\Monkey\setUp();
+	}
+
+	public function tear_down() {
+		Brain\Monkey\tearDown();
+		parent::tear_down();
+	}
 
     /**
      *  Tests Get Account Id for authorized user.
@@ -53,7 +63,7 @@ class GaServiceTests extends TestCase {
         // return values.
         Functions\expect('get_option')->once()->with('fiftyonedegrees_ga_tracking_id')->andReturn('test-123456789-0');
         Functions\expect('get_option')->once()->with('fiftyonedegrees_ga_max_cust_dim_index')->andReturn(0);
-        Functions\expect('update_option')->once()->with('fiftyonedegrees_ga_account_id')->andReturn("123456789");
+        Functions\expect('update_option')->once()->with('fiftyonedegrees_ga_account_id', "123456789");
         
         // Mock Google Analytics Service.
         $ga_mock = new Mock_Google_Service_Analytics();

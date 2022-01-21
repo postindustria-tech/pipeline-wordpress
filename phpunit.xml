@@ -16,6 +16,7 @@
     <testsuite name="GATests">
       <file>tests/GaServiceTests.php</file>
       <file>tests/GaTrackingGtagTests.php</file>
+      <file>tests/GaHookTests.php</file>
     </testsuite>
   </testsuites>
 </phpunit>
