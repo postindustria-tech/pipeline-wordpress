@@ -86,6 +86,9 @@ class FiftyoneService {
             array($this, 'fiftyonedegrees_update_option'),
             10,
             10);
+	    add_action(
+            'admin_init',
+            array($this, 'fiftyonedegrees_register_settings'));
     }
     
     /**
@@ -306,7 +309,7 @@ class FiftyoneService {
      * @return void
      */
     function fiftyonedegrees_admin_page() {
-        include plugin_dir_path(__FILE__) . "/admin.php";
+        include plugin_dir_path(__FILE__) . "../admin.php";
     }
 
     /**

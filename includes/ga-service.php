@@ -18,6 +18,8 @@
 
 use Google\Service\Analytics\CustomDimension;
 
+require_once __DIR__ . '/../constants.php';
+
 /**
  * Google Analytics Service class 
  *
@@ -514,7 +516,7 @@ class Fiftyonedegrees_Google_Analytics {
         update_option(Constants::GA_JS, $gtag_code);
 
         // Insert Custom Dimensions in Google Analytics
-        $this->ga_service->insert_custom_dimensions();
+        $this->insert_custom_dimensions();
         
         // Mark tracking is enabled.
         update_option(Constants::ENABLE_GA, "enabled");
@@ -599,7 +601,7 @@ class Fiftyonedegrees_Google_Analytics {
             
             $key_google_token = sanitize_text_field(wp_unslash(
                     $_POST[Constants::GA_CODE]));
-            $this->ga_service->google_analytics_authenticate(
+            $this->google_analytics_authenticate(
                 $key_google_token);
             delete_option("tracking_id_error");
             wp_redirect(get_admin_url() .

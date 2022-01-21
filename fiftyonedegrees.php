@@ -58,11 +58,11 @@ class Fiftyonedegrees {
     private function __construct() {
         $this->load_includes();
         $this->setup_constants();		
-        $this->fiftone_service = new FiftyoneService();
+        $this->fiftyone_service = new FiftyoneService();
         $this->ga_service = new Fiftyonedegrees_Google_Analytics();
         $this->gtag_tracking_inst = new Fiftyonedegrees_Tracking_Gtag();
         $this->setup_wp_actions();
-        $this->setup_wp_filters(plugin_basename(__FILE__));
+        $this->setup_wp_filters();
     }
 
     /**
@@ -139,13 +139,10 @@ class Fiftyonedegrees {
     function setup_wp_actions() {
         $this->fiftyone_service->setup_wp_actions();
         $this->ga_service->setup_wp_actions();
-        add_action(
-            'admin_init',
-            array($this, 'fiftyonedegrees_register_settings'));
     }
 
     function setup_wp_filters() {
-        $this->fiftyone_service->setup_wp_filters();
+        $this->fiftyone_service->setup_wp_filters(plugin_basename(__FILE__));
     }
                 
 }
