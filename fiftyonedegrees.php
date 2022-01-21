@@ -47,7 +47,7 @@ class Fiftyonedegrees {
     private static $instance;
     private $ga_service;
     private $gtag_tracking_inst;
-    private $fiftone_service;
+    private $fiftyone_service;
 
     /**
      * Constructor.
