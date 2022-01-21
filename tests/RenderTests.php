@@ -20,7 +20,6 @@ require_once(__DIR__ . "/../lib/vendor/autoload.php");
 require_once(__DIR__ . "/../includes/fiftyone-service.php");
 
 use fiftyone\pipeline\core\PipelineBuilder;
-#use PHPUnit\Framework\TestCase;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 use \Brain\Monkey\Functions;
 use \Brain\Monkey\Actions;

@@ -21,7 +21,6 @@ require(__DIR__ . "/../includes/pipeline.php");
 require(__DIR__ . "/TestFlowElement.php");
 
 use fiftyone\pipeline\core\PipelineBuilder;
-#use PHPUnit\Framework\TestCase;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 use \Brain\Monkey\Functions;
 use \Brain\Monkey\Filters;
