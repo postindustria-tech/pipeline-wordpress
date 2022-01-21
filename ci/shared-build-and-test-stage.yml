@@ -84,7 +84,7 @@ stages:
         else
           echo "Test Production Pipeline."
         fi
-        composer install --no-interaction --prefer-dist 
+        composer install --dev --no-interaction --prefer-dist 
       displayName: 'Install dependencies'
 
     - script: |
