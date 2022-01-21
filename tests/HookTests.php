@@ -31,7 +31,7 @@ use \Brain\Monkey;
 class HookTests extends TestCase {
 
     private static $pipeline;
-	public function set_up(): void {
+	public function set_up() {
         Pipeline::reset();
 		parent::set_up();
 		Brain\Monkey\setUp();
@@ -46,7 +46,7 @@ class HookTests extends TestCase {
         });
 	}
 
-	public function tear_down(): void {
+	public function tear_down() {
 		Brain\Monkey\tearDown();
 		parent::tear_down();
 	}

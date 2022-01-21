@@ -30,7 +30,7 @@ use \Brain\Monkey;
 
 class RenderTests extends TestCase {
 
-	public function set_up(): void {
+	public function set_up() {
         Pipeline::reset();
 		parent::set_up();
 		Brain\Monkey\setUp();
@@ -42,7 +42,7 @@ class RenderTests extends TestCase {
         Pipeline::process();
     }
 
-	public function tear_down(): void {
+	public function tear_down() {
 		Brain\Monkey\tearDown();
 		parent::tear_down();
 	}

@@ -30,7 +30,7 @@ use \Brain\Monkey;
 
 class EditorTests extends TestCase {
 
-	public function set_up(): void {
+	public function set_up() {
         // Reset the pipeline so there is nothing from a previous test.
         Pipeline::reset();
 		parent::set_up();
@@ -52,7 +52,7 @@ class EditorTests extends TestCase {
         Pipeline::process();
     }
 
-	public function tear_down(): void {
+	public function tear_down() {
 		Brain\Monkey\tearDown();
 		parent::tear_down();
 	}
