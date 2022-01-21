@@ -365,5 +365,290 @@ class Fiftyonedegrees_Google_Analytics {
 
         return $calls;
     }
+    
+    public function setup_wp_actions() {
+        add_action(
+            'admin_init',
+            array($this, 'fiftyonedegrees_ga_authentication'));
+        add_action(
+            'admin_init',
+            array($this, 'fiftyonedegrees_ga_logout'));
+        add_action(
+            'admin_init',
+            array($this, 'fiftyonedegrees_ga_set_tracking_id'));
+        add_action(
+            'admin_init',
+            array($this, 'fiftyonedegrees_ga_update_cd_indices'));
+        add_action(
+            'admin_init',
+            array($this, 'fiftyonedegrees_ga_change_screen'));
+        add_action(
+            'admin_init',
+            array($this, 'fiftyonedegrees_ga_enable_tracking'));
+            
+        // Head actions. These are actions to run before generating an HTML
+        // head section.
+        add_action(
+            'wp_head',
+            array($this, 'fiftyonedegrees_ga_add_analytics_code'),
+            10);
+    }
+
+    /**
+     * Construct a list of Google Analytics custom dimensions and store in
+     * an option.
+     * 
+     * This is called either when GA is enabled, or when the custom dimensions
+     * are updated.
+     * 
+     * @param array $cachedPipeline 51Degrees pipeline
+     * @return void
+     */
+    function populate_selected_dimensions($cachedPipeline) {
+
+        if (!isset($cachedPipeline['error'])) {
+                    
+            $passed_dimensions = array();
+            foreach ($_POST as $key=>$dimension) {
+                if (strpos($key, "51D_") !== false) {
+                    $key = sanitize_text_field(wp_unslash(
+                        str_replace("51D_","", $key)));
+                    $passed_dimensions[$key] =
+                        sanitize_text_field(wp_unslash($dimension));
+                }
+            }
+            update_option(
+                Constants::GA_DIMENSIONS,
+                $passed_dimensions);
+            update_option(
+                Constants::GA_DIMENSIONS_UPDATED,
+                true);
+        }
+    }
+
+    /**
+     * If a POST has been made with new Google Analytics custom dimensions,
+     * then update them within the plugin.
+     * 
+     * @return void
+     */
+    function fiftyonedegrees_ga_update_cd_indices() {
+
+        if (isset($_POST[Constants::GA_UPDATE_DIMENSIONS_POST])) {
+
+            if ("Update Custom Dimension Mappings" ===
+                $_POST[Constants::GA_UPDATE_DIMENSIONS_POST]) {
+                $this->populate_selected_dimensions(
+                    get_option(Constants::PIPELINE));
+
+            }
+            wp_redirect(get_admin_url() .
+                'options-general.php?page=51Degrees&tab=google-analytics');
+        }       
+    }
+
+    /**
+     * Add Google Analytics JavaScript to the page.
+     * 
+     * @return void
+     */
+    function fiftyonedegrees_ga_add_analytics_code() {
+        
+        echo sprintf(
+            esc_html('%1$s'),
+            get_option(Constants::GA_JS));			  
+    }
+
+    /**
+     * If a POST has been made to enable/disable Google Analytics,
+     * then enable it and update the custom dimensions within the plugin.
+     * 
+     * @return void
+     */
+    function fiftyonedegrees_ga_enable_tracking() {
+
+        if (isset($_POST[Constants::ENABLE_GA])) {
+
+            if ("Enable Google Analytics Tracking" ===
+                $_POST[Constants::ENABLE_GA]) {
+
+                $cachedPipeline =
+                    get_option(Constants::PIPELINE);
+                $this->populate_selected_dimensions($cachedPipeline);
+
+                if (!isset($cachedPipeline['error'])) {
+
+                    $this->execute_ga_tracking_steps();
+                }
+                
+            }
+            else {
+                delete_option(Constants::GA_JS);
+                delete_option(Constants::ENABLE_GA);            
+            }
+
+            delete_option(Constants::RESOURCE_KEY_UPDATED);
+            delete_option("tracking_id_update_flag");
+            delete_option("send_page_view_update_flag");
+            delete_option(Constants::GA_DIMENSIONS_UPDATED);
+            wp_redirect(get_admin_url() .
+                'options-general.php?page=51Degrees&tab=google-analytics');
+        }
+                            
+    }
+
+    /**
+     * Sets up the options needed to add custom dimentions to Google Analytics.
+     * 
+     * @return void
+     */
+    function execute_ga_tracking_steps() {
+
+        //Prepare Custom Dimensions
+        $customDimensionsTable = new Fiftyonedegrees_Custom_Dimensions();
+        $customDimensionsTable->prepare_items();           
+
+        // Get Google analytics Tracking Javascript to be added to the
+        // header. 
+        $gtag_code = $this->gtag_tracking_inst->output_ga_tracking_code();
+        update_option(Constants::GA_JS, $gtag_code);
+
+        // Insert Custom Dimensions in Google Analytics
+        $this->ga_service->insert_custom_dimensions();
+        
+        // Mark tracking is enabled.
+        update_option(Constants::ENABLE_GA, "enabled");
+    }
+
+    /**
+     * Run if a POST is recieved to update Google Analytics options.
+     * 
+     * @return void
+     */
+    function fiftyonedegrees_ga_change_screen() {
+
+        if (isset($_POST[Constants::GA_CHANGE])) {
+            
+            delete_option("custom_dimension_screen");
+            update_option("change_to_authentication_screen", "enabled");
+            wp_redirect(get_admin_url() .
+                'options-general.php?page=51Degrees&tab=google-analytics' );
+        }          
+    }   
+
+    /**
+     * If a change is made to the Google Analytics token, then update all
+     * the relevant options.
+     * 
+     * @return void
+     */
+    function fiftyonedegrees_ga_set_tracking_id() {         
+        if (get_option(Constants::GA_TOKEN)) {
+            if (isset($_POST['submit']) &&
+                "Save Changes" === $_POST['submit']) {
+
+                delete_option("tracking_id_error");
+                update_option("custom_dimension_screen", "enabled");
+
+                if (isset($_POST[Constants::GA_TOKEN]) &&
+                    "Select Analytics Property" ===
+                    $_POST[Constants::GA_TOKEN]) {
+
+                    update_option("tracking_id_error", true);
+                    delete_option("custom_dimension_screen");                        
+                }
+                else if (isset($_POST[Constants::GA_TOKEN])) {
+
+                    $ga_tracking_id = sanitize_text_field(wp_unslash(
+                        $_POST[Constants::GA_TOKEN]));
+                    
+                    update_option(
+                        Constants::GA_TOKEN,
+                        $ga_tracking_id);
+
+                    if (isset($_POST[Constants::GA_SEND_PAGE_VIEW]) &&
+                        "on" === $_POST[Constants::GA_SEND_PAGE_VIEW]) {
+                        update_option(
+                            Constants::GA_SEND_PAGE_VIEW,
+                            'true');
+                        update_option("send_page_view_val", "On");
+                    }  
+                    else {
+                        delete_option(Constants::GA_SEND_PAGE_VIEW);
+                        update_option("send_page_view_val", "Off");                      
+                    }
+                    
+                }					
+                wp_redirect(get_admin_url() .
+                    'options-general.php?page=51Degrees&tab=google-analytics' );
+            }     
+        }
+    }
+
+    /**
+     * If a new Google Analytics token is set in the admin interface, then
+     * authenticate it in the Google Analytics service. This will then set
+     * the GA_TOKEN option.
+     * 
+     * @return void
+     */
+    function fiftyonedegrees_ga_authentication() {
+
+        if (isset($_POST[Constants::GA_CODE]) &&
+            isset($_POST['submit'])) {
+            
+            $key_google_token = sanitize_text_field(wp_unslash(
+                    $_POST[Constants::GA_CODE]));
+            $this->ga_service->google_analytics_authenticate(
+                $key_google_token);
+            delete_option("tracking_id_error");
+            wp_redirect(get_admin_url() .
+                'options-general.php?page=51Degrees&tab=google-analytics' );
+            exit;
+        }
+    }
+
+    /**
+     * If logout from Google Analytics is requested in the admin interface,
+     * then remove all existing options relating to Google Analytics.
+     * 
+     * @return void
+     */
+    function fiftyonedegrees_ga_logout() {
+
+        if (isset($_POST['ga_log_out'])) {
+            
+            $this->delete_ga_options();
+
+            wp_redirect(get_admin_url() .
+                'options-general.php?page=51Degrees&tab=google-analytics' );
+        }
+    }
+
+    /**
+     * Delete all the options relating to Google Analytics. This will disable
+     * the Google Analytics feature.
+     */
+    function delete_ga_options() {
+
+        delete_option(Constants::GA_AUTH_CODE);
+        delete_option(Constants::GA_TOKEN);
+        delete_option(Constants::GA_PROPERTIES);
+        delete_option(Constants::GA_TRACKING_ID);
+        delete_option(Constants::GA_ACCOUNT_ID);
+        delete_option(Constants::GA_MAX_DIMENSIONS);
+        delete_option(Constants::GA_SEND_PAGE_VIEW);
+        delete_option(Constants::GA_JS);
+        delete_option(Constants::ENABLE_GA);
+        delete_option(Constants::GA_ERROR);
+        delete_option(Constants::RESOURCE_KEY_UPDATED);
+        delete_option(Constants::GA_DIMENSIONS);
+        delete_option(Constants::GA_DIMENSIONS_UPDATED);
+        delete_option("tracking_id_update_flag");
+        delete_option("send_page_view_update_flag");
+        delete_option("tracking_id_error");
+        delete_option("custom_dimension_screen");
+        delete_option("change_to_authentication_screen");
+    }
 }
     
