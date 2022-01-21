@@ -20,7 +20,8 @@ require_once(__DIR__ . "/../lib/vendor/autoload.php");
 require_once(__DIR__ . "/../includes/fiftyone-service.php");
 
 use fiftyone\pipeline\core\PipelineBuilder;
-use PHPUnit\Framework\TestCase;
+#use PHPUnit\Framework\TestCase;
+use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 use \Brain\Monkey\Functions;
 use \Brain\Monkey\Actions;
 use \Brain\Monkey\Filters;
@@ -30,9 +31,9 @@ use \Brain\Monkey;
 class HookTests extends TestCase {
 
     private static $pipeline;
-	public function setUp(): void {
+	public function set_up(): void {
         Pipeline::reset();
-		parent::setUp();
+		parent::set_up();
 		Brain\Monkey\setUp();
         $mock_pipeline = (new PipelineBuilder())
             ->add(new TestFlowElement())
@@ -45,9 +46,9 @@ class HookTests extends TestCase {
         });
 	}
 
-	public function tearDown(): void {
+	public function tear_down(): void {
 		Brain\Monkey\tearDown();
-		parent::tearDown();
+		parent::tear_down();
 	}
     
     /**
@@ -176,7 +177,7 @@ class HookTests extends TestCase {
 
         // We are asserting via the expect, so tell PHPUnit not
         // to worry.
-        $this->expectNotToPerformAssertions();
+        $this->assertTrue(true);
     }
 
     /**
@@ -197,8 +198,7 @@ class HookTests extends TestCase {
        
         // We are asserting via the expect, so tell PHPUnit not
         // to worry.
-        $this->expectNotToPerformAssertions();
+        $this->assertTrue(true);
     }
-
 }
 ?>

@@ -20,7 +20,8 @@ require_once(__DIR__ . "/../lib/vendor/autoload.php");
 require_once(__DIR__ . "/../includes/fiftyone-service.php");
 
 use fiftyone\pipeline\core\PipelineBuilder;
-use PHPUnit\Framework\TestCase;
+#use PHPUnit\Framework\TestCase;
+use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 use \Brain\Monkey\Functions;
 use \Brain\Monkey\Actions;
 use \Brain\Monkey\Filters;
@@ -29,10 +30,10 @@ use \Brain\Monkey;
 
 class EditorTests extends TestCase {
 
-	public function setUp(): void {
+	public function set_up(): void {
         // Reset the pipeline so there is nothing from a previous test.
         Pipeline::reset();
-		parent::setUp();
+		parent::set_up();
 		Brain\Monkey\setUp();
         // Mock the pipeline that the plugin uses so we don't need a
         // license key.
@@ -51,9 +52,9 @@ class EditorTests extends TestCase {
         Pipeline::process();
     }
 
-	public function tearDown(): void {
+	public function tear_down(): void {
 		Brain\Monkey\tearDown();
-		parent::tearDown();
+		parent::tear_down();
 	}
 
     /**

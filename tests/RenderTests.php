@@ -20,7 +20,8 @@ require_once(__DIR__ . "/../lib/vendor/autoload.php");
 require_once(__DIR__ . "/../includes/fiftyone-service.php");
 
 use fiftyone\pipeline\core\PipelineBuilder;
-use PHPUnit\Framework\TestCase;
+#use PHPUnit\Framework\TestCase;
+use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 use \Brain\Monkey\Functions;
 use \Brain\Monkey\Actions;
 use \Brain\Monkey\Filters;
@@ -29,9 +30,9 @@ use \Brain\Monkey;
 
 class RenderTests extends TestCase {
 
-	public function setUp(): void {
+	public function set_up(): void {
         Pipeline::reset();
-		parent::setUp();
+		parent::set_up();
 		Brain\Monkey\setUp();
         $mock_pipeline = (new PipelineBuilder())
             ->add(new TestFlowElement())
@@ -41,9 +42,9 @@ class RenderTests extends TestCase {
         Pipeline::process();
     }
 
-	public function tearDown(): void {
+	public function tear_down(): void {
 		Brain\Monkey\tearDown();
-		parent::tearDown();
+		parent::tear_down();
 	}
 
     /**

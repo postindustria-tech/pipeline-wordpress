@@ -21,22 +21,24 @@ require(__DIR__ . "/../includes/pipeline.php");
 require(__DIR__ . "/TestFlowElement.php");
 
 use fiftyone\pipeline\core\PipelineBuilder;
-use PHPUnit\Framework\TestCase;
+#use PHPUnit\Framework\TestCase;
+use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 use \Brain\Monkey\Functions;
 use \Brain\Monkey\Filters;
 
+
 class PipelineTests extends TestCase {
 
-	public function setUp(): void {
+    public function set_up() {
         Pipeline::reset();
-		parent::setUp();
-		Brain\Monkey\setUp();
-	}
+        parent::set_up();
+        Brain\Monkey\setUp();
+    }
 
-	public function tearDown(): void {
-		Brain\Monkey\tearDown();
-		parent::tearDown();
-	}
+    public function tear_down() {
+        Brain\Monkey\tearDown();
+        parent::tear_down();
+    }
 
     // Data Provider for testGetAppContext
 	public function provider_testGetAppContext() {
