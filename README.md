@@ -208,3 +208,12 @@ and copy all directories and php files from the root of this repo into it.
 4.  Copy the `fiftyonedegrees` directory into your 'wp-content/plugins' directory.
 
 5.  Activate the 51Degrees plugin.
+
+# Plugin Tests
+
+Tests for this plugin are located in the `tests` folder.
+They make use of the [Brain Monkey](https://brain-wp.github.io/BrainMonkey/)
+package to facilitate WordPress specific tests via it's mocking capabilities.
+Also the [PHPUnit Polyfills](https://github.com/Yoast/PHPUnit-Polyfills)
+package to ensure tests which are backwards compatible with PHPUnit versions.
+For more info see the recommendation on [PHPUnit versions page](https://phpunit.de/supported-versions.html).
