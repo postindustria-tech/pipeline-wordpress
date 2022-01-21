@@ -368,6 +368,17 @@ class Fiftyonedegrees_Google_Analytics {
         return $calls;
     }
     
+    /**
+     * Setup action hooks for the plugin. These hooks are handled
+     * by wordpress.
+     * 
+     * See available actions:
+     * https://codex.wordpress.org/Plugin_API/Action_Reference
+     *
+     * @access      private
+     * @since       1.0.11
+     * @return      void
+     */
     public function setup_wp_actions() {
         add_action(
             'admin_init',

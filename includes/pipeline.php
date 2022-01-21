@@ -32,6 +32,10 @@ class Pipeline
      */
     public static $data = null;
 
+    /**
+     * Resets the processed data to null. This is primarily used in tests
+     * to simulate a fresh web request.
+     */
     public static function reset() {
         Pipeline::$data = null;
     }
