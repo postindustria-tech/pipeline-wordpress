@@ -64,10 +64,10 @@ if ((!get_option(Options::GA_TOKEN) &&
 				</tr>
 				<tr>
 					<th scope="row">
-						<label for="<?php echo Options::GA_CODE; ?>">Access Code</label>
+						<label for="<?php echo "fiftyonedegrees_ga_code"; ?>">Access Code</label>
 					</th>
 					<td>
-						<input name="<?php echo Options::GA_CODE; ?>" id="<?php echo Options::GA_CODE; ?>" type="text" size="32"></input>
+						<input name="<?php echo "fiftyonedegrees_ga_code"; ?>" id="<?php echo "fiftyonedegrees_ga_code"; ?>" type="text" size="32"></input>
 						<p class="description">
 							Enter copied Google Account Access Code here.<br>
 						</p>

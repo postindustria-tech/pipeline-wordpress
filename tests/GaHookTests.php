@@ -85,7 +85,7 @@ class GaHookTests extends TestCase {
      */
     public function testGaAuthenticate() {
         $_POST = array(
-            Options::GA_CODE => "some code",
+            "fiftyonedegrees_ga_code" => "some code",
             "submit" => ""
         );
         Functions\when('get_admin_url')->justReturn('admin/');
@@ -132,7 +132,6 @@ class GaHookTests extends TestCase {
         Functions\expect('delete_option')->once()->with(Options::GA_SEND_PAGE_VIEW_UPDATED);
         Functions\expect('delete_option')->once()->with(Options::GA_TRACKING_ID_ERROR);
         Functions\expect('delete_option')->once()->with(Options::GA_CUSTOM_DIMENSIONS_SCREEN);
-        Functions\expect('delete_option')->once()->with(Options::GA_CHANGE_TO_AUTH_SCREEN);
 
         Functions\expect('wp_redirect')
             ->once()
@@ -167,7 +166,7 @@ class GaHookTests extends TestCase {
      */
     public function testGaUpdateCustomDimensions() {
         $_POST = array(
-            Options::GA_UPDATE_DIMENSIONS_POST => "Update Custom Dimension Mappings",
+            "fiftyonedegrees_ga_update_cd_indices" => "Update Custom Dimension Mappings",
             "51D_dim1" => "firstproperty",
         );
         Functions\when('get_admin_url')->justReturn('admin/');

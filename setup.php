@@ -17,7 +17,7 @@
 
 <form method="post" action="options.php">
 
-    <?php settings_fields(Options::OPTIONS); ?>
+    <?php settings_fields(Options::GROUP_KEY); ?>
 
     <?php
 

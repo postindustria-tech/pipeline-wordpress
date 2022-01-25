@@ -155,7 +155,7 @@ class FiftyoneService {
 
         // Register the new settings with wordpress.
         register_setting(
-            Options::OPTIONS,
+            Options::GROUP_KEY,
             Options::RESOURCE_KEY);
     }
 
@@ -217,13 +217,13 @@ class FiftyoneService {
      */
     function fiftyonedegrees_admin_enqueue_scripts() {
         wp_enqueue_style(
-            Options::ADMIN_STYLES,
+            "fiftyonedegrees_admin_styles",
             plugin_dir_url(__FILE__) . "assets/css/fod.css");
         wp_enqueue_style(
-            Options::ADMIN_ICONS,
+            "fiftyonedegrees_admin_styles_icons",
             "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
         wp_enqueue_script(
-            Options::JQUERY,
+            "fiftyonedegrees_jQuery",
             plugin_dir_url(__FILE__) . '/assets/js/51D.js',
             array('jquery') #dependencies
         );			

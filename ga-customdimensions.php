@@ -97,7 +97,7 @@ else {
                     </p>
                 </td>
                 <td>
-                    <button type="submit" class="button-primary" name="<?php echo Options::GA_CHANGE; ?>">
+                    <button type="submit" class="button-primary" name="fiftyonedegrees_ga_change_settings">
                         <span style="font-size:16px;">&laquo;</span> Go Back</i>
                     </button>
                 </td>
@@ -132,7 +132,7 @@ else {
                 </td>
             <?php } ?> 
                 <td>
-                    <input type="submit" class="button-primary" value="Update Custom Dimension Mappings" name="<?php echo Options::GA_UPDATE_DIMENSIONS_POST; ?>" />
+                    <input type="submit" class="button-primary" value="Update Custom Dimension Mappings" name="<?php echo "fiftyonedegrees_ga_update_cd_indices"; ?>" />
                 </td>
             </tr>
         </tbody>

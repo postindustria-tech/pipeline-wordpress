@@ -446,10 +446,10 @@ class Fiftyonedegrees_Google_Analytics {
      */
     function fiftyonedegrees_ga_update_cd_indices() {
 
-        if (isset($_POST[Options::GA_UPDATE_DIMENSIONS_POST])) {
+        if (isset($_POST["fiftyonedegrees_ga_update_cd_indices"])) {
 
             if ("Update Custom Dimension Mappings" ===
-                $_POST[Options::GA_UPDATE_DIMENSIONS_POST]) {
+                $_POST["fiftyonedegrees_ga_update_cd_indices"]) {
                 $this->populate_selected_dimensions(
                     get_option(Options::PIPELINE));
 
@@ -539,10 +539,9 @@ class Fiftyonedegrees_Google_Analytics {
      */
     function fiftyonedegrees_ga_change_screen() {
 
-        if (isset($_POST[Options::GA_CHANGE])) {
+        if (isset($_POST["fiftyonedegrees_ga_change_settings"])) {
             
             delete_option(Options::GA_CUSTOM_DIMENSIONS_SCREEN);
-            update_option(Options::GA_CHANGE_TO_AUTH_SCREEN, "enabled");
             wp_redirect(get_admin_url() .
                 'options-general.php?page=51Degrees&tab=google-analytics' );
         }          
@@ -606,11 +605,11 @@ class Fiftyonedegrees_Google_Analytics {
      */
     function fiftyonedegrees_ga_authentication() {
 
-        if (isset($_POST[Options::GA_CODE]) &&
+        if (isset($_POST["fiftyonedegrees_ga_code"]) &&
             isset($_POST['submit'])) {
             
             $key_google_token = sanitize_text_field(wp_unslash(
-                    $_POST[Options::GA_CODE]));
+                    $_POST["fiftyonedegrees_ga_code"]));
             $this->google_analytics_authenticate(
                 $key_google_token);
             delete_option(Options::GA_TRACKING_ID_ERROR);
@@ -660,7 +659,6 @@ class Fiftyonedegrees_Google_Analytics {
         delete_option(Options::GA_SEND_PAGE_VIEW_UPDATED);
         delete_option(Options::GA_TRACKING_ID_ERROR);
         delete_option(Options::GA_CUSTOM_DIMENSIONS_SCREEN);
-        delete_option(Options::GA_CHANGE_TO_AUTH_SCREEN);
     }
 }
     
