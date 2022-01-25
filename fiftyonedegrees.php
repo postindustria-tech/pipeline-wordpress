@@ -134,7 +134,6 @@ class Fiftyonedegrees {
             require_once('includes/ga-custom-dimension-class.php');
         }         
     }
-          
 
     function setup_wp_actions() {
         $this->fiftyone_service->setup_wp_actions();
@@ -144,7 +143,10 @@ class Fiftyonedegrees {
     function setup_wp_filters() {
         $this->fiftyone_service->setup_wp_filters(plugin_basename(__FILE__));
     }
-                
+    
+    function delete_options() {
+        $this->ga_service->delete_ga_options();
+    }
 }
 
 
@@ -165,7 +167,7 @@ register_uninstall_hook(__FILE__, 'fiftyonedegrees_deactivate'); // delete
 
 function fiftyonedegrees_deactivate() {
 
-    Fiftyonedegrees::get_instance()->ga_service->delete_ga_options();
+    Fiftyonedegrees::get_instance()->delete_options();
     delete_option(Options::RESOURCE_KEY);
     delete_option(Options::PIPELINE);
 }
