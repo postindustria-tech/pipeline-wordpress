@@ -39,8 +39,8 @@ else {
     }
     else if (get_option(Constants::ENABLE_GA)) {
         if (get_option(Constants::RESOURCE_KEY_UPDATED) ||
-            get_option("tracking_id_update_flag") ||
-            get_option("send_page_view_update_flag") ||
+            get_option(Constants::GA_ID_UPDATED) ||
+            get_option(Constants::GA_SEND_PAGE_VIEW_UPDATED) ||
             get_option(Constants::GA_DIMENSIONS)) {
 
             // Include Fiftyonedegrees class
@@ -66,8 +66,8 @@ else {
                 echo '<p></p><span class="fod-pipeline-status good">' .
                 'Google Analytics Tracking is enabled for new Google ' .
                 'Analytics Property Settings.</span>';
-                delete_option("tracking_id_update_flag");
-                delete_option("send_page_view_update_flag");
+                delete_option(Constants::GA_ID_UPDATED);
+                delete_option(Constants::GA_SEND_PAGE_VIEW_UPDATED);
             }
         }
         else {
@@ -97,7 +97,7 @@ else {
                     </p>
                 </td>
                 <td>
-                    <button type="submit" class="button-primary" name="fiftyonedegrees_ga_change_settings">
+                    <button type="submit" class="button-primary" name="<?php echo Constants::GA_CHANGE; ?>">
                         <span style="font-size:16px;">&laquo;</span> Go Back</i>
                     </button>
                 </td>
@@ -124,15 +124,15 @@ else {
             <tr>         
             <?php if ("enabled" !== get_option(Constants::ENABLE_GA)) { ?>
                 <td style="width: 90%">
-                    <input type="submit" class="button-primary" value="Enable Google Analytics Tracking" name="fiftyonedegrees_ga_enable_tracking" />
+                    <input type="submit" class="button-primary" value="Enable Google Analytics Tracking" name="<?php echo Constants::ENABLE_GA; ?>" />
                 </td>
             <?php } else { ?>
                 <td style="width: 90%">
-                    <input type="submit" class="button-primary" value="Disable Google Analytics Tracking" name="fiftyonedegrees_ga_enable_tracking" />
+                    <input type="submit" class="button-primary" value="Disable Google Analytics Tracking" name="<?php echo Constants::ENABLE_GA; ?>" />
                 </td>
             <?php } ?> 
                 <td>
-                    <input type="submit" class="button-primary" value="Update Custom Dimension Mappings" name="fiftyonedegrees_ga_update_cd_indices" />
+                    <input type="submit" class="button-primary" value="Update Custom Dimension Mappings" name="<?php echo Constants::GA_UPDATE_DIMENSIONS_POST; ?>" />
                 </td>
             </tr>
         </tbody>

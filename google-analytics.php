@@ -57,17 +57,17 @@ if ((!get_option(Constants::GA_TOKEN) &&
 							when logging into Google Analytics.</br>
 						</p>
 						</br>
-						<a title="Log in with Google Analytics Account" id="fiftyonedegrees_ga_token" class="button-primary authentication_btn" href="https://accounts.google.com/o/oauth2/auth?<?php echo generate_login_url(); ?>" target="_blank">
+						<a title="Log in with Google Analytics Account" id="<?php echo Constants::GA_TOKEN; ?>" class="button-primary authentication_btn" href="https://accounts.google.com/o/oauth2/auth?<?php echo generate_login_url(); ?>" target="_blank">
 							Log in with Google Analytics Account
 						</a>
 					</td>
 				</tr>
 				<tr>
 					<th scope="row">
-						<label for="fiftyonedegrees_ga_code">Access Code</label>
+						<label for="<?php echo Constants::GA_CODE; ?>">Access Code</label>
 					</th>
 					<td>
-						<input name="fiftyonedegrees_ga_code" id="fiftyonedegrees_ga_code" type="text" size="32"></input>
+						<input name="<?php echo Constants::GA_CODE; ?>" id="<?php echo Constants::GA_CODE; ?>" type="text" size="32"></input>
 						<p class="description">
 							Enter copied Google Account Access Code here.<br>
 						</p>
@@ -80,7 +80,7 @@ if ((!get_option(Constants::GA_TOKEN) &&
 	</form>
 <?php	
 }
-else if (get_option("custom_dimension_screen")) { 
+else if (get_option(Constants::GA_CUSTOM_DIMENSIONS_SCREEN)) { 
 
 	include plugin_dir_path(__FILE__) . "/ga-customdimensions.php";
 
@@ -91,7 +91,7 @@ else { ?>
 		<table class="form-table">
 			<tbody>
 			<?php 
-				if (get_option('tracking_id_error')) {
+				if (get_option(Constants::GA_TRACKING_ID_ERROR)) {
 			?>
 					<p></p>
 					<?php echo '<span class="fod-pipeline-status error"><b>Please Select Analytics Property.</b></span>';
@@ -113,12 +113,12 @@ else { ?>
 				</tr>
 				<tr>
 					<th scope="row" >
-						<label class="pt-20" for="fiftyonedegrees_ga_tracking_id">
+						<label class="pt-20" for="<?php echo Constants::GA_TRACKING_ID; ?>">
 							Analytics Account/Property
 						</label>
 					</th>
 					<td>
-						<select id="fiftyonedegrees_ga_tracking_id" name = "fiftyonedegrees_ga_tracking_id">
+						<select id="<?php echo Constants::GA_TRACKING_ID; ?>" name = "<?php echo Constants::GA_TRACKING_ID; ?>">
 						    <option >Select Analytics Property</option>
 							<script>
 							    var preSelectedTrackingId = "<?php echo esc_html(get_option(Constants::GA_TRACKING_ID)); ?>";
@@ -157,17 +157,17 @@ else { ?>
                 
 				<tr>
 					<th scope="row" >
-						<label class="pt-20" for="fiftyonedegrees_ga_send_page_view">
+						<label class="pt-20" for="<?php echo Constants::GA_SEND_PAGE_VIEW; ?>">
 							Send Page View
 						</label>
 					</th>
 					<td>
 					    <?php if (get_option(Constants::GA_SEND_PAGE_VIEW)) { ?>
-						    <input type="checkbox" id="fiftyonedegrees_ga_send_page_view" name="fiftyonedegrees_ga_send_page_view" checked>
+						    <input type="checkbox" id="<?php echo Constants::GA_SEND_PAGE_VIEW; ?>" name="<?php echo Constants::GA_SEND_PAGE_VIEW; ?>" checked>
 						<?php } else { ?>
-							<input type="checkbox" id="fiftyonedegrees_ga_send_page_view" name="fiftyonedegrees_ga_send_page_view"> 
+							<input type="checkbox" id="<?php echo Constants::GA_SEND_PAGE_VIEW; ?>" name="<?php echo Constants::GA_SEND_PAGE_VIEW; ?>"> 
 						<?php } ?>
-						<label for="fiftyonedegrees_ga_send_page_view">
+						<label for="<?php echo Constants::GA_SEND_PAGE_VIEW; ?>">
 							Send Page View
 							<span class="fa-stack fa-lg" style="font-size:12px;">
 								<i class="fa fa-circle fa-stack-2x" style="color:#666666;"></i>

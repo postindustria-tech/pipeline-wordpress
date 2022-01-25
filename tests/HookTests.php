@@ -41,7 +41,7 @@ class HookTests extends TestCase {
             "available_engines" => ["testElement"],
             "error" => null);
         Functions\when('get_option')->alias(function($arg) {
-            if ($arg === 'fiftyonedegrees_resource_key_pipeline') {
+            if ($arg === Constants::PIPELINE) {
                 return HookTests::$pipeline;
             }
         });

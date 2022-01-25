@@ -41,7 +41,7 @@ class RenderTests extends TestCase {
             "error" => null);
         Functions\expect('get_option')
             ->once()
-            ->with('fiftyonedegrees_resource_key_pipeline')
+            ->with(Constants::PIPELINE)
             ->andReturn($pipeline);
         Pipeline::process();
     }

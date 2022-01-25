@@ -55,7 +55,7 @@ class Fiftyonedegrees_Tracking_Gtag {
      */
 	public function get_properties_as_custom_dimensions() {
         
-		$custom_dimensions = get_option("fiftyonedegrees_ga_cust_dims_map");
+		$custom_dimensions = get_option(Constants::GA_CUSTOM_DIMENSIONS_MAP);
 		
 		$ga_dimensions_map = array();
 		foreach ( $custom_dimensions as $dimension ) {        

@@ -1,4 +1,10 @@
-<p>51Degrees Pipeline plugin can be used in your theme or plugin development. To setup, take the text from the <code>Usage in Content</code> column and insert it into <code>code</code> snippets into your pages that will be replaced with the corresponding values. Below is the list of properties available with your resource key.</p>
+<p>
+    51Degrees Pipeline plugin can be used in your theme or plugin development.
+    To setup, take the text from the <code>Usage in Content</code> column and
+    insert it into <code>code</code> snippets into your pages that will be
+    replaced with the corresponding values. Below is the list of properties
+    available with your resource key.
+</p>
 
 <?php
 /*

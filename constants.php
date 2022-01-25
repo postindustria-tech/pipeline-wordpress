@@ -37,10 +37,18 @@ class Constants
     const GA_MAX_DIMENSIONS = "fiftyonedegrees_ga_max_cust_dim_index";
     const GA_ERROR = "fiftyonedegrees_ga_error";
     const GA_SEND_PAGE_VIEW = "fiftyonedegrees_ga_send_page_view";
+    const GA_SEND_PAGE_VIEW_VAL = "fiftyonedegrees_ga_send_page_view_val";
     const GA_DIMENSIONS = "fiftyonedegrees_passed_dimensions";
     const GA_DIMENSIONS_UPDATED = "fiftyonedegrees_passed_dimensions_updated";
     const GA_UPDATE_DIMENSIONS_POST = "fiftyonedegrees_ga_update_cd_indices";
     const GA_JS = "fiftyonedegrees_ga_tracking_javascript";
     const GA_CHANGE = "fiftyonedegrees_ga_change_settings";
+    const GA_ID_UPDATED = "fiftyonedegrees_ga_tracking_id_update_flag";
+    const GA_SEND_PAGE_VIEW_UPDATED = "fiftyonedegrees_ga_send_page_view_update_flag";
+    const GA_TRACKING_ID_ERROR = "fiftyonedegrees_ga_tracking_id_error";
+    const GA_CUSTOM_DIMENSIONS_SCREEN = "fiftyonedegrees_ga_custom_dimension_screen";
+    const GA_CHANGE_TO_AUTH_SCREEN = "fiftyonedegrees_ga_change_to_authentication_screen";
+    const GA_CUSTOM_DIMENSIONS_MAP = "fiftyonedegrees_ga_cust_dims_map";
+    const GA_AUTH_DATE = "fiftyonedegrees_ga_auth_date";
 }
 ?>

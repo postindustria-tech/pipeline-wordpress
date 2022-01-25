@@ -55,7 +55,7 @@ class Fiftyonedegrees_Google_Analytics {
     
         }
         catch (Exception $e) {
-    
+
             error_log($e->getMessage());
         }
         return false; 
@@ -150,7 +150,7 @@ class Fiftyonedegrees_Google_Analytics {
     
                 update_option(Constants::GA_TOKEN, $access_token);
                 update_option(
-                    'fiftyonedegrees_ga_auth_date',
+                    Constants::GA_AUTH_DATE,
                     date( 'l jS F Y h:i:s A' ) . date_default_timezone_get());
     
             }
@@ -271,7 +271,6 @@ class Fiftyonedegrees_Google_Analytics {
      * and max available custom dimension index 
      */	
     public function get_custom_dimensions() {
-
         $trackingId = get_option(Constants::GA_TRACKING_ID);
         $maxCustomDimIndex = get_option(Constants::GA_MAX_DIMENSIONS);
         $client = $this->authenticate();
@@ -317,9 +316,9 @@ class Fiftyonedegrees_Google_Analytics {
     public function insert_custom_dimensions() {
 
         $calls = 0;        
-        $accountId = get_option("fiftyonedegrees_ga_account_id");
+        $accountId = get_option(Constants::GA_ACCOUNT_ID);
         $trackingId = get_option(Constants::GA_TRACKING_ID);
-        $cust_dim_map = get_option("fiftyonedegrees_ga_cust_dims_map");
+        $cust_dim_map = get_option(Constants::GA_CUSTOM_DIMENSIONS_MAP);
         $client = $this->authenticate();
 
         if ($client) {
@@ -501,8 +500,8 @@ class Fiftyonedegrees_Google_Analytics {
             }
 
             delete_option(Constants::RESOURCE_KEY_UPDATED);
-            delete_option("tracking_id_update_flag");
-            delete_option("send_page_view_update_flag");
+            delete_option(Constants::GA_ID_UPDATED);
+            delete_option(Constants::GA_SEND_PAGE_VIEW_UPDATED);
             delete_option(Constants::GA_DIMENSIONS_UPDATED);
             wp_redirect(get_admin_url() .
                 'options-general.php?page=51Degrees&tab=google-analytics');
@@ -542,8 +541,8 @@ class Fiftyonedegrees_Google_Analytics {
 
         if (isset($_POST[Constants::GA_CHANGE])) {
             
-            delete_option("custom_dimension_screen");
-            update_option("change_to_authentication_screen", "enabled");
+            delete_option(Constants::GA_CUSTOM_DIMENSIONS_SCREEN);
+            update_option(Constants::GA_CHANGE_TO_AUTH_SCREEN, "enabled");
             wp_redirect(get_admin_url() .
                 'options-general.php?page=51Degrees&tab=google-analytics' );
         }          
@@ -560,15 +559,15 @@ class Fiftyonedegrees_Google_Analytics {
             if (isset($_POST['submit']) &&
                 "Save Changes" === $_POST['submit']) {
 
-                delete_option("tracking_id_error");
-                update_option("custom_dimension_screen", "enabled");
+                delete_option(Constants::GA_TRACKING_ID_ERROR);
+                update_option(Constants::GA_CUSTOM_DIMENSIONS_SCREEN, "enabled");
 
                 if (isset($_POST[Constants::GA_TOKEN]) &&
                     "Select Analytics Property" ===
                     $_POST[Constants::GA_TOKEN]) {
 
-                    update_option("tracking_id_error", true);
-                    delete_option("custom_dimension_screen");                        
+                    update_option(Constants::GA_TRACKING_ID_ERROR, true);
+                    delete_option(Constants::GA_CUSTOM_DIMENSIONS_SCREEN);                        
                 }
                 else if (isset($_POST[Constants::GA_TOKEN])) {
 
@@ -584,11 +583,11 @@ class Fiftyonedegrees_Google_Analytics {
                         update_option(
                             Constants::GA_SEND_PAGE_VIEW,
                             'true');
-                        update_option("send_page_view_val", "On");
+                        update_option(Constants::GA_SEND_PAGE_VIEW_VAL, "On");
                     }  
                     else {
                         delete_option(Constants::GA_SEND_PAGE_VIEW);
-                        update_option("send_page_view_val", "Off");                      
+                        update_option(Constants::GA_SEND_PAGE_VIEW_VAL, "Off");                   
                     }
                     
                 }					
@@ -614,7 +613,7 @@ class Fiftyonedegrees_Google_Analytics {
                     $_POST[Constants::GA_CODE]));
             $this->google_analytics_authenticate(
                 $key_google_token);
-            delete_option("tracking_id_error");
+            delete_option(Constants::GA_TRACKING_ID_ERROR);
             wp_redirect(get_admin_url() .
                 'options-general.php?page=51Degrees&tab=google-analytics' );
             if (defined('ABSPATH')) { exit; }
@@ -657,11 +656,11 @@ class Fiftyonedegrees_Google_Analytics {
         delete_option(Constants::RESOURCE_KEY_UPDATED);
         delete_option(Constants::GA_DIMENSIONS);
         delete_option(Constants::GA_DIMENSIONS_UPDATED);
-        delete_option("tracking_id_update_flag");
-        delete_option("send_page_view_update_flag");
-        delete_option("tracking_id_error");
-        delete_option("custom_dimension_screen");
-        delete_option("change_to_authentication_screen");
+        delete_option(Constants::GA_ID_UPDATED);
+        delete_option(Constants::GA_SEND_PAGE_VIEW_UPDATED);
+        delete_option(Constants::GA_TRACKING_ID_ERROR);
+        delete_option(Constants::GA_CUSTOM_DIMENSIONS_SCREEN);
+        delete_option(Constants::GA_CHANGE_TO_AUTH_SCREEN);
     }
 }
     

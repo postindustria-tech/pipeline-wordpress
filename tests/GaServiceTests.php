@@ -65,15 +65,15 @@ class GaServiceTests extends TestCase {
         // return values.
         Functions\expect('get_option')
             ->once()
-            ->with('fiftyonedegrees_ga_tracking_id')
+            ->with(Constants::GA_TRACKING_ID)
             ->andReturn('test-123456789-0');
         Functions\expect('get_option')
             ->once()
-            ->with('fiftyonedegrees_ga_max_cust_dim_index')
+            ->with(Constants::GA_MAX_DIMENSIONS)
             ->andReturn(0);
         Functions\expect('update_option')
             ->once()
-            ->with('fiftyonedegrees_ga_account_id', "123456789");
+            ->with(Constants::GA_ACCOUNT_ID, "123456789");
         
         // Mock Google Analytics Service.
         $ga_mock = new Mock_Google_Service_Analytics();
@@ -117,15 +117,15 @@ class GaServiceTests extends TestCase {
         // return values.
         Functions\expect('get_option')
             ->once()
-            ->with('fiftyonedegrees_ga_account_id')
+            ->with(Constants::GA_ACCOUNT_ID)
             ->andReturn('123456789');
         Functions\expect('get_option')
             ->once()
-            ->with('fiftyonedegrees_ga_tracking_id')
+            ->with(Constants::GA_TRACKING_ID)
             ->andReturn('test-123456789-0');
         Functions\expect('get_option')
             ->once()
-            ->with('fiftyonedegrees_ga_cust_dims_map')
+            ->with(Constants::GA_CUSTOM_DIMENSIONS_MAP)
             ->andReturn($cust_dims_map);
         
         // Mock Google Analytics Service.

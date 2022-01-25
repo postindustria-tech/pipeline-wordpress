@@ -44,7 +44,7 @@ class EditorTests extends TestCase {
             "error" => null);
         Functions\expect('get_option')
             ->once()
-            ->with('fiftyonedegrees_resource_key_pipeline')
+            ->with(Constants::PIPELINE)
             ->andReturn($pipeline);
         Functions\when("wp_list_pluck")->alias(function($arg1, $arg2) {
             return array_column($arg1, $arg2);

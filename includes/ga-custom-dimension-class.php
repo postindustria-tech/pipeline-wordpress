@@ -131,7 +131,7 @@ class Fiftyonedegrees_Custom_Dimensions extends WP_List_Table
             return ($order === 'asc') ? $result : -$result;
         });
 
-        update_option("fiftyonedegrees_ga_cust_dims_map", $ga_results);
+        update_option(Constants::GA_CUSTOM_DIMENSIONS_MAP, $ga_results);
 
         $this->items = $results;
     }

@@ -93,7 +93,7 @@ class GaHookTests extends TestCase {
             ->makePartial();
         $service->shouldReceive('authenticate')->andReturn(false);
 
-        Functions\expect('delete_option')->once()->with('tracking_id_error');
+        Functions\expect('delete_option')->once()->with(Constants::GA_TRACKING_ID_ERROR);
         Functions\expect('wp_redirect')
             ->once()
             ->with('admin/options-general.php?page=51Degrees&tab=google-analytics');
@@ -128,11 +128,11 @@ class GaHookTests extends TestCase {
         Functions\expect('delete_option')->once()->with(Constants::RESOURCE_KEY_UPDATED);
         Functions\expect('delete_option')->once()->with(Constants::GA_DIMENSIONS);
         Functions\expect('delete_option')->once()->with(Constants::GA_DIMENSIONS_UPDATED);
-        Functions\expect('delete_option')->once()->with("tracking_id_update_flag");
-        Functions\expect('delete_option')->once()->with("send_page_view_update_flag");
-        Functions\expect('delete_option')->once()->with("tracking_id_error");
-        Functions\expect('delete_option')->once()->with("custom_dimension_screen");
-        Functions\expect('delete_option')->once()->with("change_to_authentication_screen");
+        Functions\expect('delete_option')->once()->with(Constants::GA_ID_UPDATED);
+        Functions\expect('delete_option')->once()->with(Constants::GA_SEND_PAGE_VIEW_UPDATED);
+        Functions\expect('delete_option')->once()->with(Constants::GA_TRACKING_ID_ERROR);
+        Functions\expect('delete_option')->once()->with(Constants::GA_CUSTOM_DIMENSIONS_SCREEN);
+        Functions\expect('delete_option')->once()->with(Constants::GA_CHANGE_TO_AUTH_SCREEN);
 
         Functions\expect('wp_redirect')
             ->once()
@@ -181,7 +181,7 @@ class GaHookTests extends TestCase {
 
         Functions\expect('get_option')
             ->once()
-            ->with('fiftyonedegrees_resource_key_pipeline')
+            ->with(Constants::PIPELINE)
             ->andReturn($pipeline);
         Functions\expect('wp_redirect')
             ->once()

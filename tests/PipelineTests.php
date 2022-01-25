@@ -122,7 +122,7 @@ class PipelineTests extends TestCase {
         $pipeline = Pipeline::make_pipeline($resourceKey);
         Functions\expect('get_option')
             ->once()
-            ->with('fiftyonedegrees_resource_key_pipeline')
+            ->with(Constants::PIPELINE)
             ->andReturn($pipeline);
 
         Pipeline::process();
@@ -154,7 +154,7 @@ class PipelineTests extends TestCase {
 
         Functions\expect('get_option')
             ->times(1)
-            ->with('fiftyonedegrees_resource_key_pipeline')
+            ->with(Constants::PIPELINE)
             ->andReturn($pipeline);
         Functions\when('plugin_dir_path')->justReturn(getcwd(). "/");
 
@@ -212,7 +212,7 @@ class PipelineTests extends TestCase {
         $_SESSION = array();
         Functions\expect('get_option')
             ->times(1)
-            ->with('fiftyonedegrees_resource_key_pipeline')
+            ->with(Constants::PIPELINE)
             ->andReturn($pipeline);
 
         Pipeline::reset();
@@ -278,7 +278,7 @@ class PipelineTests extends TestCase {
         $_SESSION = array();
         Functions\expect('get_option')
             ->times(2)
-            ->with('fiftyonedegrees_resource_key_pipeline')
+            ->with(Constants::PIPELINE)
             ->andReturn($pipeline);
 
         Pipeline::reset();

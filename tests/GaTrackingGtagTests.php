@@ -73,7 +73,7 @@ class GaTrackingGtagTests extends TestCase {
         
         Functions\expect('get_option')
             ->once()
-            ->with('fiftyonedegrees_ga_cust_dims_map')
+            ->with(Constants::GA_CUSTOM_DIMENSIONS_MAP)
             ->andReturn($cust_dims_map);
 
         $ga_tracking_gtag = new Fiftyonedegrees_Tracking_Gtag();
@@ -107,11 +107,11 @@ class GaTrackingGtagTests extends TestCase {
         // Mock fiftonedegrees_tracking_id and fiftyonedegrees_send_page_view values.
         Functions\expect('get_option')
             ->once()
-            ->with('fiftyonedegrees_ga_tracking_id')
+            ->with(Constants::GA_TRACKING_ID)
             ->andReturn('test-123456789-0');
         Functions\expect('get_option')
             ->once()
-            ->with('fiftyonedegrees_ga_send_page_view')
+            ->with(Constants::GA_SEND_PAGE_VIEW)
             ->andReturn(true);
         Functions\expect('esc_html')
             ->times(4)
@@ -161,7 +161,7 @@ class GaTrackingGtagTests extends TestCase {
         // Mock fiftonedegrees_tracking_id and fiftyonedegrees_send_page_view values.
         Functions\expect('get_option')
             ->once()
-            ->with('fiftyonedegrees_ga_tracking_id')
+            ->with(Constants::GA_TRACKING_ID)
             ->andReturn('test-123456789-0');
         Functions\expect('esc_html')
             ->times(3)

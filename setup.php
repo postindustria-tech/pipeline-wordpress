@@ -61,10 +61,10 @@
         <tbody>
             <tr>
                 <th scope="row">
-                    <label for="fiftyonedegrees_resource_key">Resource Key</label>
+                    <label for="<?php echo Constants::RESOURCE_KEY; ?>">Resource Key</label>
                 </th>
                 <td>
-                    <input name="fiftyonedegrees_resource_key" type="text" id="fiftyonedegrees_resource_key" value="<?php echo esc_attr(get_option(Constants::RESOURCE_KEY));?>" class="regular-text">
+                    <input name="<?php echo Constants::RESOURCE_KEY; ?>" type="text" id="<?php echo Constants::RESOURCE_KEY; ?>" value="<?php echo esc_attr(get_option(Constants::RESOURCE_KEY));?>" class="regular-text">
                 </td>
             </tr>
         </tbody>

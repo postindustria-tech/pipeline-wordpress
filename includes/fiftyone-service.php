@@ -269,12 +269,12 @@ class FiftyoneService {
 
         if ($option === Constants::GA_TRACKING_ID &&
             $old_value !== $new_value) {
-            update_option("tracking_id_update_flag", true);
+            update_option(Constants::GA_ID_UPDATED, true);
             delete_option(Constants::GA_DIMENSIONS);
         }
 
         if ($option === "send_page_view_val" && $old_value !== $new_value) {
-            update_option("send_page_view_update_flag", true);
+            update_option(Constants::GA_SEND_PAGE_VIEW_UPDATED, true);
         }
     }
 
