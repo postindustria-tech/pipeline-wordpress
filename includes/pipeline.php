@@ -21,7 +21,7 @@ use fiftyone\pipeline\cloudrequestengine\CloudRequestEngine;
 use fiftyone\pipeline\cloudrequestengine\CloudEngine;
 use fiftyone\pipeline\core\Utils;
 
-require_once __DIR__ . '/../constants.php';
+require_once __DIR__ . '/../options.php';
 
 class Pipeline
 {
@@ -128,7 +128,7 @@ class Pipeline
             require_once dirname(__DIR__) . "/lib/vendor/autoload.php";
            
             // Get the preconstructed pipeline from the cached option.
-            $cachedPipeline = get_option(Constants::PIPELINE);
+            $cachedPipeline = get_option(Options::PIPELINE);
 
             if (!$cachedPipeline) {
                 // There is no pipeline, so return null.
@@ -345,7 +345,7 @@ class Pipeline
      */
     static function session_is_invalidated() {
         $createdAt = $_SESSION["fiftyonedegrees_data"]['createdAt'];
-        $invalidatedAt = get_option(Constants::SESSION_INVALIDATED);
+        $invalidatedAt = get_option(Options::SESSION_INVALIDATED);
         return $createdAt < $invalidatedAt;
     }
 }

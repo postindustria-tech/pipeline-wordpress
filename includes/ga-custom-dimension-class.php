@@ -60,8 +60,8 @@ class Fiftyonedegrees_Custom_Dimensions extends WP_List_Table
         $results = array();
         $ga_service = new Fiftyonedegrees_Google_Analytics();
         $ga_service->get_custom_dimensions(); 
-        $currCustDimIndex = get_option(Constants::GA_MAX_DIMENSIONS, 0);
-        $passedDims = get_option(Constants::GA_DIMENSIONS);
+        $currCustDimIndex = get_option(Options::GA_MAX_DIMENSIONS, 0);
+        $passedDims = get_option(Options::GA_DIMENSIONS);
 
         foreach ($result["properties"] as $dataKey => $properties) {
             foreach ($properties as $property) {                
@@ -131,7 +131,7 @@ class Fiftyonedegrees_Custom_Dimensions extends WP_List_Table
             return ($order === 'asc') ? $result : -$result;
         });
 
-        update_option(Constants::GA_CUSTOM_DIMENSIONS_MAP, $ga_results);
+        update_option(Options::GA_CUSTOM_DIMENSIONS_MAP, $ga_results);
 
         $this->items = $results;
     }
@@ -145,7 +145,7 @@ class Fiftyonedegrees_Custom_Dimensions extends WP_List_Table
 
             echo "<td>" . esc_html(strtolower($rec["property_name"])) . "</td>";
            
-            $passedDims = get_option(Constants::GA_DIMENSIONS);
+            $passedDims = get_option(Options::GA_DIMENSIONS);
             $listBoxId =  "51D_" . strtolower($rec["property_name"]);
 
             $selectedPHP = "";

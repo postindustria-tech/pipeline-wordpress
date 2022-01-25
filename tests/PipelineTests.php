@@ -122,7 +122,7 @@ class PipelineTests extends TestCase {
         $pipeline = Pipeline::make_pipeline($resourceKey);
         Functions\expect('get_option')
             ->once()
-            ->with(Constants::PIPELINE)
+            ->with(Options::PIPELINE)
             ->andReturn($pipeline);
 
         Pipeline::process();
@@ -154,7 +154,7 @@ class PipelineTests extends TestCase {
 
         Functions\expect('get_option')
             ->times(1)
-            ->with(Constants::PIPELINE)
+            ->with(Options::PIPELINE)
             ->andReturn($pipeline);
         Functions\when('plugin_dir_path')->justReturn(getcwd(). "/");
 
@@ -212,7 +212,7 @@ class PipelineTests extends TestCase {
         $_SESSION = array();
         Functions\expect('get_option')
             ->times(1)
-            ->with(Constants::PIPELINE)
+            ->with(Options::PIPELINE)
             ->andReturn($pipeline);
 
         Pipeline::reset();
@@ -240,7 +240,7 @@ class PipelineTests extends TestCase {
         $_SESSION = array();
         Functions\expect('get_option')
             ->times(1)
-            ->with(Constants::PIPELINE)
+            ->with(Options::PIPELINE)
             ->andReturn($pipeline);
 
         Pipeline::reset();
@@ -278,7 +278,7 @@ class PipelineTests extends TestCase {
         $_SESSION = array();
         Functions\expect('get_option')
             ->times(2)
-            ->with(Constants::PIPELINE)
+            ->with(Options::PIPELINE)
             ->andReturn($pipeline);
 
         Pipeline::reset();
@@ -290,7 +290,7 @@ class PipelineTests extends TestCase {
         sleep(1);
         Functions\expect('get_option')
             ->times(2)
-            ->with(Constants::SESSION_INVALIDATED)
+            ->with(Options::SESSION_INVALIDATED)
             ->andReturn(time());
 
         // Check everything is set up as expected.

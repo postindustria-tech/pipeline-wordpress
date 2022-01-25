@@ -127,7 +127,7 @@ class Fiftyonedegrees {
         require_once __DIR__ . '/includes/fiftyone-service.php';
         require_once __DIR__ . '/includes/ga-service.php';
         require_once __DIR__ . '/includes/ga-tracking-gtag.php';
-        require_once __DIR__ . '/constants.php';
+        require_once __DIR__ . '/options.php';
         
         // Include Custom_Dimensions class
         if (!class_exists('Fiftyonedegrees_Custom_Dimensions')) {
@@ -166,6 +166,6 @@ register_uninstall_hook(__FILE__, 'fiftyonedegrees_deactivate'); // delete
 function fiftyonedegrees_deactivate() {
 
     Fiftyonedegrees::get_instance()->ga_service->delete_ga_options();
-    delete_option(Constants::RESOURCE_KEY);
-    delete_option(Constants::PIPELINE);
+    delete_option(Options::RESOURCE_KEY);
+    delete_option(Options::PIPELINE);
 }

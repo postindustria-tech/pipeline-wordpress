@@ -148,15 +148,15 @@ class FiftyoneService {
      */
     function fiftyonedegrees_register_settings() {
         // This is the cached pipeline for the current resource key.
-        add_option(Constants::PIPELINE);
+        add_option(Options::PIPELINE);
         // This is the resource key set by the user to be used to access
         // cloud services.
-        add_option(Constants::RESOURCE_KEY);
+        add_option(Options::RESOURCE_KEY);
 
         // Register the new settings with wordpress.
         register_setting(
-            Constants::OPTIONS,
-            Constants::RESOURCE_KEY);
+            Options::OPTIONS,
+            Options::RESOURCE_KEY);
     }
 
     /**
@@ -183,18 +183,18 @@ class FiftyoneService {
      */
     function submit_rk_submit_action() {
 
-        if (isset($_POST[Constants::RESOURCE_KEY]) &&
+        if (isset($_POST[Options::RESOURCE_KEY]) &&
             isset($_POST["action"]) &&
-            $_POST[Constants::RESOURCE_KEY] !==
-            get_option(Constants::RESOURCE_KEY)) {
+            $_POST[Options::RESOURCE_KEY] !==
+            get_option(Options::RESOURCE_KEY)) {
 
             $resource_key = sanitize_text_field(wp_unslash(
-                $_POST[Constants::RESOURCE_KEY]));
-            update_option(Constants::RESOURCE_KEY, $resource_key);
+                $_POST[Options::RESOURCE_KEY]));
+            update_option(Options::RESOURCE_KEY, $resource_key);
 
             if (!isset($cachedPipeline['error'])) {
-                if (get_option(Constants::ENABLE_GA) &&
-                    get_option(Constants::RESOURCE_KEY_UPDATED)) {
+                if (get_option(Options::ENABLE_GA) &&
+                    get_option(Options::RESOURCE_KEY_UPDATED)) {
                 
                     wp_redirect(get_admin_url() .
                         'options-general.php?page=51Degrees&tab=google-analytics');
@@ -217,13 +217,13 @@ class FiftyoneService {
      */
     function fiftyonedegrees_admin_enqueue_scripts() {
         wp_enqueue_style(
-            Constants::ADMIN_STYLES,
+            Options::ADMIN_STYLES,
             plugin_dir_url(__FILE__) . "assets/css/fod.css");
         wp_enqueue_style(
-            Constants::ADMIN_ICONS,
+            Options::ADMIN_ICONS,
             "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
         wp_enqueue_script(
-            Constants::JQUERY,
+            Options::JQUERY,
             plugin_dir_url(__FILE__) . '/assets/js/51D.js',
             array('jquery') #dependencies
         );			
@@ -238,14 +238,14 @@ class FiftyoneService {
      */
     function fiftyonedegrees_update_option($option, $old_value, $new_value) {
 
-        if ($option === Constants::RESOURCE_KEY) {
+        if ($option === Options::RESOURCE_KEY) {
 
             // Remove the cached flowdata from the session.
             if (Pipeline::has_session() &&
                 isset($_SESSION["fiftyonedegrees_data"])) {
                 unset($_SESSION["fiftyonedegrees_data"]);
                 update_option(
-                    Constants::SESSION_INVALIDATED,
+                    Options::SESSION_INVALIDATED,
                     time());
             }
 
@@ -253,28 +253,29 @@ class FiftyoneService {
 
             if ($pipeline) {
                 update_option(
-                    Constants::PIPELINE,
+                    Options::PIPELINE,
                     $pipeline);
             }
 
             if ($old_value !== $new_value) {
-                update_option(Constants::RESOURCE_KEY_UPDATED, true);
-                delete_option(Constants::GA_DIMENSIONS);
+                update_option(Options::RESOURCE_KEY_UPDATED, true);
+                delete_option(Options::GA_DIMENSIONS);
             }
             else {
-                delete_option(Constants::RESOURCE_KEY_UPDATED);
+                delete_option(Options::RESOURCE_KEY_UPDATED);
             }
             
         }
 
-        if ($option === Constants::GA_TRACKING_ID &&
+        if ($option === Options::GA_TRACKING_ID &&
             $old_value !== $new_value) {
-            update_option(Constants::GA_ID_UPDATED, true);
-            delete_option(Constants::GA_DIMENSIONS);
+            update_option(Options::GA_ID_UPDATED, true);
+            delete_option(Options::GA_DIMENSIONS);
         }
 
-        if ($option === "send_page_view_val" && $old_value !== $new_value) {
-            update_option(Constants::GA_SEND_PAGE_VIEW_UPDATED, true);
+        if ($option === Options::GA_SEND_PAGE_VIEW_VAL &&
+            $old_value !== $new_value) {
+            update_option(Options::GA_SEND_PAGE_VIEW_UPDATED, true);
         }
     }
 

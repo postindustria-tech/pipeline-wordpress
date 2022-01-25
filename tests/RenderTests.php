@@ -41,7 +41,7 @@ class RenderTests extends TestCase {
             "error" => null);
         Functions\expect('get_option')
             ->once()
-            ->with(Constants::PIPELINE)
+            ->with(Options::PIPELINE)
             ->andReturn($pipeline);
         Pipeline::process();
     }

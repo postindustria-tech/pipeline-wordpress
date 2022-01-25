@@ -16,7 +16,7 @@
     clause in Article 5 of the EUPL shall not apply.
 */
 
-class Constants
+class Options
 {
     const PIPELINE = "fiftyonedegrees_resource_key_pipeline";
     const RESOURCE_KEY = "fiftyonedegrees_resource_key";

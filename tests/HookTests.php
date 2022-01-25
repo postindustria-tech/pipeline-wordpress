@@ -41,7 +41,7 @@ class HookTests extends TestCase {
             "available_engines" => ["testElement"],
             "error" => null);
         Functions\when('get_option')->alias(function($arg) {
-            if ($arg === Constants::PIPELINE) {
+            if ($arg === Options::PIPELINE) {
                 return HookTests::$pipeline;
             }
         });

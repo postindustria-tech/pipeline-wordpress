@@ -85,7 +85,7 @@ class GaHookTests extends TestCase {
      */
     public function testGaAuthenticate() {
         $_POST = array(
-            Constants::GA_CODE => "some code",
+            Options::GA_CODE => "some code",
             "submit" => ""
         );
         Functions\when('get_admin_url')->justReturn('admin/');
@@ -93,13 +93,13 @@ class GaHookTests extends TestCase {
             ->makePartial();
         $service->shouldReceive('authenticate')->andReturn(false);
 
-        Functions\expect('delete_option')->once()->with(Constants::GA_TRACKING_ID_ERROR);
+        Functions\expect('delete_option')->once()->with(Options::GA_TRACKING_ID_ERROR);
         Functions\expect('wp_redirect')
             ->once()
             ->with('admin/options-general.php?page=51Degrees&tab=google-analytics');
         Functions\expect('update_option')
             ->once()
-            ->with(Constants::GA_AUTH_CODE, "some code");
+            ->with(Options::GA_AUTH_CODE, "some code");
 
         $service->fiftyonedegrees_ga_authentication();
         $this->assertTrue(true);
@@ -115,24 +115,24 @@ class GaHookTests extends TestCase {
         Functions\when('get_admin_url')->justReturn('admin/');
 
         $service = new Fiftyonedegrees_Google_Analytics();
-        Functions\expect('delete_option')->once()->with(Constants::GA_AUTH_CODE);
-        Functions\expect('delete_option')->once()->with(Constants::GA_TOKEN);
-        Functions\expect('delete_option')->once()->with(Constants::GA_PROPERTIES);
-        Functions\expect('delete_option')->once()->with(Constants::GA_TRACKING_ID);
-        Functions\expect('delete_option')->once()->with(Constants::GA_ACCOUNT_ID);
-        Functions\expect('delete_option')->once()->with(Constants::GA_MAX_DIMENSIONS);
-        Functions\expect('delete_option')->once()->with(Constants::GA_SEND_PAGE_VIEW);
-        Functions\expect('delete_option')->once()->with(Constants::GA_JS);
-        Functions\expect('delete_option')->once()->with(Constants::ENABLE_GA);
-        Functions\expect('delete_option')->once()->with(Constants::GA_ERROR);
-        Functions\expect('delete_option')->once()->with(Constants::RESOURCE_KEY_UPDATED);
-        Functions\expect('delete_option')->once()->with(Constants::GA_DIMENSIONS);
-        Functions\expect('delete_option')->once()->with(Constants::GA_DIMENSIONS_UPDATED);
-        Functions\expect('delete_option')->once()->with(Constants::GA_ID_UPDATED);
-        Functions\expect('delete_option')->once()->with(Constants::GA_SEND_PAGE_VIEW_UPDATED);
-        Functions\expect('delete_option')->once()->with(Constants::GA_TRACKING_ID_ERROR);
-        Functions\expect('delete_option')->once()->with(Constants::GA_CUSTOM_DIMENSIONS_SCREEN);
-        Functions\expect('delete_option')->once()->with(Constants::GA_CHANGE_TO_AUTH_SCREEN);
+        Functions\expect('delete_option')->once()->with(Options::GA_AUTH_CODE);
+        Functions\expect('delete_option')->once()->with(Options::GA_TOKEN);
+        Functions\expect('delete_option')->once()->with(Options::GA_PROPERTIES);
+        Functions\expect('delete_option')->once()->with(Options::GA_TRACKING_ID);
+        Functions\expect('delete_option')->once()->with(Options::GA_ACCOUNT_ID);
+        Functions\expect('delete_option')->once()->with(Options::GA_MAX_DIMENSIONS);
+        Functions\expect('delete_option')->once()->with(Options::GA_SEND_PAGE_VIEW);
+        Functions\expect('delete_option')->once()->with(Options::GA_JS);
+        Functions\expect('delete_option')->once()->with(Options::ENABLE_GA);
+        Functions\expect('delete_option')->once()->with(Options::GA_ERROR);
+        Functions\expect('delete_option')->once()->with(Options::RESOURCE_KEY_UPDATED);
+        Functions\expect('delete_option')->once()->with(Options::GA_DIMENSIONS);
+        Functions\expect('delete_option')->once()->with(Options::GA_DIMENSIONS_UPDATED);
+        Functions\expect('delete_option')->once()->with(Options::GA_ID_UPDATED);
+        Functions\expect('delete_option')->once()->with(Options::GA_SEND_PAGE_VIEW_UPDATED);
+        Functions\expect('delete_option')->once()->with(Options::GA_TRACKING_ID_ERROR);
+        Functions\expect('delete_option')->once()->with(Options::GA_CUSTOM_DIMENSIONS_SCREEN);
+        Functions\expect('delete_option')->once()->with(Options::GA_CHANGE_TO_AUTH_SCREEN);
 
         Functions\expect('wp_redirect')
             ->once()
@@ -151,7 +151,7 @@ class GaHookTests extends TestCase {
 
         Functions\expect('get_option')
             ->once()
-            ->with(Constants::GA_JS)
+            ->with(Options::GA_JS)
             ->andReturn("some javascript");
         Functions\when('esc_html')->returnArg();
 
@@ -167,7 +167,7 @@ class GaHookTests extends TestCase {
      */
     public function testGaUpdateCustomDimensions() {
         $_POST = array(
-            Constants::GA_UPDATE_DIMENSIONS_POST => "Update Custom Dimension Mappings",
+            Options::GA_UPDATE_DIMENSIONS_POST => "Update Custom Dimension Mappings",
             "51D_dim1" => "firstproperty",
         );
         Functions\when('get_admin_url')->justReturn('admin/');
@@ -181,7 +181,7 @@ class GaHookTests extends TestCase {
 
         Functions\expect('get_option')
             ->once()
-            ->with(Constants::PIPELINE)
+            ->with(Options::PIPELINE)
             ->andReturn($pipeline);
         Functions\expect('wp_redirect')
             ->once()
@@ -189,10 +189,10 @@ class GaHookTests extends TestCase {
 
         $expectedDim = array("dim1" => "firstproperty");
         Functions\expect('update_option')->once()->with(
-             Constants::GA_DIMENSIONS,
+             Options::GA_DIMENSIONS,
              $expectedDim);
         Functions\expect('update_option')->once()->with(
-            Constants::GA_DIMENSIONS_UPDATED,
+            Options::GA_DIMENSIONS_UPDATED,
             true);
 
         $service = new Fiftyonedegrees_Google_Analytics();

@@ -20,28 +20,28 @@
 
 <?php
 
-if (!get_option(Constants::GA_TOKEN) &&
-    empty(get_option(Constants::GA_TOKEN))) {
+if (!get_option(Options::GA_TOKEN) &&
+    empty(get_option(Options::GA_TOKEN))) {
         echo '<span class="fod-pipeline-status error">' .
             'Please Authenticate with Google Analytics first.</span>';
 }
 else { 
     
-    if (get_option(Constants::PIPELINE)['error']) {
+    if (get_option(Options::PIPELINE)['error']) {
         echo '<p></p><span class="fod-pipeline-status error">' .
             'Provided resource key does not contain any Custom Dimensions.' .
             ' Please enter a valid resource key. </span>';        
     }
-    else if (get_option(Constants::GA_ERROR)) {
+    else if (get_option(Options::GA_ERROR)) {
         echo '<p></p><span class="fod-pipeline-status warn">' .
-            esc_html(get_option(Constants::GA_ERROR)) . '</span>';
-        delete_option(Constants::GA_ERROR);
+            esc_html(get_option(Options::GA_ERROR)) . '</span>';
+        delete_option(Options::GA_ERROR);
     }
-    else if (get_option(Constants::ENABLE_GA)) {
-        if (get_option(Constants::RESOURCE_KEY_UPDATED) ||
-            get_option(Constants::GA_ID_UPDATED) ||
-            get_option(Constants::GA_SEND_PAGE_VIEW_UPDATED) ||
-            get_option(Constants::GA_DIMENSIONS)) {
+    else if (get_option(Options::ENABLE_GA)) {
+        if (get_option(Options::RESOURCE_KEY_UPDATED) ||
+            get_option(Options::GA_ID_UPDATED) ||
+            get_option(Options::GA_SEND_PAGE_VIEW_UPDATED) ||
+            get_option(Options::GA_DIMENSIONS)) {
 
             // Include Fiftyonedegrees class
             if (!class_exists('Fiftyonedegrees')) {
@@ -51,23 +51,23 @@ else {
             $instance = Fiftyonedegrees::get_instance();
             $instance->execute_ga_tracking_steps();
 
-            if (get_option(Constants::RESOURCE_KEY_UPDATED)) {
+            if (get_option(Options::RESOURCE_KEY_UPDATED)) {
                 echo '<p></p><span class="fod-pipeline-status good">' .
                     'Google Analytics Tracking is enabled for the Properties' .
                     ' available in the new resource key. </span>';      
-                delete_option(Constants::RESOURCE_KEY_UPDATED);
+                delete_option(Options::RESOURCE_KEY_UPDATED);
             }
-            else if (get_option(Constants::GA_DIMENSIONS_UPDATED)) {
+            else if (get_option(Options::GA_DIMENSIONS_UPDATED)) {
                 echo '<p></p><span class="fod-pipeline-status good">' .
                 'Google Analytics Custom Dimensions mapping has been updated.</span>';
-                delete_option(Constants::GA_DIMENSIONS_UPDATED);
+                delete_option(Options::GA_DIMENSIONS_UPDATED);
             }                    
             else {
                 echo '<p></p><span class="fod-pipeline-status good">' .
                 'Google Analytics Tracking is enabled for new Google ' .
                 'Analytics Property Settings.</span>';
-                delete_option(Constants::GA_ID_UPDATED);
-                delete_option(Constants::GA_SEND_PAGE_VIEW_UPDATED);
+                delete_option(Options::GA_ID_UPDATED);
+                delete_option(Options::GA_SEND_PAGE_VIEW_UPDATED);
             }
         }
         else {
@@ -77,7 +77,7 @@ else {
         }            
     }
     
-    if (!get_option(Constants::PIPELINE)['error']) {
+    if (!get_option(Options::PIPELINE)['error']) {
 ?>
             
 <form method="post" action="options.php">	
@@ -91,13 +91,13 @@ else {
                         <b>Enable Google Analytics Tracking</b> to send them as
                         Custom Dimensions to
                         <b>
-                            <?php echo esc_html(get_option(Constants::GA_TRACKING_ID));?>
+                            <?php echo esc_html(get_option(Options::GA_TRACKING_ID));?>
                         </b>
                         Google Analytics Property or <b>Go Back</b> to change.
                     </p>
                 </td>
                 <td>
-                    <button type="submit" class="button-primary" name="<?php echo Constants::GA_CHANGE; ?>">
+                    <button type="submit" class="button-primary" name="<?php echo Options::GA_CHANGE; ?>">
                         <span style="font-size:16px;">&laquo;</span> Go Back</i>
                     </button>
                 </td>
@@ -122,17 +122,17 @@ else {
     <table style="width: 100%">
         <tbody>
             <tr>         
-            <?php if ("enabled" !== get_option(Constants::ENABLE_GA)) { ?>
+            <?php if ("enabled" !== get_option(Options::ENABLE_GA)) { ?>
                 <td style="width: 90%">
-                    <input type="submit" class="button-primary" value="Enable Google Analytics Tracking" name="<?php echo Constants::ENABLE_GA; ?>" />
+                    <input type="submit" class="button-primary" value="Enable Google Analytics Tracking" name="<?php echo Options::ENABLE_GA; ?>" />
                 </td>
             <?php } else { ?>
                 <td style="width: 90%">
-                    <input type="submit" class="button-primary" value="Disable Google Analytics Tracking" name="<?php echo Constants::ENABLE_GA; ?>" />
+                    <input type="submit" class="button-primary" value="Disable Google Analytics Tracking" name="<?php echo Options::ENABLE_GA; ?>" />
                 </td>
             <?php } ?> 
                 <td>
-                    <input type="submit" class="button-primary" value="Update Custom Dimension Mappings" name="<?php echo Constants::GA_UPDATE_DIMENSIONS_POST; ?>" />
+                    <input type="submit" class="button-primary" value="Update Custom Dimension Mappings" name="<?php echo Options::GA_UPDATE_DIMENSIONS_POST; ?>" />
                 </td>
             </tr>
         </tbody>

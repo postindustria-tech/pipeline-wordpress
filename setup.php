@@ -17,11 +17,11 @@
 
 <form method="post" action="options.php">
 
-    <?php settings_fields(Constants::OPTIONS); ?>
+    <?php settings_fields(Options::OPTIONS); ?>
 
     <?php
 
-        $cachedPipeline = get_option(Constants::PIPELINE);
+        $cachedPipeline = get_option(Options::PIPELINE);
 
         if (isset($cachedPipeline['error'])) {
             echo '<p></p><span class="fod-pipeline-status error"><b>' .
@@ -61,10 +61,10 @@
         <tbody>
             <tr>
                 <th scope="row">
-                    <label for="<?php echo Constants::RESOURCE_KEY; ?>">Resource Key</label>
+                    <label for="<?php echo Options::RESOURCE_KEY; ?>">Resource Key</label>
                 </th>
                 <td>
-                    <input name="<?php echo Constants::RESOURCE_KEY; ?>" type="text" id="<?php echo Constants::RESOURCE_KEY; ?>" value="<?php echo esc_attr(get_option(Constants::RESOURCE_KEY));?>" class="regular-text">
+                    <input name="<?php echo Options::RESOURCE_KEY; ?>" type="text" id="<?php echo Options::RESOURCE_KEY; ?>" value="<?php echo esc_attr(get_option(Options::RESOURCE_KEY));?>" class="regular-text">
                 </td>
             </tr>
         </tbody>
