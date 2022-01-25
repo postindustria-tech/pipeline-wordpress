@@ -19,7 +19,6 @@
 require_once(__DIR__ . "/../includes/pipeline.php");
 require_once(__DIR__ . "/TestFlowElement.php");
 
-use Patchwork\{redefine, getFunction, always};
 use fiftyone\pipeline\core\PipelineBuilder;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 use \Brain\Monkey\Functions;
