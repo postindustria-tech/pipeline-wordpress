@@ -561,20 +561,20 @@ class Fiftyonedegrees_Google_Analytics {
                 delete_option(Options::GA_TRACKING_ID_ERROR);
                 update_option(Options::GA_CUSTOM_DIMENSIONS_SCREEN, "enabled");
 
-                if (isset($_POST[Options::GA_TOKEN]) &&
+                if (isset($_POST[Options::GA_TRACKING_ID]) &&
                     "Select Analytics Property" ===
-                    $_POST[Options::GA_TOKEN]) {
+                    $_POST[Options::GA_TRACKING_ID]) {
 
                     update_option(Options::GA_TRACKING_ID_ERROR, true);
                     delete_option(Options::GA_CUSTOM_DIMENSIONS_SCREEN);                        
                 }
-                else if (isset($_POST[Options::GA_TOKEN])) {
+                else if (isset($_POST[Options::GA_TRACKING_ID])) {
 
                     $ga_tracking_id = sanitize_text_field(wp_unslash(
-                        $_POST[Options::GA_TOKEN]));
+                        $_POST[Options::GA_TRACKING_ID]));
                     
                     update_option(
-                        Options::GA_TOKEN,
+                        Options::GA_TRACKING_ID,
                         $ga_tracking_id);
 
                     if (isset($_POST[Options::GA_SEND_PAGE_VIEW]) &&
