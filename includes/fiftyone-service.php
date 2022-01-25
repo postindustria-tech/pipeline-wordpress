@@ -241,9 +241,12 @@ class FiftyoneService {
         if ($option === Constants::RESOURCE_KEY) {
 
             // Remove the cached flowdata from the session.
-            if (session_status() === PHP_SESSION_ACTIVE &&
+            if (Pipeline::has_session() &&
                 isset($_SESSION["fiftyonedegrees_data"])) {
                 unset($_SESSION["fiftyonedegrees_data"]);
+                update_option(
+                    Constants::SESSION_INVALIDATED,
+                    time());
             }
 
             $pipeline = Pipeline::make_pipeline($new_value);

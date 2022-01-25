@@ -1,4 +1,6 @@
-<phpunit colors="true">
+<phpunit
+  colors="true"
+  bootstrap="tests/bootstrap.php">
   <php>
     <env name="RESOURCEKEY" value="!!YOUR_RESOURCE_KEY!!" force="true"/>
     <const name="FIFTYONEDEGREES_PLUGIN_DIR" value= ""/>

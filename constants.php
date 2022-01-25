@@ -21,6 +21,7 @@ class Constants
     const PIPELINE = "fiftyonedegrees_resource_key_pipeline";
     const RESOURCE_KEY = "fiftyonedegrees_resource_key";
     const RESOURCE_KEY_UPDATED = "fiftyonedegrees_resource_key_updated";
+    const SESSION_INVALIDATED = "fiftyonedegrees_session_invalidated";
     const OPTIONS = "fiftyonedegrees_options";
     const ADMIN_STYLES = "fiftyonedegrees_admin_styles";
     const ADMIN_ICONS = "fiftyonedegrees_admin_styles_icons";

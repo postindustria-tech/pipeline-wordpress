@@ -16,7 +16,6 @@
     clause in Article 5 of the EUPL shall not apply.
 */
 
-require_once(__DIR__ . "/../lib/vendor/autoload.php");
 require_once(__DIR__ . "/../includes/fiftyone-service.php");
 
 use fiftyone\pipeline\core\PipelineBuilder;
@@ -39,8 +38,14 @@ class EditorTests extends TestCase {
         $mock_pipeline = (new PipelineBuilder())
             ->add(new TestFlowElement())
             ->build();
-        $pipeline = array("pipeline" =>  $mock_pipeline, "available_engines" => ["testElement"], "error" => null);
-        Functions\expect('get_option')->once()->with('fiftyonedegrees_resource_key_pipeline')->andReturn($pipeline);
+        $pipeline = array(
+            "pipeline" => $mock_pipeline,
+            "available_engines" => ["testElement"],
+            "error" => null);
+        Functions\expect('get_option')
+            ->once()
+            ->with('fiftyonedegrees_resource_key_pipeline')
+            ->andReturn($pipeline);
         Functions\when("wp_list_pluck")->alias(function($arg1, $arg2) {
             return array_column($arg1, $arg2);
         });

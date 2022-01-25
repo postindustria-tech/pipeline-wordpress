@@ -16,7 +16,6 @@
     clause in Article 5 of the EUPL shall not apply.
 */
 
-require_once(__DIR__ . "/../lib/vendor/autoload.php");
 require_once(__DIR__ . "/../includes/fiftyone-service.php");
 
 use fiftyone\pipeline\core\PipelineBuilder;
@@ -36,8 +35,14 @@ class RenderTests extends TestCase {
         $mock_pipeline = (new PipelineBuilder())
             ->add(new TestFlowElement())
             ->build();
-        $pipeline = array("pipeline" =>  $mock_pipeline, "available_engines" => ["testElement"], "error" => null);
-        Functions\expect('get_option')->once()->with('fiftyonedegrees_resource_key_pipeline')->andReturn($pipeline);
+        $pipeline = array(
+            "pipeline" => $mock_pipeline,
+            "available_engines" => ["testElement"],
+            "error" => null);
+        Functions\expect('get_option')
+            ->once()
+            ->with('fiftyonedegrees_resource_key_pipeline')
+            ->andReturn($pipeline);
         Pipeline::process();
     }
 

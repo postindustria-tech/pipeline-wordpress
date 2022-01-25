@@ -118,8 +118,9 @@ class Pipeline
 
             // Fetch the data from the session if it's enabled and is already
             // there.
-            if (session_status() == PHP_SESSION_ACTIVE &&
-                isset($_SESSION["fiftyonedegrees_data"])) {
+            if (session_status() === PHP_SESSION_ACTIVE &&
+                isset($_SESSION["fiftyonedegrees_data"]) &&
+                Pipeline::session_is_invalidated() === false) {
                 Pipeline::$data = $_SESSION["fiftyonedegrees_data"];
                 return;
             }
@@ -170,7 +171,8 @@ class Pipeline
             Pipeline::$data = array(
                 "flowData" => $flowData,
                 "properties" => $properties,
-                "errors" => $flowData->errors);
+                "errors" => $flowData->errors,
+                "createdAt" => time());
 
             // If session cache is enabled then store the result in it.
             if (session_status() == PHP_SESSION_ACTIVE) {
@@ -333,5 +335,17 @@ class Pipeline
 		    $appContext = "";
 		}
 		return $appContext;
+    }
+
+    /**
+     * Returns true if the data in the session has been invalidated by
+     * another process updating the pipeline.
+     * 
+     * @return bool
+     */
+    static function session_is_invalidated() {
+        $createdAt = $_SESSION["fiftyonedegrees_data"]['createdAt'];
+        $invalidatedAt = get_option(Constants::SESSION_INVALIDATED);
+        return $createdAt < $invalidatedAt;
     }
 }

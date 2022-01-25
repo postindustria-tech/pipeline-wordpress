@@ -16,9 +16,9 @@
     clause in Article 5 of the EUPL shall not apply.
 */
 
-require_once(__DIR__ . "/../lib/vendor/autoload.php");
 require_once(__DIR__ . "/../includes/ga-service.php");
 
+use fiftyone\pipeline\core\PipelineBuilder;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 use \Brain\Monkey\Functions;
 use \Brain\Monkey\Actions;
@@ -29,15 +29,14 @@ use \Brain\Monkey;
 class GaHookTests extends TestCase {
 
 	public function set_up() {
-		parent::set_up();
+        parent::set_up();
         $_POST = array();
         Functions\stubs([
-            'sanitize_text_field' => null,
-            'wp_unslash' => null,
+            'sanitize_text_field',
+            'wp_unslash'
         ]);
-
         Brain\Monkey\setUp();
-	}
+    }
 
 	public function tear_down() {
 		Brain\Monkey\tearDown();
@@ -50,12 +49,24 @@ class GaHookTests extends TestCase {
      */
     public function testAdminInitActions() {
         (new Fiftyonedegrees_Google_Analytics())->setup_wp_actions();
-        self::assertNotFalse(has_action('admin_init', 'Fiftyonedegrees_Google_Analytics->fiftyonedegrees_ga_authentication()' ));
-        self::assertNotFalse(has_action('admin_init', 'Fiftyonedegrees_Google_Analytics->fiftyonedegrees_ga_logout()' ));
-        self::assertNotFalse(has_action('admin_init', 'Fiftyonedegrees_Google_Analytics->fiftyonedegrees_ga_set_tracking_id()' ));
-        self::assertNotFalse(has_action('admin_init', 'Fiftyonedegrees_Google_Analytics->fiftyonedegrees_ga_update_cd_indices()' ));
-        self::assertNotFalse(has_action('admin_init', 'Fiftyonedegrees_Google_Analytics->fiftyonedegrees_ga_change_screen()' ));
-        self::assertNotFalse(has_action('admin_init', 'Fiftyonedegrees_Google_Analytics->fiftyonedegrees_ga_enable_tracking()' ));
+        self::assertNotFalse(has_action(
+            'admin_init',
+            'Fiftyonedegrees_Google_Analytics->fiftyonedegrees_ga_authentication()'));
+        self::assertNotFalse(has_action(
+            'admin_init',
+            'Fiftyonedegrees_Google_Analytics->fiftyonedegrees_ga_logout()'));
+        self::assertNotFalse(has_action(
+            'admin_init',
+            'Fiftyonedegrees_Google_Analytics->fiftyonedegrees_ga_set_tracking_id()'));
+        self::assertNotFalse(has_action(
+            'admin_init',
+            'Fiftyonedegrees_Google_Analytics->fiftyonedegrees_ga_update_cd_indices()'));
+        self::assertNotFalse(has_action(
+            'admin_init',
+            'Fiftyonedegrees_Google_Analytics->fiftyonedegrees_ga_change_screen()'));
+        self::assertNotFalse(has_action(
+            'admin_init',
+            'Fiftyonedegrees_Google_Analytics->fiftyonedegrees_ga_enable_tracking()'));
     }
 
     /**
@@ -63,7 +74,9 @@ class GaHookTests extends TestCase {
      */
     public function testHeadActions() {
         (new Fiftyonedegrees_Google_Analytics())->setup_wp_actions();
-        self::assertNotFalse(has_action('wp_head', 'Fiftyonedegrees_Google_Analytics->fiftyonedegrees_ga_add_analytics_code()' ));
+        self::assertNotFalse(has_action(
+            'wp_head',
+            'Fiftyonedegrees_Google_Analytics->fiftyonedegrees_ga_add_analytics_code()'));
     }
 
     /**
@@ -76,14 +89,20 @@ class GaHookTests extends TestCase {
             "submit" => ""
         );
         Functions\when('get_admin_url')->justReturn('admin/');
-        $service = \Mockery::mock('Fiftyonedegrees_Google_Analytics')->makePartial();
+        $service = \Mockery::mock('Fiftyonedegrees_Google_Analytics')
+            ->makePartial();
         $service->shouldReceive('authenticate')->andReturn(false);
 
         Functions\expect('delete_option')->once()->with('tracking_id_error');
-        Functions\expect('wp_redirect')->once()->with('admin/options-general.php?page=51Degrees&tab=google-analytics');
-        Functions\expect('update_option')->once()->with(Constants::GA_AUTH_CODE, "some code");
+        Functions\expect('wp_redirect')
+            ->once()
+            ->with('admin/options-general.php?page=51Degrees&tab=google-analytics');
+        Functions\expect('update_option')
+            ->once()
+            ->with(Constants::GA_AUTH_CODE, "some code");
 
         $service->fiftyonedegrees_ga_authentication();
+        $this->assertTrue(true);
     }
     
     /**
@@ -115,15 +134,71 @@ class GaHookTests extends TestCase {
         Functions\expect('delete_option')->once()->with("custom_dimension_screen");
         Functions\expect('delete_option')->once()->with("change_to_authentication_screen");
 
-        Functions\expect('wp_redirect')->once()->with('admin/options-general.php?page=51Degrees&tab=google-analytics');
+        Functions\expect('wp_redirect')
+            ->once()
+            ->with('admin/options-general.php?page=51Degrees&tab=google-analytics');
 
         $service->fiftyonedegrees_ga_logout();
+        $this->assertTrue(true);
     }
-    // 'fiftyonedegrees_ga_set_tracking_id'));
-    // 'fiftyonedegrees_ga_update_cd_indices'));
-    // 'fiftyonedegrees_ga_change_screen'));
-    // 'fiftyonedegrees_ga_enable_tracking'));
-    //  'fiftyonedegrees_ga_add_analytics_code'),
 
+    /**
+     * Test that the JavaScript is printed when calling the add
+     * analytics method.
+     */
+    public function testGaGetJavaScript() {
+        $service = new Fiftyonedegrees_Google_Analytics();
+
+        Functions\expect('get_option')
+            ->once()
+            ->with(Constants::GA_JS)
+            ->andReturn("some javascript");
+        Functions\when('esc_html')->returnArg();
+
+        $this->expectOutputString("some javascript");
+
+        $result = $service->fiftyonedegrees_ga_add_analytics_code();
+        
+    }
+
+    /**
+     * Test that custom dimensions are populated correctly when updated
+     * from the admin page.
+     */
+    public function testGaUpdateCustomDimensions() {
+        $_POST = array(
+            Constants::GA_UPDATE_DIMENSIONS_POST => "Update Custom Dimension Mappings",
+            "51D_dim1" => "firstproperty",
+        );
+        Functions\when('get_admin_url')->justReturn('admin/');
+        $mock_pipeline = (new PipelineBuilder())
+            ->add(new TestFlowElement())
+            ->build();
+        $pipeline = array(
+            "pipeline" =>  $mock_pipeline,
+            "available_engines" => ["testElement"],
+            "error" => null);
+
+        Functions\expect('get_option')
+            ->once()
+            ->with('fiftyonedegrees_resource_key_pipeline')
+            ->andReturn($pipeline);
+        Functions\expect('wp_redirect')
+            ->once()
+            ->with('admin/options-general.php?page=51Degrees&tab=google-analytics');
+
+        $expectedDim = array("dim1" => "firstproperty");
+        Functions\expect('update_option')->once()->with(
+             Constants::GA_DIMENSIONS,
+             $expectedDim);
+        Functions\expect('update_option')->once()->with(
+            Constants::GA_DIMENSIONS_UPDATED,
+            true);
+
+        $service = new Fiftyonedegrees_Google_Analytics();
+
+        $service->fiftyonedegrees_ga_update_cd_indices();
+        $this->assertTrue(true);
+    }
 }
 ?>

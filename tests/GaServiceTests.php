@@ -16,7 +16,6 @@
     clause in Article 5 of the EUPL shall not apply.
 */
 
-require(__DIR__ . "/../lib/vendor/autoload.php");
 require(__DIR__ . "/../includes/ga-service.php");
 require(__DIR__ . "/Mock_Google_Service_Analytics.php");
 
@@ -44,12 +43,15 @@ class GaServiceTests extends TestCase {
         $trackingId = 'test-123456789-1';
 
         // Partially mock fiftyonedegrees analytics service.
-        $fiftyone_ga_service = Mockery::mock('Fiftyonedegrees_Google_Analytics')->makePartial();
+        $fiftyone_ga_service = Mockery::mock('Fiftyonedegrees_Google_Analytics')
+            ->makePartial();
 
         // Mock Google Analytics Service.
         $ga_mock = new Mock_Google_Service_Analytics();
         $ga_mock->mock_management_accountSummaries();        
-        $result = $fiftyone_ga_service->get_account_id($ga_mock->ga_service, $trackingId);
+        $result = $fiftyone_ga_service->get_account_id(
+            $ga_mock->ga_service,
+            $trackingId);
 
         $this->assertEquals("123456789", $result);
        
@@ -61,22 +63,36 @@ class GaServiceTests extends TestCase {
     public function testGetCustomDimensions() {
 
         // return values.
-        Functions\expect('get_option')->once()->with('fiftyonedegrees_ga_tracking_id')->andReturn('test-123456789-0');
-        Functions\expect('get_option')->once()->with('fiftyonedegrees_ga_max_cust_dim_index')->andReturn(0);
-        Functions\expect('update_option')->once()->with('fiftyonedegrees_ga_account_id', "123456789");
+        Functions\expect('get_option')
+            ->once()
+            ->with('fiftyonedegrees_ga_tracking_id')
+            ->andReturn('test-123456789-0');
+        Functions\expect('get_option')
+            ->once()
+            ->with('fiftyonedegrees_ga_max_cust_dim_index')
+            ->andReturn(0);
+        Functions\expect('update_option')
+            ->once()
+            ->with('fiftyonedegrees_ga_account_id', "123456789");
         
         // Mock Google Analytics Service.
         $ga_mock = new Mock_Google_Service_Analytics();
         $ga_mock->mock_management_customDimensions();
 
         // Partially mock fiftyonedegrees analytics service.        
-        $fiftyone_ga_service = Mockery::mock('Fiftyonedegrees_Google_Analytics')->makePartial();
+        $fiftyone_ga_service = Mockery::mock('Fiftyonedegrees_Google_Analytics')
+            ->makePartial();
         $fiftyone_ga_service->shouldReceive('authenticate')->andReturn(true);
-        $fiftyone_ga_service->shouldReceive('get_google_analytics_service')->andReturn($ga_mock->ga_service);
-        $fiftyone_ga_service->shouldReceive('get_account_id')->andReturn("123456789");
+        $fiftyone_ga_service->shouldReceive('get_google_analytics_service')
+            ->andReturn($ga_mock->ga_service);
+        $fiftyone_ga_service->shouldReceive('get_account_id')
+            ->andReturn("123456789");
 
         $result = $fiftyone_ga_service->get_custom_dimensions();
-        $this->assertEquals(['51D.testelement.testproperty1' => 1, '51D.testelement.testproperty2' => 2], $result["cust_dims_map"]);
+        $this->assertEquals(
+            ['51D.testelement.testproperty1' => 1,
+            '51D.testelement.testproperty2' => 2],
+            $result["cust_dims_map"]);
         $this->assertEquals(2, $result["max_cust_dim_index"]);
 
     }
@@ -99,18 +115,29 @@ class GaServiceTests extends TestCase {
     public function testInsertCustomDimensions($cust_dims_map, $expected_calls) {
 
         // return values.
-        Functions\expect('get_option')->once()->with('fiftyonedegrees_ga_account_id')->andReturn('123456789');
-        Functions\expect('get_option')->once()->with('fiftyonedegrees_ga_tracking_id')->andReturn('test-123456789-0');
-        Functions\expect('get_option')->once()->with('fiftyonedegrees_ga_cust_dims_map')->andReturn($cust_dims_map);
+        Functions\expect('get_option')
+            ->once()
+            ->with('fiftyonedegrees_ga_account_id')
+            ->andReturn('123456789');
+        Functions\expect('get_option')
+            ->once()
+            ->with('fiftyonedegrees_ga_tracking_id')
+            ->andReturn('test-123456789-0');
+        Functions\expect('get_option')
+            ->once()
+            ->with('fiftyonedegrees_ga_cust_dims_map')
+            ->andReturn($cust_dims_map);
         
         // Mock Google Analytics Service.
         $ga_mock = new Mock_Google_Service_Analytics();
         $ga_mock->mock_management_customDimensions();
 
         // Partially mock fiftyonedegrees analytics service.        
-        $fiftyone_ga_service = Mockery::mock('Fiftyonedegrees_Google_Analytics')->makePartial();
+        $fiftyone_ga_service = Mockery::mock('Fiftyonedegrees_Google_Analytics')
+            ->makePartial();
         $fiftyone_ga_service->shouldReceive('authenticate')->andReturn(true);
-        $fiftyone_ga_service->shouldReceive('get_google_analytics_service')->andReturn($ga_mock->ga_service);
+        $fiftyone_ga_service->shouldReceive('get_google_analytics_service')
+            ->andReturn($ga_mock->ga_service);
 
         $result = $fiftyone_ga_service->insert_custom_dimensions();
         $this->assertEquals($expected_calls, $result);
