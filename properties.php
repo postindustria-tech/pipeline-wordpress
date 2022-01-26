@@ -3,7 +3,7 @@
     To setup, take the text from the <code>Usage in Content</code> column and
     insert it into <code>code</code> snippets into your pages that will be
     replaced with the corresponding values. Below is the list of properties
-    available with your resource key.
+    available with your Resource Key.
 </p>
 
 <?php

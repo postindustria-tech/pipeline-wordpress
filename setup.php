@@ -30,7 +30,7 @@
 
         if (isset($cachedPipeline['pipeline'])) {
             echo '<p></p><span class="fod-pipeline-status good"><b>This ' .
-                'resource key is valid and allows access to the custom ' .
+                'Resource Key is valid and allows access to the custom ' .
                 'properties selected in the following categories: ' .
                 esc_html(json_encode($cachedPipeline['available_engines'])) .
                 ' </br>To continue, connect to Google Analytics via the ' .
@@ -47,7 +47,7 @@
         <a href="https://configure.51degrees.com/" target="_blank">
             https://configure.51degrees.com/
         </a>
-        to get a 51Degrees resource key for the device detection properties you
+        to get a 51Degrees Resource Key for the device detection properties you
         want to get access to.
         </br>
         For more information on how to use our Configurator, view our explainer

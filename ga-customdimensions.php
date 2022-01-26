@@ -29,8 +29,8 @@ else {
     
     if (get_option(Options::PIPELINE)['error']) {
         echo '<p></p><span class="fod-pipeline-status error">' .
-            'Provided resource key does not contain any Custom Dimensions.' .
-            ' Please enter a valid resource key. </span>';        
+            'Provided Resource Key does not contain any Custom Dimensions.' .
+            ' Please enter a valid Resource Key. </span>';        
     }
     else if (get_option(Options::GA_ERROR)) {
         echo '<p></p><span class="fod-pipeline-status warn">' .
@@ -54,7 +54,7 @@ else {
             if (get_option(Options::RESOURCE_KEY_UPDATED)) {
                 echo '<p></p><span class="fod-pipeline-status good">' .
                     'Google Analytics Tracking is enabled for the Properties' .
-                    ' available in the new resource key. </span>';      
+                    ' available in the new Resource Key. </span>';      
                 delete_option(Options::RESOURCE_KEY_UPDATED);
             }
             else if (get_option(Options::GA_DIMENSIONS_UPDATED)) {
@@ -87,7 +87,7 @@ else {
                 <td>
                     <p>
                         The following properties are available with the provided
-                        resource key. Please Click
+                        Resource Key. Please Click
                         <b>Enable Google Analytics Tracking</b> to send them as
                         Custom Dimensions to
                         <b>

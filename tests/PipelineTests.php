@@ -59,7 +59,7 @@ class PipelineTests extends TestCase {
 
     /**
      * Test that a pipeline is successfully created for a valid
-     * resource key.
+     * Resource Key.
      */
     public function testMakePipeline_ValidResourceKey() {
 
@@ -68,7 +68,7 @@ class PipelineTests extends TestCase {
 
         $resourceKey = $_ENV["RESOURCEKEY"];
         if ($resourceKey === "!!YOUR_RESOURCE_KEY!!") {
-            $this->fail("You need to create a resource key at " .
+            $this->fail("You need to create a Resource Key at " .
             "https://configure.51degrees.com and paste it into the " .
             "phpunit.xml config file, " .
             "replacing !!YOUR_RESOURCE_KEY!!.");
@@ -83,7 +83,7 @@ class PipelineTests extends TestCase {
     }
 
     /**
-     * Test that an invalid resource key results in an error being added to the
+     * Test that an invalid Resource Key results in an error being added to the
      * pipeline.
      */
     public function testMakePipeline_InValidResourceKey() {
@@ -113,7 +113,7 @@ class PipelineTests extends TestCase {
 
         $resourceKey = $_ENV["RESOURCEKEY"];
         if ($resourceKey === "!!YOUR_RESOURCE_KEY!!") {
-            $this->fail("You need to create a resource key at " .
+            $this->fail("You need to create a Resource Key at " .
             "https://configure.51degrees.com and paste it into the " .
             "phpunit.xml config file, " .
             "replacing !!YOUR_RESOURCE_KEY!!.");

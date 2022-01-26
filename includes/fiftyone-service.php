@@ -80,7 +80,7 @@ class FiftyoneService {
             'rest_api_init',
             array($this, 'fiftyonedegrees_rest_api_init'));     
 
-        // Cache resource key data / pipeline after saving options page
+        // Cache Resource Key data / pipeline after saving options page
         add_action(
             'update_option',
             array($this, 'fiftyonedegrees_update_option'),
@@ -147,9 +147,9 @@ class FiftyoneService {
      * @return void
      */
     function fiftyonedegrees_register_settings() {
-        // This is the cached pipeline for the current resource key.
+        // This is the cached pipeline for the current Resource Key.
         add_option(Options::PIPELINE);
-        // This is the resource key set by the user to be used to access
+        // This is the Resource Key set by the user to be used to access
         // cloud services.
         add_option(Options::RESOURCE_KEY);
 
@@ -175,7 +175,7 @@ class FiftyoneService {
     }
 
     /**
-     * Checks if the resource key has been changed, and stores the new one
+     * Checks if the Resource Key has been changed, and stores the new one
      * if it has. When the new option has been updated, the pipeline will be
      * rebuilt.
      * 
@@ -231,7 +231,7 @@ class FiftyoneService {
 
     /**
      * After any option is updated, check if the option was something that
-     * needs to be taken care of. For resource key, the flow data needs to
+     * needs to be taken care of. For Resource Key, the flow data needs to
      * be removed from the session cache, and a new pipeline created.
      * 
      * @return void

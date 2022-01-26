@@ -41,7 +41,7 @@ class Pipeline
     }
 
    /**
-	* Makes a pipeline from a resource key that 
+	* Makes a pipeline from a Resource Key that 
 	* can be serialized to the database.
     *
 	* @param string $resourceKey Resource Key
@@ -82,7 +82,7 @@ class Pipeline
         }
         
 
-        // Get engines available with th resource key
+        // Get engines available with the Resource Key
         $engines = array_keys($cloud->flowElementProperties);
 
         // Add CloudRequestEngine to the pipeline.

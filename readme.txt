@@ -71,9 +71,9 @@ file, please see the plugin
 = After activation =
 
 1. Visit the new `51Degrees` Settings menu.
-2. To start using this plugin, you will need to create a `resource key`. This
+2. To start using this plugin, you will need to create a `Resource Key`. This
  enables access to the data you need via the 51Degrees cloud service. You can
- create a `resource key` for free, using the
+ create a `Resource Key` for free, using the
  [configurator](https://configure.51degrees.com/) to select the properties you want.
 
 For a demo video on how to use our configurator,
@@ -94,7 +94,7 @@ enable Custom Dimensions Tracking via the `Google Analytics Property` dropdown.
 with Custom Dimensions. It is only recommended if you have not already
 integrated with any other Google Analytics plugin to avoid data duplication.
 5. Click `Save Changes`. This will prompt to the new Custom Dimensions Screen
-where you can find all the Custom Dimensions available with your resource key.
+where you can find all the Custom Dimensions available with your Resource Key.
 6. Click on `Enable Google Analytics Tracking` to enable tracking of all the
 Device Data Properties as Custom Dimensions.
 

@@ -88,7 +88,7 @@
 
 <p>
     5. This will prompt to the new custom dimensions screen where you can find
-    all the custom dimensions available with your resource key. Click on
+    all the custom dimensions available with your Resource Key. Click on
     Enable Google Analytics Tracking button to enable tracking of all the
     Device Data Properties as custom dimensions.
 </p>

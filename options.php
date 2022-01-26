@@ -34,12 +34,12 @@ class Options
     const PIPELINE = "fiftyonedegrees_resource_key_pipeline";
 
     /**
-     * Key for storing the resource key used by the pipeline.
+     * Key for storing the Resource Key used by the pipeline.
      */
     const RESOURCE_KEY = "fiftyonedegrees_resource_key";
 
     /**
-     * Key for storing a flag indicating whether the resource key
+     * Key for storing a flag indicating whether the Resource Key
      * option has been updated.
      */
     const RESOURCE_KEY_UPDATED = "fiftyonedegrees_resource_key_updated";
