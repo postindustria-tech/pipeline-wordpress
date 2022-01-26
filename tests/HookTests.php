@@ -174,7 +174,7 @@ class HookTests extends TestCase {
             ->once()
             ->with(
                 'fiftyonedegrees-conditional-group-block',
-                'conditional-group-block/build/index.js',
+                '../conditional-group-block/build/index.js',
                 Mockery::any(),
                 Mockery::any());
         
@@ -182,7 +182,7 @@ class HookTests extends TestCase {
             ->once()
             ->with(
                 'fiftyonedegrees-conditional-group-block',
-                'conditional-group-block/src/editor.css',
+                '../conditional-group-block/src/editor.css',
                 Mockery::any(),
                 Mockery::any());
         
@@ -210,7 +210,7 @@ class HookTests extends TestCase {
      */
     function testAddedJavaScript() {
         Functions\when('plugin_dir_url')
-            ->justReturn('root/includes');
+            ->justReturn('root/includes/');
         Functions\expect('wp_enqueue_script')
             ->once()
             ->with('fiftyonedegrees', 'root/includes/../assets/js/fod.js');
