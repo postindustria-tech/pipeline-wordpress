@@ -415,7 +415,7 @@ class FiftyoneService {
 
         wp_register_script(
             'fiftyonedegrees-conditional-group-block',
-            plugins_url('conditional-group-block/build/index.js', __FILE__),
+            plugins_url('../conditional-group-block/build/index.js', __FILE__),
             [
                 'wp-i18n',
                 'wp-element',
@@ -428,7 +428,7 @@ class FiftyoneService {
 
         wp_register_style(
             'fiftyonedegrees-conditional-group-block',
-            plugins_url('conditional-group-block/src/editor.css', __FILE__),
+            plugins_url('../conditional-group-block/src/editor.css', __FILE__),
             [],
             '1.0.0'
         );

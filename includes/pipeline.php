@@ -125,7 +125,7 @@ class Pipeline
                 return;
             }
 
-            require_once dirname(__DIR__) . "/lib/vendor/autoload.php";
+            require_once dirname(__DIR__) . "/../lib/vendor/autoload.php";
            
             // Get the preconstructed pipeline from the cached option.
             $cachedPipeline = get_option(Options::PIPELINE);
