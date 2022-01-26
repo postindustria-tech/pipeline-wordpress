@@ -218,13 +218,13 @@ class FiftyoneService {
     function fiftyonedegrees_admin_enqueue_scripts() {
         wp_enqueue_style(
             "fiftyonedegrees_admin_styles",
-            plugin_dir_url(__FILE__) . "assets/css/fod.css");
+            plugin_dir_url(__FILE__) . "../assets/css/fod.css");
         wp_enqueue_style(
             "fiftyonedegrees_admin_styles_icons",
             "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
         wp_enqueue_script(
             "fiftyonedegrees_jQuery",
-            plugin_dir_url(__FILE__) . '/assets/js/51D.js',
+            plugin_dir_url(__FILE__) . '../assets/js/51D.js',
             array('jquery') #dependencies
         );			
     }
@@ -324,7 +324,7 @@ class FiftyoneService {
     function fiftyonedegrees_javascript() {
         wp_enqueue_script(
             "fiftyonedegrees",
-            plugin_dir_url(__FILE__) . "assets/js/fod.js");
+            plugin_dir_url(__FILE__) . "../assets/js/fod.js");
         wp_add_inline_script(
             "fiftyonedegrees",
             Pipeline::getJavaScript(),

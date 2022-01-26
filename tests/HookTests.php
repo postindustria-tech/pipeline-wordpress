@@ -210,10 +210,10 @@ class HookTests extends TestCase {
      */
     function testAddedJavaScript() {
         Functions\when('plugin_dir_url')
-            ->justReturn('root/');
+            ->justReturn('root/includes');
         Functions\expect('wp_enqueue_script')
             ->once()
-            ->with('fiftyonedegrees', 'root/assets/js/fod.js');
+            ->with('fiftyonedegrees', 'root/includes/../assets/js/fod.js');
 
         Functions\expect('wp_add_inline_script')
             ->once()
