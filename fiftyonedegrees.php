@@ -145,6 +145,10 @@ class Fiftyonedegrees {
     function delete_options() {
         $this->ga_service->delete_ga_options();
     }
+
+    function execute_ga_tracking_steps() {
+        $this->ga_service->execute_ga_tracking_steps();
+    }
 }
 
 
