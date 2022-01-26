@@ -31,6 +31,21 @@ require_once __DIR__ . '/../options.php';
 class Fiftyonedegrees_Google_Analytics {
 
     /**
+     * Instance of the tracking GTag.
+     */
+    private $gtag_tracking_inst;
+ 
+     /**
+     * Constructor.
+     * Initializes the instance of this service.
+     * 
+     * @access public
+     */
+    public function __construct() {
+        $this->gtag_tracking_inst = new Fiftyonedegrees_Tracking_Gtag();
+    }
+
+    /**
      * Authenticate with Google Analytics.
 	 * @param string $key_google_token Access Code
      * @return boolean true for successful authentication. 

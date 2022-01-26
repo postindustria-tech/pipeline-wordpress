@@ -46,7 +46,6 @@ class Fiftyonedegrees {
      */
     private static $instance;
     private $ga_service;
-    private $gtag_tracking_inst;
     private $fiftyone_service;
 
     /**
@@ -60,7 +59,6 @@ class Fiftyonedegrees {
         $this->setup_constants();		
         $this->fiftyone_service = new FiftyoneService();
         $this->ga_service = new Fiftyonedegrees_Google_Analytics();
-        $this->gtag_tracking_inst = new Fiftyonedegrees_Tracking_Gtag();
         $this->setup_wp_actions();
         $this->setup_wp_filters();
     }
