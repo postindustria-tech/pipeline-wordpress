@@ -364,11 +364,20 @@ class Fiftyonedegrees_Google_Analytics {
                     catch (Exception $e) {
 
                         $jsonError = json_decode($e->getMessage(), $assoc = true);
+                        $message = "Could not insert Custom Dimensions in Google " .
+                            "Analytics account.";
+                        
+                        if (strpos($e->getMessage(), "maximum allowed entities")
+                            !== false) {
+                            $message = $message + " Your Analytics account " .
+                                "allows a maximum of " .
+                                get_option(Options::GA_MAX_DIMENSIONS) .
+                                " Custom Dimensions.";
+                        }
                         update_option(
                             Options::GA_ERROR,
-                            "Could not insert Custom Dimensions in Google " .
-                            "Analytics account. Error message was: " .
-                            $jsonError["error"]["message"]);
+                            $message . " Error message from Google was: '" .
+                            $jsonError["error"]["message"] . "'");
                         error_log($e->getMessage());
                         return -1;
                     }
