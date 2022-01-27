@@ -89,7 +89,7 @@ class Fiftyonedegrees_Custom_Dimensions extends WP_List_Table
                
                     $ga_custom_dimension_index =
                         $this->get_ga_custom_dimension_index(
-                            $custom_dimentions,
+                            $custom_dimensions,
                             $actual_custom_dimension_name);
                     if ($ga_custom_dimension_index > -1) {
                         $custom_dimension_index = $ga_custom_dimension_index;
