@@ -363,14 +363,14 @@ class Fiftyonedegrees_Google_Analytics {
                     }
                     catch (Exception $e) {
 
-                        $calls = -1;
                         $jsonError = json_decode($e->getMessage(), $assoc = true);
                         update_option(
                             Options::GA_ERROR,
                             "Could not insert Custom Dimensions in Google " .
-                            "Analytics account because" .
+                            "Analytics account. Error message was: " .
                             $jsonError["error"]["message"]);
                         error_log($e->getMessage());
+                        return -1;
                     }
                 }
             }    
@@ -541,10 +541,12 @@ class Fiftyonedegrees_Google_Analytics {
         update_option(Options::GA_JS, $gtag_code);
 
         // Insert Custom Dimensions in Google Analytics
-        $this->insert_custom_dimensions();
+        $added = $this->insert_custom_dimensions();
         
         // Mark tracking is enabled.
-        update_option(Options::ENABLE_GA, "enabled");
+        if ($added >= 0) {
+            update_option(Options::ENABLE_GA, "enabled");
+        }
     }
 
     /**
