@@ -371,7 +371,7 @@ class Fiftyonedegrees_Google_Analytics {
                             !== false) {
                             $message = $message . " Your Analytics account " .
                                 "allows a maximum of " .
-                                get_custom_dimensions()['max_cust_dim_index'] .
+                                $this->get_custom_dimensions()['max_cust_dim_index'] .
                                 " Custom Dimensions.";
                         }
                         update_option(
