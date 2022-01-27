@@ -369,7 +369,7 @@ class Fiftyonedegrees_Google_Analytics {
                         
                         if (strpos($e->getMessage(), "maximum allowed entities")
                             !== false) {
-                            $message = $message + " Your Analytics account " .
+                            $message = $message . " Your Analytics account " .
                                 "allows a maximum of " .
                                 get_custom_dimensions()['max_cust_dim_index'] .
                                 " Custom Dimensions.";
