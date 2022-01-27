@@ -59,7 +59,7 @@ class Fiftyonedegrees_Custom_Dimensions extends WP_List_Table
 
         $results = array();
         $ga_service = new Fiftyonedegrees_Google_Analytics();
-        $ga_service->get_custom_dimensions(); 
+        $custom_dimensions = $ga_service->get_custom_dimensions(); 
         $currCustDimIndex = get_option(Options::GA_MAX_DIMENSIONS, 0);
         $passedDims = get_option(Options::GA_DIMENSIONS);
 
@@ -76,6 +76,7 @@ class Fiftyonedegrees_Custom_Dimensions extends WP_List_Table
                         $dataKey,
                         $property["name"]);
                     $custom_dimension_list = $this->get_custom_dimension_listbox(
+                        $custom_dimensions,
                         $custom_dimension_name);
 
                     // Get Custom Dimension Index for the property.
@@ -88,6 +89,7 @@ class Fiftyonedegrees_Custom_Dimensions extends WP_List_Table
                
                     $ga_custom_dimension_index =
                         $this->get_ga_custom_dimension_index(
+                            $custom_dimentions,
                             $actual_custom_dimension_name);
                     if ($ga_custom_dimension_index > -1) {
                         $custom_dimension_index = $ga_custom_dimension_index;
@@ -196,15 +198,17 @@ class Fiftyonedegrees_Custom_Dimensions extends WP_List_Table
 
     /**
      * Retrieves Custom Dimension Index from Google Analytics.
+     * @param array array containing custom dimensions list
+     * and max available custom dimension index 
      * @param string $cust_dim_name custom dimension name
      * @return int Google Analytic Index if dimension 
      * already exists otherwise returns -1.
      */
-    public function get_ga_custom_dimension_index($cust_dim_name) {
+    public function get_ga_custom_dimension_index(
+        $custom_dimensions,
+        $cust_dim_name) {
 
-        $ga_service = new Fiftyonedegrees_Google_Analytics();
-        $result = $ga_service->get_custom_dimensions();
-        $cust_dims_map = $result["cust_dims_map"];
+        $cust_dims_map = $custom_dimensions["cust_dims_map"];
 
         $cust_dim_index = -1;
         if (isset($cust_dims_map[$cust_dim_name])) {
@@ -216,18 +220,19 @@ class Fiftyonedegrees_Custom_Dimensions extends WP_List_Table
 
     /**
      * Retrieves Custom Dimension list box content. 
+     * @param array array containing custom dimensions list
+     * and max available custom dimension index 
      * @param string $cust_dim_name custom dimension name
      * @return array array list containing default and
      * existing custom dimensions.
      */	
-    public function get_custom_dimension_listbox($cust_dim_name) {
-
-        $ga_service = new Fiftyonedegrees_Google_Analytics();
-        $result = $ga_service->get_custom_dimensions();
+    public function get_custom_dimension_listbox(
+        $custom_dimensions,
+        $cust_dim_name) {
 
         $cust_dims_list = array();
          
-        $list = array_keys($result["cust_dims_map"]);
+        $list = array_keys($custom_dimensions["cust_dims_map"]);
 
         array_push($cust_dims_list, $cust_dim_name);
 
