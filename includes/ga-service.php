@@ -386,6 +386,7 @@ class Fiftyonedegrees_Google_Analytics {
         }
         else {
             error_log("User is not authenticated.");
+            return -1;
         }  
 
         return $calls;
