@@ -1,4 +1,10 @@
-<p>51Degrees Pipeline plugin can be used in your theme or plugin development. To setup, take the text from the <code>Usage in Content</code> column and insert it into <code>code</code> snippets into your pages that will be replaced with the corresponding values. Below is the list of properties available with your resource key.</p>
+<p>
+    51Degrees Pipeline plugin can be used in your theme or plugin development.
+    To setup, take the text from the <code>Usage in Content</code> column and
+    insert it into <code>code</code> snippets into your pages that will be
+    replaced with the corresponding values. Below is the list of properties
+    available with your Resource Key.
+</p>
 
 <?php
 /*
@@ -27,76 +33,78 @@ if (!class_exists('WP_List_Table')) {
 
 class Properties_List_table extends WP_List_Table
 {
-    public function get_columns()
-    {
+    public function get_columns() {
         return $columns= array(
-           'col_property_name'=>__('Name'),
-           'col_property_type'=>__('Type'),
-           'col_property_category'=>__('Category'),
+           'col_property_name' => __('Name'),
+           'col_property_type' => __('Type'),
+           'col_property_category' => __('Category'),
            'col_property_engine' => __('Engine'),
            'col_property_content_usage' => __('Usage in Content'),
            'col_property_php_usage' => __('Usage in PHP')
         );
     }
 
-    public function get_sortable_columns()
-    {
+    public function get_sortable_columns() {
         return $sortable = array(
-           'col_property_name'=> array('col_property_name',true),
-           'col_property_engine'=> array('col_property_engine',true)
+           'col_property_name' => array('col_property_name', true),
+           'col_property_engine' => array('col_property_engine', true)
         );
     }
 
-    public function prepare_items()
-    {
-        $result = Pipeline::process();
+    public function prepare_items() {
+        $result = Pipeline::$data;
 
-        if(!$result){
-
+        if (!$result){
             return;
-
         }
 
-        $this->_column_headers = array($this->get_columns(), array(), $this->get_sortable_columns());
+        $this->_column_headers = array(
+            $this->get_columns(),
+            array(),
+            $this->get_sortable_columns());
 
         $results = array();
 
         foreach ($result["properties"] as $dataKey => $properties) {
             foreach ($properties as $property) {
                 $results[] = array(
-                  "col_property_name" => strtolower($property["name"]),
-                  "col_property_category" => $property["type"],
-                  "col_property_type" => $property["category"],
-                  "col_property_engine" => $dataKey,
-                  "col_property_content_usage" => '{Pipeline::get("' . $dataKey . '"' . ', "' . strtolower($property["name"]) . '")}',
-                  "col_property_php_usage" => 'Pipeline::get("' . $dataKey . '"' . ', "' . strtolower($property["name"]) . '")'
+                    "col_property_name" => strtolower($property["name"]),
+                    "col_property_category" => $property["type"],
+                    "col_property_type" => $property["category"],
+                    "col_property_engine" => $dataKey,
+                    "col_property_content_usage" => '{Pipeline::get("' .
+                        $dataKey . '"' . ', "' .
+                        strtolower($property["name"]) . '")}',
+                    "col_property_php_usage" => 'Pipeline::get("' . $dataKey .
+                        '"' . ', "' . strtolower($property["name"]) . '")'
                 );
             }
         }
 
         usort($results, function ($a, $b) {
-            $orderby = ( !empty( $_GET['orderby'] ) ) ? sanitize_text_field( $_GET['orderby'] ) : 'col_property_name';
-            $order = (! empty( $_GET['order'] ) ) ? sanitize_text_field( $_GET['order'] ) : 'asc';
-            $result = strcmp( $a[$orderby], $b[$orderby] );
+            $orderby = (!empty($_GET['orderby'])) ?
+                sanitize_text_field($_GET['orderby']) : 'col_property_name';
+            $order = (!empty($_GET['order'])) ?
+                sanitize_text_field($_GET['order']) : 'asc';
+            $result = strcmp($a[$orderby], $b[$orderby]);
             return ($order === 'asc') ? $result : -$result;
         });
 
         $this->items = $results;
     }
 
-    public function display_rows()
-    {
+    public function display_rows() {
         $records = $this->items;
 
         foreach ($records as $i => $rec) {
             echo '<tr id="record_' . esc_html( $i ). '">';
 
-            echo "<td>" . esc_html( strtolower($rec["col_property_name"]) ). "</td>";
-            echo "<td>" . esc_html( $rec["col_property_category"] ). "</td>";
-            echo "<td>" . esc_html( $rec["col_property_type"] ) . "</td>";
-            echo "<td>" . esc_html( $rec["col_property_engine"] ). "</td>";
-            echo "<td>" . esc_html( $rec["col_property_content_usage"] ). "</td>";
-            echo "<td>" . esc_html( $rec["col_property_php_usage"] ). "</td>";
+            echo "<td>" . esc_html(strtolower($rec["col_property_name"])). "</td>";
+            echo "<td>" . esc_html($rec["col_property_category"]). "</td>";
+            echo "<td>" . esc_html($rec["col_property_type"]) . "</td>";
+            echo "<td>" . esc_html($rec["col_property_engine"]). "</td>";
+            echo "<td>" . esc_html($rec["col_property_content_usage"]). "</td>";
+            echo "<td>" . esc_html($rec["col_property_php_usage"]). "</td>";
 
             echo'</tr>';
         }

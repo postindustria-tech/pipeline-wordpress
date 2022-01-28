@@ -21,13 +21,31 @@ use fiftyone\pipeline\cloudrequestengine\CloudRequestEngine;
 use fiftyone\pipeline\cloudrequestengine\CloudEngine;
 use fiftyone\pipeline\core\Utils;
 
+require_once __DIR__ . '/../options.php';
+
 class Pipeline
 {
+    /**
+     * Single instance of processed flow data.
+     * This is populated by the process() method, and is only populated
+     * once per request.
+     */
+    public static $data = null;
+
+    /**
+     * Resets the processed data to null. This is primarily used in tests
+     * to simulate a fresh web request.
+     */
+    public static function reset() {
+        Pipeline::$data = null;
+    }
+
    /**
-	* Makes a pipeline from a resource key that 
-	* can be serialized to the database
-	* @param resourceKey Resource Key
-	* @return Array containing pipeline and engines
+	* Makes a pipeline from a Resource Key that 
+	* can be serialized to the database.
+    *
+	* @param string $resourceKey Resource Key
+	* @return array an array containing pipeline and engines
 	*/
     public static function make_pipeline($resourceKey) {
 
@@ -35,16 +53,18 @@ class Pipeline
         $url = get_site_url();
 		$appContext = Pipeline::getAppContext($url);
 		
-        // Prepare PipelineBuilder and add the JavaScript settings for the JavaScriptBuilder,
-		// in this case an endpoint to call back to to retrieve additional
-		// properties populated by client side evidence
+        // Prepare PipelineBuilder and add the JavaScript settings for the
+        // JavaScriptBuilder, in this case an endpoint to call back to to
+        // retrieve additional properties populated by client side evidence
 		// this ?json endpoint is used later to serve results from a special
 		// json engine automatically included in the pipeline		
         $builder = new PipelineBuilder([
             "javascriptBuilderSettings" => [
                 "endpoint" => $appContext . "/wp-json/fiftyonedegrees/v4/json",
-                "host" => isset($_SERVER['HTTP_HOST']) ? sanitize_text_field( $_SERVER['HTTP_HOST'] ) : $url,
-                "protocol" => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? "https" : "http",
+                "host" => isset($_SERVER['HTTP_HOST']) ?
+                    sanitize_text_field($_SERVER['HTTP_HOST']) : $url,
+                "protocol" => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ?
+                    "https" : "http",
 				"minify" => false
             ]
         ]);
@@ -55,11 +75,14 @@ class Pipeline
         }
         catch (Exception $e) {
             $error = $e->getMessage();
-            return array("pipeline" =>  null, "available_engines" => null, "error" => $error);
+            return array(
+                "pipeline" =>  null,
+                "available_engines" => null,
+                "error" => $error);
         }
         
 
-        // Get engines available with th resource key
+        // Get engines available with the Resource Key
         $engines = array_keys($cloud->flowElementProperties);
 
         // Add CloudRequestEngine to the pipeline.
@@ -76,25 +99,45 @@ class Pipeline
         // Build the pipeline
         $pipeline = $builder->build();
 
-        return array("pipeline" =>  $pipeline, "available_engines" => $engines, "error" => $error);
-
+        return array(
+            "pipeline" =>  $pipeline,
+            "available_engines" => $engines,
+            "error" => $error);
     }
 
     /**
-     * process function sets the evidence from web request in flowData and
+     * Process function sets the evidence from web request in flowData and
 	 * runs the process function on each attached FlowElement
-     * @return array, containing FlowData, properties and errors.
+     * 
+     * @return void
      */
-    public static function process()
-    {
-        $cache = null;
-        if ($cache === null) {
-    
+    public static function process() {
+        
+        // Only process if the data has not already been populated.
+        if (Pipeline::$data === null) {
+
+            // Fetch the data from the session if it's enabled and is already
+            // there.
+            if (session_status() === PHP_SESSION_ACTIVE &&
+                isset($_SESSION["fiftyonedegrees_data"]) &&
+                Pipeline::session_is_invalidated() === false) {
+                Pipeline::$data = $_SESSION["fiftyonedegrees_data"];
+                return;
+            }
+
             require_once dirname(__DIR__) . "/lib/vendor/autoload.php";
            
-            $cachedPipeline = get_option('fiftyonedegrees_resource_key_pipeline');
+            // Get the preconstructed pipeline from the cached option.
+            $cachedPipeline = get_option(Options::PIPELINE);
 
-            if(isset($cachedPipeline["error"]) || !$cachedPipeline){
+            if (!$cachedPipeline) {
+                // There is no pipeline, so return null.
+                return;
+            }
+
+            if (isset($cachedPipeline["error"])) {
+                error_log("Error occurred while initializing the 51Degrees " .
+                    "plugin: '" . $cachedPipeline["error"] . "'");
                 return;
             }
 
@@ -112,8 +155,8 @@ class Pipeline
             $flowData->process();
 
 			// Some browsers require that extra HTTP headers are explicitly
-			// requested. So set whatever headers are required by the browser in
-			// order to return the evidence needed by the pipeline.
+			// requested. So set whatever headers are required by the browser
+			// in order to return the evidence needed by the pipeline.
 			// More info on this can be found at
 			// https://51degrees.com/blog/user-agent-client-hints
 			Utils::setResponseHeader($flowData);
@@ -121,34 +164,50 @@ class Pipeline
             // Get properties for each engine from pipeline.
             $properties = array();
             foreach ($engines as $engine) {
-                $properties[$engine] = $pipeline->getElement($engine)->getProperties();
+                $properties[$engine] =
+                    $pipeline->getElement($engine)->getProperties();
             }
 
-            $result = array("flowData" => $flowData, "properties" => $properties, "errors" => $flowData->errors);
-            $cache = $result;
+            Pipeline::$data = array(
+                "flowData" => $flowData,
+                "properties" => $properties,
+                "errors" => $flowData->errors,
+                "createdAt" => time());
+
+            // If session cache is enabled then store the result in it.
+            if (session_status() == PHP_SESSION_ACTIVE) {
+                $_SESSION["fiftyonedegrees_data"] = Pipeline::$data;
+            }
         }
-        
-        return $cache;
     }
 
     /**
-     * Retrieves property by engine and property key
-     * @param string FlowElementDataKey
-	 * @param string Property Key
-     * @return String Property Value
+     * Retrieves property by engine and property key. If there is no flow data
+     * available, or it contains errors, then null is returned.
+     * 
+     * @param string $engine FlowElementDataKey e.g. device
+	 * @param string $key Property Key e.g. browsername
+     * @return string|null Property Value
      */	
     public static function get($engine, $key) {
 
-        $result =  Pipeline::process();
-        if(isset($result["errors"]) && count($result["errors"])) {
-            error_log("Errors processing Flow Data" . $result["errors"]);
-            return;
+        $data =  Pipeline::$data;
+
+        if (!$data) {
+            // There is no processed flow data.
+            return null;
         }
 
-        $flowData = $result["flowData"];
+        if(isset($data["errors"]) && count($data["errors"])) {
+            // There were errors from processing.
+            error_log("Errors processing Flow Data" . $data["errors"]);
+            return null;
+        }
+
+        $flowData = $data["flowData"];
 
         try {
-            if($flowData->{$engine}->{$key}->hasValue) {
+            if ($flowData->{$engine}->{$key}->hasValue) {
                 return $flowData->{$engine}->{$key}->value;
             }
             else {
@@ -164,41 +223,53 @@ class Pipeline
     }
 
     /**
-     * Retrieves flowData properties JSON object
-     * @return JSON Object
+     * Retrieves processed flow data as a JSON object.
+     * 
+     * @return object|null flow data as a JSON Object
      */	
     public static function getJSON() {
 
-        $result =  Pipeline::process();
-        if(isset($result["errors"]) && count($result["errors"])) {
-            error_log("Errors processing Flow Data" . $result["errors"]);
-            return;
+        $data =  Pipeline::$data;
+
+        if (!$data) {
+            return null;
+        }
+        if (isset($data["errors"]) && count($data["errors"])) {
+            error_log("Errors processing Flow Data" . $data["errors"]);
+            return null;
         }
 
-        $flowData = $result["flowData"];
+        $flowData = $data["flowData"];
+
         try {
             return $flowData->jsonbundler->json;
         }
         catch (\Exception $e) {
             error_log($e->getMessage());
-            return;
+            return null;
         }       
     }
 
     /**
-     * Retrieves properties list by category
-	 * @param string Category
-     * @return Array Properties List
+     * Retrieves a properties list for the specified category.
+     * 
+	 * @param string $category the category name to get properties for
+     * @return array|null the list of properties
      */	
-    public static function getCategory($category)
-    {
-        $result =  Pipeline::process();
-        if(isset($result["errors"]) && count($result["errors"])) {
-            error_log("Errors processing Flow Data" . $result["errors"]);
-            return;
+    public static function getCategory($category) {
+
+        $data =  Pipeline::$data;
+
+        if (!$data) {
+            return null;
         }
 
-        $flowData = $result["flowData"];
+        if (isset($data["errors"]) && count($data["errors"])) {
+            error_log("Errors processing Flow Data" . $data["errors"]);
+            return null;
+        }
+
+        $flowData = $data["flowData"];
 
         $categoryResults = $flowData->getWhere("category", $category);
         $output = array();
@@ -210,7 +281,6 @@ class Pipeline
                 $value = $property->value;
             }
             else {
-                //error_log($property->noValueMessage);
                 $value = null;
             }
             $output[$key] = $value;
@@ -219,21 +289,29 @@ class Pipeline
     }
 
     /**
-     * Gets client side javascript from FlowData
-     * @param Javascript
+     * Gets client side javascript from FlowData.
+     * 
+     * @return string|null the Javascript for the requesting device
      */
     public static function getJavaScript() {
-        $result =  Pipeline::process();
-        if(isset($result["errors"]) && count($result["errors"])) {
-            error_log("Errors processing Flow Data" . $result["errors"]);
-            return;
+
+        $data =  Pipeline::$data;
+
+        if (!$data) {
+            return null;
         }
 
-        $flowData = $result["flowData"];
+        if (isset($data["errors"]) && count($data["errors"])) {
+            error_log("Errors processing Flow Data" . $data["errors"]);
+            return null;
+        }
+
+        $flowData = $data["flowData"];
         
         try {
             return $flowData->javascriptbuilder->javascript;
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             error_log($e->getMessage());
             return "";
         }
@@ -241,11 +319,16 @@ class Pipeline
  
     /**
      * Gets AppContext from the URL
-     * @param URL
+     * @param string $url
+     * @return string the app context
      */
     public static function getAppContext($url) {
-        $urlParts = explode("/", str_replace("https://", "", str_replace("http://", "", $url)));
-		if(count($urlParts) > 1) {
+
+        $urlParts = explode(
+            "/",
+            str_replace("https://", "", str_replace("http://", "", $url)));
+
+		if (count($urlParts) > 1) {
 			$appContext = "/" . end($urlParts);
 		}
 		else { 
@@ -254,4 +337,15 @@ class Pipeline
 		return $appContext;
     }
 
+    /**
+     * Returns true if the data in the session has been invalidated by
+     * another process updating the pipeline.
+     * 
+     * @return bool
+     */
+    static function session_is_invalidated() {
+        $createdAt = $_SESSION["fiftyonedegrees_data"]['createdAt'];
+        $invalidatedAt = get_option(Options::SESSION_INVALIDATED);
+        return $createdAt < $invalidatedAt;
+    }
 }

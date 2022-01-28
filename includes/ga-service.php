@@ -18,6 +18,8 @@
 
 use Google\Service\Analytics\CustomDimension;
 
+require_once __DIR__ . '/../options.php';
+
 /**
  * Google Analytics Service class 
  *
@@ -29,30 +31,46 @@ use Google\Service\Analytics\CustomDimension;
 class Fiftyonedegrees_Google_Analytics {
 
     /**
+     * Instance of the tracking GTag.
+     */
+    private $gtag_tracking_inst;
+ 
+     /**
+     * Constructor.
+     * Initializes the instance of this service.
+     * 
+     * @access public
+     */
+    public function __construct() {
+        $this->gtag_tracking_inst = new Fiftyonedegrees_Tracking_Gtag();
+    }
+
+    /**
      * Authenticate with Google Analytics.
-	 * @param string Access Code
+	 * @param string $key_google_token Access Code
      * @return boolean true for successful authentication. 
      */	
-    public function google_analytics_authenticate( $key_google_token ) {
+    public function google_analytics_authenticate($key_google_token) {
         
         try {
 
-            update_option( 'fiftyonedegrees_ga_auth_code', $key_google_token );
+            update_option(Options::GA_AUTH_CODE, $key_google_token);
 
             $client = $this->authenticate();
 
-            if ( $client ) { 
+            if ($client) {
               
                 $service = $this->get_google_analytics_service( $client );
                 $this->get_analytics_properties_list($service);
                 return true; 
-
-            } else {
+            }
+            else {
                 error_log("Could not authenticate with the user.");
             }
     
-        } catch (Exception $e) {
-    
+        }
+        catch (Exception $e) {
+
             error_log($e->getMessage());
         }
         return false; 
@@ -65,65 +83,93 @@ class Fiftyonedegrees_Google_Analytics {
     public function authenticate() {
 
         $client = new Google_Client();
-        $client->setApprovalPrompt( FIFTYONEDEGREES_PROMPT );
-        $client->setAccessType( FIFTYONEDEGREES_ACCESS_TYPE );
-        $client->setClientId( FIFTYONEDEGREES_CLIENT_ID );
-        $client->setClientSecret( FIFTYONEDEGREES_CLIENT_SECRET );
-        $client->setRedirectUri( FIFTYONEDEGREES_REDIRECT );	
-        $client->setScopes( Google_Service_Analytics::ANALYTICS_READONLY );
+        $client->setApprovalPrompt(FIFTYONEDEGREES_PROMPT);
+        $client->setAccessType(FIFTYONEDEGREES_ACCESS_TYPE);
+        $client->setClientId(FIFTYONEDEGREES_CLIENT_ID);
+        $client->setClientSecret(FIFTYONEDEGREES_CLIENT_SECRET);
+        $client->setRedirectUri(FIFTYONEDEGREES_REDIRECT);
+        $client->setScopes(Google_Service_Analytics::ANALYTICS_READONLY);
         
-        $ga_google_authtoken = get_option( 'fiftyonedegrees_ga_access_token' );
+        $ga_google_authtoken = get_option(Options::GA_TOKEN);
     
-        if ( ! empty( $ga_google_authtoken ) ) {
+        if (!empty($ga_google_authtoken)) {
     
-            $client->setAccessToken( $ga_google_authtoken );
-        } else {
+            $client->setAccessToken($ga_google_authtoken);
+        }
+        else {
     
-            $auth_code = get_option( 'fiftyonedegrees_ga_auth_code' );
+            $auth_code = get_option(Options::GA_AUTH_CODE);
     
-            if ( empty( $auth_code ) ) {
+            if (empty($auth_code)) {
                 
-                update_option( "fiftyonedegrees_ga_error", "Please enter Access Code to authenticate." );
+                update_option(
+                    Options::GA_ERROR,
+                    "Please enter Access Code to authenticate.");
                 return false; 
             }
     
             try {   
                                
-                $access_token = $client->authenticate( $auth_code );
+                $access_token = $client->authenticate($auth_code);
 
-                if( isset( $access_token["error_description"] )) {
-                    update_option( "fiftyonedegrees_ga_error", "<b>Authentication request has returned " . $access_token["error_description"] . "</b>");  
+                if (isset($access_token["error_description"])) {
+                    update_option(
+                        Options::GA_ERROR,
+                        "<b>Authentication request has returned " .
+                        $access_token["error_description"] . "</b>");  
                 }
-                else if( isset( $access_token["scope"] ) && strpos( $access_token["scope"], Google_Service_Analytics::ANALYTICS_READONLY ) === false ) {
-                    update_option( "fiftyonedegrees_ga_error", 'Please ensure you tick the <b>See and download your Google Analytics data</b> box when logging into Google Analytics.' );
+                else if (isset($access_token["scope"]) &&
+                    strpos(
+                        $access_token["scope"],
+                        Google_Service_Analytics::ANALYTICS_READONLY) === false) {
+                    update_option(
+                        Options::GA_ERROR,
+                        'Please ensure you tick the <b>See and download your ' .
+                        'Google Analytics data</b> box when logging into ' .
+                        'Google Analytics.');
                     return false;
                 }
-                else if( isset( $access_token["scope"] ) && strpos( $access_token["scope"], Google_Service_Analytics::ANALYTICS_EDIT ) === false ) { 
-                    update_option( "fiftyonedegrees_ga_error", 'Please ensure you tick the <b>Edit Google Analytics management entities</b> box when logging into Google Analytics.' );
+                else if (isset($access_token["scope"]) &&
+                    strpos(
+                        $access_token["scope"],
+                        Google_Service_Analytics::ANALYTICS_EDIT) === false) {
+                    update_option(
+                        Options::GA_ERROR,
+                        'Please ensure you tick the <b>Edit Google Analytics ' .
+                        'management entities</b> box when logging into ' .
+                        'Google Analytics.');
                     return false;
                 }                
 
-            } catch ( Analytify_Google_Auth_Exception $e ) {
-                update_option( "fiftyonedegrees_ga_error", "Authentication request has returned an error. Please enter valid Access Code." );
+            }
+            catch (Analytify_Google_Auth_Exception $e) {
+                update_option(
+                    Options::GA_ERROR,
+                    "Authentication request has returned an error. " .
+                    "Please enter valid Access Code.");
                 error_log($e->getMessage());
                 return false;
-
-            } catch ( Exception $e ) {
-                update_option( "fiftyonedegrees_ga_error", "Authentication request has returned an error. Please enter valid Access Code." );
+            }
+            catch (Exception $e) {
+                update_option(
+                    Options::GA_ERROR,
+                    "Authentication request has returned an error. " .
+                    "Please enter valid Access Code.");
                 error_log($e->getMessage());
                 return false;
-
             }
     
-            if ( $access_token ) {
+            if ($access_token) {
     
-                $client->setAccessToken( $access_token );
+                $client->setAccessToken($access_token);
     
-                update_option( 'fiftyonedegrees_ga_access_token', $access_token );
-                update_option( 'fiftyonedegrees_ga_auth_date', date( 'l jS F Y h:i:s A' ) . date_default_timezone_get() );
+                update_option(Options::GA_TOKEN, $access_token);
+                update_option(
+                    Options::GA_AUTH_DATE,
+                    date( 'l jS F Y h:i:s A' ) . date_default_timezone_get());
     
-            } else {
-    
+            }
+            else {
                 return false;
             }
         }
@@ -134,22 +180,22 @@ class Fiftyonedegrees_Google_Analytics {
     /**
      * Retrieves Google Analytics Object
 	 * @param Google_Client $client
-     * @return $service service object
+     * @return Google_Service_Analytics service service object
      */	
-    public function get_google_analytics_service ( $client ) {
+    public function get_google_analytics_service ($client) {
         try {
             
             // Create an authorized analytics service object.
-            $service = new Google_Service_Analytics( $client );
+            $service = new Google_Service_Analytics($client);
              
-        } catch ( Google_Service_Exception $e ) {
+        }
+        catch (Google_Service_Exception $e) {
             
             error_log($e->getMessage());
-
-        } catch ( Exception $e ) {
+        }
+        catch (Exception $e) {
             
             error_log($e->getMessage());
-
         }
 
         return $service;		
@@ -162,7 +208,7 @@ class Fiftyonedegrees_Google_Analytics {
      */	
     public function get_analytics_properties_list($analytics_service) {
   
-        if (!get_option( 'fiftyonedegrees_ga_access_token' )) {
+        if (!get_option(Options::GA_TOKEN)) {
             echo "You must authenticate to access your Analytics Account.";
             return;
         }
@@ -190,7 +236,7 @@ class Fiftyonedegrees_Google_Analytics {
 			error_log($e->getMessage());
 		}
 
-        update_option( 'fiftyonedegrees_ga_properties_list' , $propertiesList );
+        update_option(Options::GA_PROPERTIES , $propertiesList);
     
         return $propertiesList;
     }
@@ -198,12 +244,12 @@ class Fiftyonedegrees_Google_Analytics {
     /**
      * Retrieves account id for the web property being used.
 	 * @param Google_Service_Analytics $analytics_service
-     * @param string trackingId
+     * @param string $trackingId
      * @return string accountId 
      */	
-    public function get_account_id( $analytics_service, $trackingId ) {
+    public function get_account_id($analytics_service, $trackingId) {
 
-        if( !empty( $trackingId ) ) {
+        if (!empty($trackingId)) {
 
             try {
                 // Get the list of accounts and web properties.
@@ -211,20 +257,21 @@ class Fiftyonedegrees_Google_Analytics {
                 foreach ($accounts->getItems() as $account) {
                     $accountId = $account->getId();
                     foreach ($account->getWebProperties() as $property) {
-                        if ( $property->getId() === $trackingId ){
+                        if ($property->getId() === $trackingId) {
                             return $accountId;
                         }
                     }
                 }
             }
             catch (apiServiceException $e) {
-                error_log('There was an Analytics API service error '
-                . $e->getCode() . ':' . $e->getMessage());
+                error_log('There was an Analytics API service error ' .
+                $e->getCode() . ':' . $e->getMessage());
                 return "";
               
-            } catch (apiException $e) {
-                error_log('There was a general API error '
-                . $e->getCode() . ':' . $e->getMessage());
+            }
+            catch (apiException $e) {
+                error_log('There was a general API error ' .
+                $e->getCode() . ':' . $e->getMessage());
 
                 return "";
             }
@@ -234,22 +281,22 @@ class Fiftyonedegrees_Google_Analytics {
 
     /**
      * Retrieves custom dimensions for the authorized user.
+     * 
      * @return array array containing custom dimensions list
      * and max available custom dimension index 
      */	
     public function get_custom_dimensions() {
-
-        $trackingId = get_option("fiftyonedegrees_ga_tracking_id");
-        $maxCustomDimIndex = get_option("fiftyonedegrees_ga_max_cust_dim_index");
+        $trackingId = get_option(Options::GA_TRACKING_ID);
+        $maxCustomDimIndex = get_option(Options::GA_MAX_DIMENSIONS);
         $client = $this->authenticate();
 
-        if ( $client ) {  
+        if ($client) {
 
-            $service = $this->get_google_analytics_service( $client ); 
+            $service = $this->get_google_analytics_service($client);
 
             // Get accountId from tracking Id
-            $accountId = $this->get_account_id( $service, $trackingId );
-            update_option("fiftyonedegrees_ga_account_id", $accountId);
+            $accountId = $this->get_account_id($service, $trackingId);
+            update_option(Options::GA_ACCOUNT_ID, $accountId);
 
             // Get the list of custom dimensions for the web property.
             $customDimensions = $service->management_customDimensions->listManagementCustomDimensions($accountId, $trackingId);
@@ -264,39 +311,42 @@ class Fiftyonedegrees_Google_Analytics {
 
             // Get Maximum Custom Dimension Index
             $maxCustomDimIndex = count($customDimensions->getItems());
-            update_option("fiftyonedegrees_ga_max_cust_dim_index", $maxCustomDimIndex);       
+            update_option(Options::GA_MAX_DIMENSIONS, $maxCustomDimIndex);
     
         } 
         else {
             error_log("User is not authenticated.");
         }
 
-        return array( "cust_dims_map" => $custom_dimensions_map, "max_cust_dim_index" => $maxCustomDimIndex );
+        return array(
+            "cust_dims_map" => $custom_dimensions_map,
+            "max_cust_dim_index" => $maxCustomDimIndex );
     }
 
     /**
      * Inserts Custom Dimension into analytics account.
-     * @return int no of new custom dimensions inserted.
+     * 
+     * @return int number of new custom dimensions inserted.
      */	
     public function insert_custom_dimensions() {
 
         $calls = 0;        
-        $accountId = get_option("fiftyonedegrees_ga_account_id");
-        $trackingId = get_option("fiftyonedegrees_ga_tracking_id");
-        $cust_dim_map = get_option("fiftyonedegrees_ga_cust_dims_map");
+        $accountId = get_option(Options::GA_ACCOUNT_ID);
+        $trackingId = get_option(Options::GA_TRACKING_ID);
+        $cust_dim_map = get_option(Options::GA_CUSTOM_DIMENSIONS_MAP);
         $client = $this->authenticate();
 
-        if ( $client ) {  
+        if ($client) {
 
-            $service = $this->get_google_analytics_service( $client );
+            $service = $this->get_google_analytics_service($client);
 
-            foreach ( $cust_dim_map as $dimension ) {
+            foreach ($cust_dim_map as $dimension) {
 
                 $custDimName = $dimension["custom_dimension_name"];
                 $custDimGAIndex = $dimension["custom_dimension_ga_index"];
                 $custDimIndex = $dimension["custom_dimension_index"];
 
-                if( $custDimGAIndex === -1 ) {
+                if ($custDimGAIndex === -1) {
 
                     $customDimension = new CustomDimension();
                     $customDimension->setName($custDimName);
@@ -310,22 +360,332 @@ class Fiftyonedegrees_Google_Analytics {
                         $result = $service->management_customDimensions->insert($accountId, $trackingId, $customDimension);
                         $calls = $calls + 1;
 
-                    } catch (Exception $e) {
-
-                        $calls = -1;
-                        $jsonError = json_decode($e->getMessage(), $assoc = true);
-                        update_option( "fiftyonedegrees_ga_error", "Could not insert Custom Dimensions in Google Analytics account because" . $jsonError["error"]["message"]);
-                        error_log($e->getMessage());
                     }
-                
+                    catch (Exception $e) {
+
+                        $jsonError = json_decode($e->getMessage(), $assoc = true);
+                        $message = "Could not insert Custom Dimensions in Google " .
+                            "Analytics account.";
+                        
+                        if (strpos($e->getMessage(), "maximum allowed entities")
+                            !== false) {
+                            $message = $message . " Your Analytics account " .
+                                "allows a maximum of " .
+                                $this->get_custom_dimensions()['max_cust_dim_index'] .
+                                " Custom Dimensions.";
+                        }
+                        update_option(
+                            Options::GA_ERROR,
+                            $message . " Error message from Google was: '" .
+                            $jsonError["error"]["message"] . "'");
+                        error_log($e->getMessage());
+                        return -1;
+                    }
                 }
-            }     
+            }    
         }
         else {
             error_log("User is not authenticated.");
+            return -1;
         }  
-        
+
         return $calls;
+    }
+    
+    /**
+     * Setup action hooks for the plugin. These hooks are handled
+     * by wordpress.
+     * 
+     * See available actions:
+     * https://codex.wordpress.org/Plugin_API/Action_Reference
+     *
+     * @access      private
+     * @since       1.0.11
+     * @return      void
+     */
+    public function setup_wp_actions() {
+        add_action(
+            'admin_init',
+            array($this, 'fiftyonedegrees_ga_authentication'));
+        add_action(
+            'admin_init',
+            array($this, 'fiftyonedegrees_ga_logout'));
+        add_action(
+            'admin_init',
+            array($this, 'fiftyonedegrees_ga_set_tracking_id'));
+        add_action(
+            'admin_init',
+            array($this, 'fiftyonedegrees_ga_update_cd_indices'));
+        add_action(
+            'admin_init',
+            array($this, 'fiftyonedegrees_ga_change_screen'));
+        add_action(
+            'admin_init',
+            array($this, 'fiftyonedegrees_ga_enable_tracking'));
+            
+        // Head actions. These are actions to run before generating an HTML
+        // head section.
+        add_action(
+            'wp_head',
+            array($this, 'fiftyonedegrees_ga_add_analytics_code'),
+            10);
+    }
+
+    /**
+     * Construct a list of Google Analytics custom dimensions and store in
+     * an option.
+     * 
+     * This is called either when GA is enabled, or when the custom dimensions
+     * are updated.
+     * 
+     * @param array $cachedPipeline 51Degrees pipeline
+     * @return void
+     */
+    function populate_selected_dimensions($cachedPipeline) {
+
+        if (!isset($cachedPipeline['error'])) {
+                    
+            $passed_dimensions = array();
+            foreach ($_POST as $key=>$dimension) {
+                if (strpos($key, "51D_") !== false) {
+                    $key = sanitize_text_field(wp_unslash(
+                        str_replace("51D_","", $key)));
+                    $passed_dimensions[$key] =
+                        sanitize_text_field(wp_unslash($dimension));
+                }
+            }
+            update_option(
+                Options::GA_DIMENSIONS,
+                $passed_dimensions);
+            update_option(
+                Options::GA_DIMENSIONS_UPDATED,
+                true);
+        }
+    }
+
+    /**
+     * If a POST has been made with new Google Analytics custom dimensions,
+     * then update them within the plugin.
+     * 
+     * @return void
+     */
+    function fiftyonedegrees_ga_update_cd_indices() {
+
+        if (isset($_POST["fiftyonedegrees_ga_update_cd_indices"])) {
+
+            if ("Update Custom Dimension Mappings" ===
+                $_POST["fiftyonedegrees_ga_update_cd_indices"]) {
+                $this->populate_selected_dimensions(
+                    get_option(Options::PIPELINE));
+
+            }
+            wp_redirect(get_admin_url() .
+                'options-general.php?page=51Degrees&tab=google-analytics');
+        }       
+    }
+
+    /**
+     * Add Google Analytics JavaScript to the page.
+     * 
+     * @return void
+     */
+    function fiftyonedegrees_ga_add_analytics_code() {
+        
+        echo sprintf(
+            esc_html('%1$s'),
+            get_option(Options::GA_JS));			  
+    }
+
+    /**
+     * If a POST has been made to enable/disable Google Analytics,
+     * then enable it and update the custom dimensions within the plugin.
+     * 
+     * @return void
+     */
+    function fiftyonedegrees_ga_enable_tracking() {
+
+        if (isset($_POST[Options::ENABLE_GA])) {
+
+            if ("Enable Google Analytics Tracking" ===
+                $_POST[Options::ENABLE_GA]) {
+
+                $cachedPipeline =
+                    get_option(Options::PIPELINE);
+                $this->populate_selected_dimensions($cachedPipeline);
+
+                if (!isset($cachedPipeline['error'])) {
+
+                    $this->execute_ga_tracking_steps();
+                }
+                
+            }
+            else {
+                delete_option(Options::GA_JS);
+                delete_option(Options::ENABLE_GA);            
+            }
+
+            delete_option(Options::RESOURCE_KEY_UPDATED);
+            delete_option(Options::GA_ID_UPDATED);
+            delete_option(Options::GA_SEND_PAGE_VIEW_UPDATED);
+            delete_option(Options::GA_DIMENSIONS_UPDATED);
+            wp_redirect(get_admin_url() .
+                'options-general.php?page=51Degrees&tab=google-analytics');
+        }
+                            
+    }
+
+    /**
+     * Sets up the options needed to add custom dimentions to Google Analytics.
+     * 
+     * @return void
+     */
+    function execute_ga_tracking_steps() {
+
+        //Prepare Custom Dimensions
+        $customDimensionsTable = new Fiftyonedegrees_Custom_Dimensions();
+        $customDimensionsTable->prepare_items();           
+
+        // Get Google analytics Tracking Javascript to be added to the
+        // header. 
+        $gtag_code = $this->gtag_tracking_inst->output_ga_tracking_code();
+        update_option(Options::GA_JS, $gtag_code);
+
+        // Insert Custom Dimensions in Google Analytics
+        $added = $this->insert_custom_dimensions();
+        
+        // Mark tracking is enabled.
+        if ($added >= 0) {
+            update_option(Options::ENABLE_GA, "enabled");
+        }
+    }
+
+    /**
+     * Run if a POST is recieved to update Google Analytics options.
+     * 
+     * @return void
+     */
+    function fiftyonedegrees_ga_change_screen() {
+
+        if (isset($_POST["fiftyonedegrees_ga_change_settings"])) {
+            
+            delete_option(Options::GA_CUSTOM_DIMENSIONS_SCREEN);
+            wp_redirect(get_admin_url() .
+                'options-general.php?page=51Degrees&tab=google-analytics' );
+        }          
+    }   
+
+    /**
+     * If a change is made to the Google Analytics token, then update all
+     * the relevant options.
+     * 
+     * @return void
+     */
+    function fiftyonedegrees_ga_set_tracking_id() {         
+        if (get_option(Options::GA_TOKEN)) {
+            if (isset($_POST['submit']) &&
+                "Save Changes" === $_POST['submit']) {
+
+                delete_option(Options::GA_TRACKING_ID_ERROR);
+                update_option(Options::GA_CUSTOM_DIMENSIONS_SCREEN, "enabled");
+
+                if (isset($_POST[Options::GA_TRACKING_ID]) &&
+                    "Select Analytics Property" ===
+                    $_POST[Options::GA_TRACKING_ID]) {
+
+                    update_option(Options::GA_TRACKING_ID_ERROR, true);
+                    delete_option(Options::GA_CUSTOM_DIMENSIONS_SCREEN);                        
+                }
+                else if (isset($_POST[Options::GA_TRACKING_ID])) {
+
+                    $ga_tracking_id = sanitize_text_field(wp_unslash(
+                        $_POST[Options::GA_TRACKING_ID]));
+                    
+                    update_option(
+                        Options::GA_TRACKING_ID,
+                        $ga_tracking_id);
+
+                    if (isset($_POST[Options::GA_SEND_PAGE_VIEW]) &&
+                        "on" === $_POST[Options::GA_SEND_PAGE_VIEW]) {
+                        update_option(
+                            Options::GA_SEND_PAGE_VIEW,
+                            'true');
+                        update_option(Options::GA_SEND_PAGE_VIEW_VAL, "On");
+                    }  
+                    else {
+                        delete_option(Options::GA_SEND_PAGE_VIEW);
+                        update_option(Options::GA_SEND_PAGE_VIEW_VAL, "Off");                   
+                    }
+                    
+                }					
+                wp_redirect(get_admin_url() .
+                    'options-general.php?page=51Degrees&tab=google-analytics' );
+            }     
+        }
+    }
+
+    /**
+     * If a new Google Analytics token is set in the admin interface, then
+     * authenticate it in the Google Analytics service. This will then set
+     * the GA_TOKEN option.
+     * 
+     * @return void
+     */
+    function fiftyonedegrees_ga_authentication() {
+
+        if (isset($_POST["fiftyonedegrees_ga_code"]) &&
+            isset($_POST['submit'])) {
+            
+            $key_google_token = sanitize_text_field(wp_unslash(
+                    $_POST["fiftyonedegrees_ga_code"]));
+            $this->google_analytics_authenticate(
+                $key_google_token);
+            delete_option(Options::GA_TRACKING_ID_ERROR);
+            wp_redirect(get_admin_url() .
+                'options-general.php?page=51Degrees&tab=google-analytics' );
+            if (defined('ABSPATH')) { exit; }
+        }
+    }
+
+    /**
+     * If logout from Google Analytics is requested in the admin interface,
+     * then remove all existing options relating to Google Analytics.
+     * 
+     * @return void
+     */
+    function fiftyonedegrees_ga_logout() {
+
+        if (isset($_POST['ga_log_out'])) {
+            
+            $this->delete_ga_options();
+
+            wp_redirect(get_admin_url() .
+                'options-general.php?page=51Degrees&tab=google-analytics' );
+        }
+    }
+
+    /**
+     * Delete all the options relating to Google Analytics. This will disable
+     * the Google Analytics feature.
+     */
+    function delete_ga_options() {
+
+        delete_option(Options::GA_AUTH_CODE);
+        delete_option(Options::GA_TOKEN);
+        delete_option(Options::GA_PROPERTIES);
+        delete_option(Options::GA_TRACKING_ID);
+        delete_option(Options::GA_ACCOUNT_ID);
+        delete_option(Options::GA_MAX_DIMENSIONS);
+        delete_option(Options::GA_SEND_PAGE_VIEW);
+        delete_option(Options::GA_JS);
+        delete_option(Options::ENABLE_GA);
+        delete_option(Options::GA_ERROR);
+        delete_option(Options::RESOURCE_KEY_UPDATED);
+        delete_option(Options::GA_DIMENSIONS);
+        delete_option(Options::GA_DIMENSIONS_UPDATED);
+        delete_option(Options::GA_ID_UPDATED);
+        delete_option(Options::GA_SEND_PAGE_VIEW_UPDATED);
+        delete_option(Options::GA_TRACKING_ID_ERROR);
+        delete_option(Options::GA_CUSTOM_DIMENSIONS_SCREEN);
     }
 }
     

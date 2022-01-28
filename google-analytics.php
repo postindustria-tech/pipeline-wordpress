@@ -17,83 +17,128 @@
     clause in Article 5 of the EUPL shall not apply.
 */
 
-if ( (!get_option( 'fiftyonedegrees_ga_access_token' ) && empty(get_option( 'fiftyonedegrees_ga_access_token' )))
-         || get_option( "fiftyonedegrees_ga_error" )) { ?>
+if ((!get_option(Options::GA_TOKEN) &&
+	empty(get_option(Options::GA_TOKEN))) ||
+	get_option(Options::GA_ERROR)) { ?>
 	<form method="post" action="options.php">
 	
-	<table class="form-table">
-		<tbody>
-        <?php
-			if ( get_option( "fiftyonedegrees_ga_error" )) {
-				echo '<p></p><span class="fod-pipeline-status error">' . esc_html( get_option( "fiftyonedegrees_ga_error" ) ) . '</span>';      
-				delete_option( "fiftyonedegrees_ga_error" );
-			}
-		?>
-		<p>It is required to <a href="https://support.google.com/analytics/answer/1008015?hl=en/" target="_blank">Set up</a> an account and a website profile at <a href="https://analytics.google.com/" target="_blank">Google Analytics</a> to send 51Degrees Custom Dimensions to Google Analytics. Once Set Up, create a connection between 51Degrees and your Google Analytics account.</p>
-			<tr>
-				<th scope="row" ><label class="pt-20">Google Authentication</label></th>
-				<td>
-					<p class="description">Please ensure you allow 51Degrees access to both <b>Edit Google Analytics management entities</b> and <b>See and download your Google Analytics data</b> when logging into Google Analytics.</br></p></br>
-					<a title="Log in with Google Analytics Account" id="fiftyonedegrees_ga_token" class="button-primary authentication_btn" href="https://accounts.google.com/o/oauth2/auth?<?php echo generate_login_url(); ?>" target="_blank">Log in with Google Analytics Account</a>					
-				</td>
-			</tr>
-			<tr>
-				<th scope="row" ><label for="fiftyonedegrees_ga_code">Access Code</label></th>
-				<td>
-					<input name="fiftyonedegrees_ga_code" id="fiftyonedegrees_ga_code" type="text" size="32"></input>
-					<p class="description">Enter copied Google Account Access Code here.<br></p>
-				</td>
-			</tr>
-		</tbody>
-	</table>
-
-	<?php submit_button( $name = 'Authenticate' );?>
-	</form>
-<?php	
-} else if ( get_option("custom_dimension_screen") ) { 
-
-	include plugin_dir_path(__FILE__) . "/ga-customdimensions.php";
-
-} else { ?>
-
-	<form method="post" action="options.php">
-
 		<table class="form-table">
-	
 			<tbody>
-
-			<?php 
-
-				if ( get_option( 'tracking_id_error' ) ) {
-					
-					?>
-					<p></p>
-					<?php echo '<span class="fod-pipeline-status error"><b>Please Select Analytics Property.</b></span>';
-				}
+				<?php
+					if (get_option(Options::GA_ERROR)) {
+						echo '<p></p><span class="fod-pipeline-status error">' .
+							esc_html(get_option(Options::GA_ERROR)) .
+							'</span>';
+						delete_option(Options::GA_ERROR);
+					}
 				?>
-
+				<p>
+					It is required to
+					<a href="https://support.google.com/analytics/answer/1008015?hl=en/" target="_blank">
+						Set up
+					</a>
+					an account and a website profile at
+					<a href="https://analytics.google.com/" target="_blank">
+						Google Analytics
+					</a>
+					to send 51Degrees Custom Dimensions to Google Analytics.
+					Once Set Up, create a connection between 51Degrees and your
+					Google Analytics account.
+				</p>
 				<tr>
-					<th scope="row" ><label class="pt-20">Google Authentication</label></th>
+					<th scope="row" >
+						<label class="pt-20">Google Authentication</label>
+					</th>
 					<td>
-						<input type="submit" class="button-primary" value="Logout" name="ga_log_out" />
-						<p class="description">You have allowed your site to access the data from your Google Analytics account. Click on logout button to disconnect or re-authenticate.</p>
+						<p class="description">
+							Please ensure you allow 51Degrees access to both
+							<b>Edit Google Analytics management entities</b>
+							and <b>See and download your Google Analytics data</b>
+							when logging into Google Analytics.</br>
+						</p>
+						</br>
+						<a title="Log in with Google Analytics Account" id="<?php echo Options::GA_TOKEN; ?>" class="button-primary authentication_btn" href="https://accounts.google.com/o/oauth2/auth?<?php echo generate_login_url(); ?>" target="_blank">
+							Log in with Google Analytics Account
+						</a>
 					</td>
 				</tr>
 				<tr>
-				<th scope="row" ><label class="pt-20" for="fiftyonedegrees_ga_tracking_id">Analytics Account/Property</label></th>
+					<th scope="row">
+						<label for="<?php echo "fiftyonedegrees_ga_code"; ?>">Access Code</label>
+					</th>
 					<td>
-						<select id="fiftyonedegrees_ga_tracking_id" name = "fiftyonedegrees_ga_tracking_id">
+						<input name="<?php echo "fiftyonedegrees_ga_code"; ?>" id="<?php echo "fiftyonedegrees_ga_code"; ?>" type="text" size="32"></input>
+						<p class="description">
+							Enter copied Google Account Access Code here.<br>
+						</p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<?php submit_button($name = 'Authenticate');?>
+	</form>
+<?php	
+}
+else if (get_option(Options::GA_CUSTOM_DIMENSIONS_SCREEN)) { 
+
+	include plugin_dir_path(__FILE__) . "/ga-customdimensions.php";
+
+}
+else { ?>
+
+	<form method="post" action="options.php">
+		<table class="form-table">
+			<tbody>
+			<?php 
+				if (get_option(Options::GA_TRACKING_ID_ERROR)) {
+			?>
+					<p></p>
+					<?php echo '<span class="fod-pipeline-status error"><b>Please Select Analytics Property.</b></span>';
+					}
+					?>
+
+				<tr>
+					<th scope="row">
+						<label class="pt-20">Google Authentication</label>
+					</th>
+					<td>
+						<input type="submit" class="button-primary" value="Logout" name="ga_log_out" />
+						<p class="description">
+							You have allowed your site to access the data
+							from your Google Analytics account. Click on logout
+							button to disconnect or re-authenticate.
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row" >
+						<label class="pt-20" for="<?php echo Options::GA_TRACKING_ID; ?>">
+							Analytics Account/Property
+						</label>
+					</th>
+					<td>
+						<select id="<?php echo Options::GA_TRACKING_ID; ?>" name = "<?php echo Options::GA_TRACKING_ID; ?>">
 						    <option >Select Analytics Property</option>
 							<script>
-							    var preSelectedTrackingId = "<?php echo esc_html( get_option("fiftyonedegrees_ga_tracking_id") ); ?>";
-								var propertiesList = <?php echo sprintf( esc_html( '%1$s' ), json_encode(get_option( 'fiftyonedegrees_ga_properties_list' ) ) );?>;
-								for(i=0; i<propertiesList.length; i++) {
-									if(preSelectedTrackingId == propertiesList[i]["id"]) {
-										document.write('<option value="' + propertiesList[i]["id"] +'" selected>' + propertiesList[i]["name"] + '</option>');
+							    var preSelectedTrackingId = "<?php echo esc_html(get_option(Options::GA_TRACKING_ID)); ?>";
+								var propertiesList = <?php echo sprintf(esc_html('%1$s'), json_encode(get_option(Options::GA_PROPERTIES)));?>;
+								for (i = 0; i<propertiesList.length; i++) {
+									if (preSelectedTrackingId == propertiesList[i]["id"]) {
+										document.write('<option value="' +
+											propertiesList[i]["id"] +
+											'" selected>' +
+											propertiesList[i]["name"] +
+											'</option>');
 									}
 									else {
-                                        document.write('<option value="' + propertiesList[i]["id"] +'">' + propertiesList[i]["name"] + '</option>');
-									}									
+                                        document.write(
+											'<option value="' +
+											propertiesList[i]["id"] +
+											'">' +
+											propertiesList[i]["name"] +
+											'</option>');
+									}
 								}
 							</script>
 						</select>
@@ -103,19 +148,27 @@ if ( (!get_option( 'fiftyonedegrees_ga_access_token' ) && empty(get_option( 'fif
 								<i class="fa fa-refresh fa-stack-1x fa-inverse"></i>
 						</span>
 					    </a>			
-					<p class="description">Select your Google Analytics Property to send 51Degrees Custom Dimensions to.<br></p>
+						<p class="description">
+							Select your Google Analytics Property to send 51Degrees
+							Custom Dimensions to.<br>
+						</p>
 					</td>
 				</tr>
                 
 				<tr>
-				<th scope="row" ><label class="pt-20" for="fiftyonedegrees_ga_send_page_view">Send Page View</label></th>
+					<th scope="row" >
+						<label class="pt-20" for="<?php echo Options::GA_SEND_PAGE_VIEW; ?>">
+							Send Page View
+						</label>
+					</th>
 					<td>
-					    <?php if( get_option("fiftyonedegrees_ga_send_page_view")) { ?>
-						    <input type="checkbox" id="fiftyonedegrees_ga_send_page_view" name="fiftyonedegrees_ga_send_page_view" checked>
+					    <?php if (get_option(Options::GA_SEND_PAGE_VIEW)) { ?>
+						    <input type="checkbox" id="<?php echo Options::GA_SEND_PAGE_VIEW; ?>" name="<?php echo Options::GA_SEND_PAGE_VIEW; ?>" checked>
 						<?php } else { ?>
-							<input type="checkbox" id="fiftyonedegrees_ga_send_page_view" name="fiftyonedegrees_ga_send_page_view"> 
+							<input type="checkbox" id="<?php echo Options::GA_SEND_PAGE_VIEW; ?>" name="<?php echo Options::GA_SEND_PAGE_VIEW; ?>"> 
 						<?php } ?>
-						<label for="fiftyonedegrees_ga_send_page_view">Send Page View
+						<label for="<?php echo Options::GA_SEND_PAGE_VIEW; ?>">
+							Send Page View
 							<span class="fa-stack fa-lg" style="font-size:12px;">
 								<i class="fa fa-circle fa-stack-2x" style="color:#666666;"></i>
 								<i class="fa fa-info fa-stack-1x fa-inverse" title="Send a pageview for each page your users visit to get the information including:
@@ -126,7 +179,10 @@ if ( (!get_option( 'fiftyonedegrees_ga_access_token' ) && empty(get_option( 'fif
 							</i>
 							</span>
 						</label> 
-						<p class="description">Check Send Page View to send default Page View hit with custom dimensions.<br></p>											
+						<p class="description">
+							Check Send Page View to send default Page View hit
+							with custom dimensions.<br>
+						</p>
 					</td>
 				</tr>				
 			</tbody>
@@ -148,7 +204,7 @@ function generate_login_url() {
 	 'client_id'       => FIFTYONEDEGREES_CLIENT_ID
 	);
 
-	return http_build_query( $url );
+	return http_build_query($url);
 }
 
 ?>

@@ -16,8 +16,6 @@
     clause in Article 5 of the EUPL shall not apply.
 */
 
-require(__DIR__ . "/../lib/vendor/autoload.php");
-
 // Mock Google Service Analytics for use with PHP unit tests
 class Mock_Google_Service_Analytics {
 
