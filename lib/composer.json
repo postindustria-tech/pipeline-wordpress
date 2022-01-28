@@ -29,6 +29,7 @@
         ]
     },
     "require-dev": {
-		"brain/monkey": "^2.6"
+      "brain/monkey": "^2.6",
+      "yoast/phpunit-polyfills": "^1.0"
   }
 }

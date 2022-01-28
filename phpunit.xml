@@ -1,4 +1,6 @@
-<phpunit>
+<phpunit
+  colors="true"
+  bootstrap="tests/bootstrap.php">
   <php>
     <env name="RESOURCEKEY" value="!!YOUR_RESOURCE_KEY!!" force="true"/>
     <const name="FIFTYONEDEGREES_PLUGIN_DIR" value= ""/>
@@ -8,9 +10,15 @@
     <testsuite name="PipelineTests">
       <file>tests/PipelineTests.php</file>
     </testsuite>
+    <testsuite name="PluginTests">
+      <file>tests/HookTests.php</file>
+      <file>tests/RenderTests.php</file>
+      <file>tests/EditorTests.php</file>
+    </testsuite>
     <testsuite name="GATests">
       <file>tests/GaServiceTests.php</file>
       <file>tests/GaTrackingGtagTests.php</file>
+      <file>tests/GaHookTests.php</file>
     </testsuite>
   </testsuites>
 </phpunit>

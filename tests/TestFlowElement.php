@@ -17,14 +17,17 @@ class TestFlowElement extends FlowElement
         $this->dataKey = "testElement";
         $this->properties = array(
             "availableProperty" => array(
+                "name" => "AvailableProperty",
                 "type" => "string",
                 "category" => "testCategory"
             ),
             "noValueProperty" => array(
+                "name" => "NoValueProperty",
                 "type" => "string",
                 "category" => "testCategory"
             ),
             "testProperty" => array(
+                "name" => "TestProperty",
                 "type" => "int",
                 "category" => "otherCategory"
             )

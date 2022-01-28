@@ -16,22 +16,34 @@
     clause in Article 5 of the EUPL shall not apply.
 */
 
-require(__DIR__ . "/../lib/vendor/autoload.php");
-require(__DIR__ . "/../includes/pipeline.php");
-require(__DIR__ . "/TestFlowElement.php");
+require_once(__DIR__ . "/../includes/pipeline.php");
+require_once(__DIR__ . "/TestFlowElement.php");
 
 use fiftyone\pipeline\core\PipelineBuilder;
-use PHPUnit\Framework\TestCase;
+use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 use \Brain\Monkey\Functions;
+use \Brain\Monkey\Filters;
+
 
 class PipelineTests extends TestCase {
 
+    public function set_up() {
+        Pipeline::reset();
+        parent::set_up();
+        Brain\Monkey\setUp();
+        $_SESSION = null;
+    }
+
+    public function tear_down() {
+        Brain\Monkey\tearDown();
+        parent::tear_down();
+    }
+
     // Data Provider for testGetAppContext
-	public function provider_testGetAppContext()
-    {
+	public function provider_testGetAppContext() {
         return array(
-        array("http://localhost/testsite", "/testsite"),
-        array("https://test.domain.com", ""),
+            array("http://localhost/testsite", "/testsite"),
+            array("https://test.domain.com", ""),
         );
     }
 
@@ -45,6 +57,10 @@ class PipelineTests extends TestCase {
         $this->assertEquals($expectedValue, $result);
     }
 
+    /**
+     * Test that a pipeline is successfully created for a valid
+     * Resource Key.
+     */
     public function testMakePipeline_ValidResourceKey() {
 
         //A fake get_site_url() that always return 'http://localhost/testsite'
@@ -52,7 +68,7 @@ class PipelineTests extends TestCase {
 
         $resourceKey = $_ENV["RESOURCEKEY"];
         if ($resourceKey === "!!YOUR_RESOURCE_KEY!!") {
-            $this->fail("You need to create a resource key at " .
+            $this->fail("You need to create a Resource Key at " .
             "https://configure.51degrees.com and paste it into the " .
             "phpunit.xml config file, " .
             "replacing !!YOUR_RESOURCE_KEY!!.");
@@ -60,10 +76,16 @@ class PipelineTests extends TestCase {
 
         $result = Pipeline::make_pipeline($resourceKey);
 
-        $this->assertEquals(get_class($result["pipeline"]), "fiftyone\pipeline\core\Pipeline");
-        $this->assertEquals('device', $result["available_engines"][0]);
+        $this->assertEquals(
+            get_class($result["pipeline"]),
+            "fiftyone\pipeline\core\Pipeline");
+        $this->assertTrue(in_array('device', $result["available_engines"]));
     }
 
+    /**
+     * Test that an invalid Resource Key results in an error being added to the
+     * pipeline.
+     */
     public function testMakePipeline_InValidResourceKey() {
 
         //A fake get_site_url() that always return 'http://localhost/testsite'
@@ -72,10 +94,18 @@ class PipelineTests extends TestCase {
         $resourceKey = "XXXXXXXXXXXXXX";
         $result = Pipeline::make_pipeline($resourceKey);
 
-        $this->assertEquals($result["error"], "Error returned from 51Degrees cloud service: ''XXXXXXXXXXXXXX' is not a valid Resource Key. See http://51degrees.com/documentation/_info__error_messages.html#Resource_key_not_valid for more information.'");
+        $this->assertEquals(
+            $result["error"],
+            "Error returned from 51Degrees cloud service: ''XXXXXXXXXXXXXX' " .
+            "is not a valid Resource Key. See " .
+            "http://51degrees.com/documentation/_info__error_messages.html#Resource_key_not_valid " .
+            "for more information.'");
 
     }
 
+    /**
+     * Test that the process method returns the expected result.
+     */
     public function testProcess() {
 
         //A fake get_site_url() that always return 'http://localhost/testsite'
@@ -83,56 +113,197 @@ class PipelineTests extends TestCase {
 
         $resourceKey = $_ENV["RESOURCEKEY"];
         if ($resourceKey === "!!YOUR_RESOURCE_KEY!!") {
-            $this->fail("You need to create a resource key at " .
+            $this->fail("You need to create a Resource Key at " .
             "https://configure.51degrees.com and paste it into the " .
             "phpunit.xml config file, " .
             "replacing !!YOUR_RESOURCE_KEY!!.");
         }
 
         $pipeline = Pipeline::make_pipeline($resourceKey);
-        Functions\expect('get_option')->once()->with('fiftyonedegrees_resource_key_pipeline')->andReturn($pipeline);
+        Functions\expect('get_option')
+            ->once()
+            ->with(Options::PIPELINE)
+            ->andReturn($pipeline);
 
-        $result = Pipeline::process();
-        $this->assertEquals(get_class($result["flowData"]), "fiftyone\pipeline\core\FlowData");
+        Pipeline::process();
+        $result = Pipeline::$data;
+        $this->assertEquals(
+            get_class($result["flowData"]),
+            "fiftyone\pipeline\core\FlowData");
         $this->assertTrue(isset($result["properties"]));
         $this->assertTrue(count($result["errors"]) == 0);
         
     }
 
+    /**
+     * Test the methods of getting values from the pipeline.
+     */
     public function testGet() {
 
         // Create a tmpfile to write errors to.
         $capture = tmpfile();
         $saved = ini_set('error_log', stream_get_meta_data($capture)['uri']);
 
-        $mock_pipeline   = (new PipelineBuilder())
-                            ->add(new TestFlowElement())
-                            ->build();
-        $pipeline = array("pipeline" =>  $mock_pipeline, "available_engines" => ["testElement"], "error" => null);
+        $mock_pipeline = (new PipelineBuilder())
+            ->add(new TestFlowElement())
+            ->build();
+        $pipeline = array(
+            "pipeline" => $mock_pipeline,
+            "available_engines" => ["testElement"],
+            "error" => null);
 
-        Functions\expect('get_option')->times(5)->with('fiftyonedegrees_resource_key_pipeline')->andReturn($pipeline);
+        Functions\expect('get_option')
+            ->times(1)
+            ->with(Options::PIPELINE)
+            ->andReturn($pipeline);
         Functions\when('plugin_dir_path')->justReturn(getcwd(). "/");
+
+        Pipeline::reset();
+        Pipeline::process();
 
         // Tests Pipeline::get Function.
         $result1 = Pipeline::get("testElement", "availableProperty");
         $this->assertEquals("Value", $result1);
 
         $result2 = Pipeline::get("testElement", "noValueProperty");
-        $this->assertTrue(strpos(stream_get_contents($capture), "Property is not available.") !== false);
+        $this->assertTrue(strpos(
+            stream_get_contents($capture),
+            "Property is not available.") !== false);
         $this->assertNull($result2);
 
         $result3 = Pipeline::get("testElement", "notAvailableProperty");
-        $this->assertTrue(strpos(stream_get_contents($capture), "Trying to get property") !== false);
+        $this->assertTrue(strpos(
+            stream_get_contents($capture),
+            "Trying to get property") !== false);
         $this->assertNull($result3);
 
         $result4 = Pipeline::get("notAvailableElement", "availableProperty");
-        $this->assertTrue(strpos(stream_get_contents($capture), "There is no element data for 'notAvailableElement' against this flow data. Available element data keys are: 'testElement,jsonbundler,javascriptbuilder,set-headers") !== false);
+        $this->assertTrue(strpos(
+            stream_get_contents($capture),
+            "There is no element data for 'notAvailableElement' against this " .
+            "flow data. Available element data keys are: " .
+            "'testElement,jsonbundler,javascriptbuilder,set-headers") !== false);
         $this->assertNull($result4);
 
         // Tests Pipeline::getCategory Function.
-        $expectedResult = array('availableProperty' => "Value", 'noValueProperty' => null);
+        $expectedResult = array(
+            'availableProperty' => "Value",
+            'noValueProperty' => null);
         $categoryResult = Pipeline::getCategory("testCategory");
         $this->assertEquals($expectedResult, $categoryResult);
+
+    }
+
+    /**
+     * Test that when a request is processed by the pipeline, it is added
+     * to the session if there is one active.
+     */
+    public function testStoredInSession() {
+        // Setup the session.
+        Patchwork\redefine('session_status', Patchwork\always(PHP_SESSION_ACTIVE));
+        $mock_pipeline = (new PipelineBuilder())
+            ->add(new TestFlowElement())
+            ->build();
+        $pipeline = array(
+            "pipeline" => $mock_pipeline,
+            "available_engines" => ["testElement"],
+            "error" => null);
+        
+        $_SESSION = array();
+        Functions\expect('get_option')
+            ->times(1)
+            ->with(Options::PIPELINE)
+            ->andReturn($pipeline);
+
+        Pipeline::reset();
+        Pipeline::process();
+
+        $this->assertNotnull(Pipeline::$data);
+        $this->assertEquals(Pipeline::$data, $_SESSION["fiftyonedegrees_data"]);
+    }
+    
+    /**
+     * Test that if there is a processed request in the session, then that is
+     * used instead of processing again.
+     */
+    public function testFetchedFromSession() {
+        // Setup the session.
+        Patchwork\redefine('session_status', Patchwork\always(PHP_SESSION_ACTIVE));
+        $mock_pipeline = (new PipelineBuilder())
+            ->add(new TestFlowElement())
+            ->build();
+        $pipeline = array(
+            "pipeline" => $mock_pipeline,
+            "available_engines" => ["testElement"],
+            "error" => null);
+        
+        $_SESSION = array();
+        Functions\expect('get_option')
+            ->times(1)
+            ->with(Options::PIPELINE)
+            ->andReturn($pipeline);
+
+        Pipeline::reset();
+        Pipeline::process();
+        $createdAt = Pipeline::$data['createdAt'];
+        // Check everything is set up as expected.
+        $this->assertTrue(session_status() == PHP_SESSION_ACTIVE);
+        $this->assertTrue(isset($_SESSION["fiftyonedegrees_data"]));
+        $this->assertFalse(Pipeline::session_is_invalidated());
+
+        Pipeline::reset();
+        Pipeline::process();
+
+        $this->assertNotnull(Pipeline::$data);
+        $this->assertEquals($createdAt, Pipeline::$data['createdAt']);
+        $this->assertEquals(Pipeline::$data, $_SESSION["fiftyonedegrees_data"]);
+
+    }
+
+    /**
+     * Test that if there is a processed request in the session, but it has been
+     * invalidated, then the request is processed again and stored in the session.
+     */
+    public function testClearedFromSession() {
+        // Setup the session.
+        Patchwork\redefine('session_status', Patchwork\always(PHP_SESSION_ACTIVE));
+        $mock_pipeline = (new PipelineBuilder())
+            ->add(new TestFlowElement())
+            ->build();
+        $pipeline = array(
+            "pipeline" =>  $mock_pipeline,
+            "available_engines" => ["testElement"],
+            "error" => null);
+        
+        $_SESSION = array();
+        Functions\expect('get_option')
+            ->times(2)
+            ->with(Options::PIPELINE)
+            ->andReturn($pipeline);
+
+        Pipeline::reset();
+        Pipeline::process();
+
+        $createdAt = Pipeline::$data['createdAt'];
+        // Resolution of time() is 1 second. So sleep for 1 second to ensure
+        // the value has changed.
+        sleep(1);
+        Functions\expect('get_option')
+            ->times(2)
+            ->with(Options::SESSION_INVALIDATED)
+            ->andReturn(time());
+
+        // Check everything is set up as expected.
+        $this->assertTrue(session_status() == PHP_SESSION_ACTIVE);
+        $this->assertTrue(isset($_SESSION["fiftyonedegrees_data"]));
+        $this->assertTrue(Pipeline::session_is_invalidated());
+  
+        Pipeline::reset();
+        Pipeline::process();
+
+        $this->assertNotnull(Pipeline::$data);
+        $this->assertTrue($createdAt < Pipeline::$data['createdAt']);
+        $this->assertEquals(Pipeline::$data, $_SESSION["fiftyonedegrees_data"]);
 
     }
 }
