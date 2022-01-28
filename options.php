@@ -104,8 +104,6 @@ class Options
     /**
      * Key for storing whether or no page views should be sent to
      * Google Analytics. This takes the value of 'On' or 'Off'.
-     * TODO: in future can this or GA_SEND_PAGE_VIEW be removed in favor
-     * or just one.
      */
     const GA_SEND_PAGE_VIEW_VAL = "fiftyonedegrees_ga_send_page_view_val";
 
