@@ -45,26 +45,6 @@
 </p>
 
 <p>
-    If you encounter the below screen when granting 51Degrees access to your
-    Google Analytics, don't worry! As this is the first version of our plugin
-    (1.0.0), we are currently waiting for Google to verify the plugin.
-</p>
-
-<p>
-    The 51Degrees plugin only needs access to your Google Analytics to add
-    custom dimensions, so you should click "Advanced" and "Go to 51Degrees
-    (unsafe)".
-</p>
-
-<p>
-    Once this has been verified by Google, we will update the plugin version
-    number to reflect this.
-</p>
-<p>
-    <img src="<?php echo plugin_dir_url( __FILE__ ) . "assets/images/unverified-screen.jpg"?>" alt="GoogleAnalytics2-unverified">
-</p>
-
-<p>
     3. Enter the copied Code in the <code><b>Access Code</b></code>
     text field and click <code><b>Authenticate</b></code>. This will
     connect your Google Analytics Account to 51Degrees Plugin.
@@ -100,7 +80,7 @@
 
 <p>
     Please visit our
-    <a href="https://51degrees.com/documentation/4.3/_info__word_press.html" target="_blank">
+    <a href="https://51degrees.com/documentation/_info__word_press.html" target="_blank">
         documentation
     </a>
     page for more information on advanced features including Value Replacement
