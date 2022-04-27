@@ -80,7 +80,7 @@
 
 <p>
     Please visit our
-    <a href="https://51degrees.com/documentation/_info__word_press.html" target="_blank">
+    <a href="https://51degrees.com/documentation/_other_integrations__wordpress.html" target="_blank">
         documentation
     </a>
     page for more information on advanced features including Value Replacement
