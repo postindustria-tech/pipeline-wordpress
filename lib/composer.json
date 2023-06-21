@@ -31,5 +31,10 @@
     "require-dev": {
       "brain/monkey": "^2.6",
       "yoast/phpunit-polyfills": "^1.0"
+  },
+  "config": {
+    "allow-plugins": {
+      "nodejs-php-fallback/nodejs-php-fallback": false
+    }
   }
 }
