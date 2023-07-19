@@ -98,7 +98,7 @@ class GaServiceTests extends TestCase {
     }
 
     // Data Provider for testInsertCustomDimensions
-	public function provider_testInsertCustomDimensions() {
+	public static function provider_testInsertCustomDimensions() {
         return array(
             array(array(array("custom_dimension_name" => "51D.testelement.testproperty1", "custom_dimension_ga_index" => 1, "custom_dimension_index" => 1),
             array("custom_dimension_name" => "51D.testelement.testproperty2", "custom_dimension_ga_index" => -1, "custom_dimension_index" => 2)), 1),

@@ -24,7 +24,7 @@ use \Brain\Monkey\Functions;
 class GaTrackingGtagTests extends TestCase {
 
     // Data Provider for testCustomDimensionsFromProperties
-	public function provider_testCustomDimensionsFromProperties()
+	public static function provider_testCustomDimensionsFromProperties()
     {
         return array(
             array(
