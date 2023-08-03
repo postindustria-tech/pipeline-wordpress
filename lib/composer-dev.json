@@ -11,26 +11,31 @@
   "repositories": [
     {
       "type": "path",
-      "url": "pipeline-php-cloudrequestengine"
+      "url": "pipeline-php-cloudrequestengine",
+      "options": {
+        "versions": {
+          "51degrees/fiftyone.pipeline.cloudrequestengine": "4"
+        }
+      }
     }
   ],
   "require": {
-    "51degrees/fiftyone.pipeline.cloudrequestengine": "dev-main",
-	"google/apiclient": "^2.10"
-    },
-    "scripts": {
-        "pre-autoload-dump": "Google\\Task\\Composer::cleanup"
-    },
-    "extra": {
-        "google/apiclient-services": [
-            "Analytics",
-            "AnalyticsData",
-            "AnalyticsReporting",
-            "GoogleAnalyticsAdmin"
-        ]
-    },
-    "require-dev": {
-      "brain/monkey": "^2.6",
-      "yoast/phpunit-polyfills": "^1.0"
+    "51degrees/fiftyone.pipeline.cloudrequestengine": "*",
+    "google/apiclient": "^2.10"
+  },
+  "scripts": {
+    "pre-autoload-dump": "Google\\Task\\Composer::cleanup"
+  },
+  "extra": {
+    "google/apiclient-services": [
+      "Analytics",
+      "AnalyticsData",
+      "AnalyticsReporting",
+      "GoogleAnalyticsAdmin"
+    ]
+  },
+  "require-dev": {
+    "brain/monkey": "^2.6",
+    "yoast/phpunit-polyfills": "^1.0"
   }
 }
