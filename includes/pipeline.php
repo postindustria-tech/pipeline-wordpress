@@ -206,7 +206,10 @@ class Pipeline
 
         $flowData = $data["flowData"];
         
-        if (isset($flowData->{$engine}->{$key}->hasValue)) {
+        if (
+            isset($flowData->{$engine}->{$key}->hasValue) &&
+            $flowData->{$engine}->{$key}->hasValue
+        ) {
             return $flowData->{$engine}->{$key}->value;
         }
         
