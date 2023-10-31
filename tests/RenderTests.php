@@ -91,8 +91,6 @@ class RenderTests extends TestCase {
     public function testBlockRender_noValue() {
         $service = new FiftyoneService();
         $content = "text ... {Pipeline::get(\"testElement\", \"noValueProperty\")}";
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Property is not available.');
         $rendered = $service->fiftyonedegrees_block_filter($content, null);
         $this->assertEquals("text ... null", $rendered);
     }
@@ -104,8 +102,6 @@ class RenderTests extends TestCase {
     public function testBlockRender_unknownElement() {
         $service = new FiftyoneService();
         $content = "text ... {Pipeline::get(\"noelement\", \"noproperty\")}";
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage(sprintf(Messages::NO_ELEMENT_DATA, 'noelement', 'testElement,jsonbundler,javascriptbuilder,set-headers'));
         $rendered = $service->fiftyonedegrees_block_filter($content, null);
         $this->assertEquals("text ... null", $rendered);
     }
