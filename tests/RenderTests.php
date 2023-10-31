@@ -19,7 +19,6 @@
 require_once(__DIR__ . "/../includes/fiftyone-service.php");
 require_once(__DIR__ . "/TestFlowElement.php");
 
-use fiftyone\pipeline\core\Messages;
 use fiftyone\pipeline\core\PipelineBuilder;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 use \Brain\Monkey\Functions;
