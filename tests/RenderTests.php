@@ -19,6 +19,7 @@
 require_once(__DIR__ . "/../includes/fiftyone-service.php");
 require_once(__DIR__ . "/TestFlowElement.php");
 
+use fiftyone\pipeline\core\Messages;
 use fiftyone\pipeline\core\PipelineBuilder;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 use \Brain\Monkey\Functions;
@@ -90,6 +91,7 @@ class RenderTests extends TestCase {
     public function testBlockRender_noValue() {
         $service = new FiftyoneService();
         $content = "text ... {Pipeline::get(\"testElement\", \"noValueProperty\")}";
+        $this->expectExceptionMessage('Property is not available.');
         $rendered = $service->fiftyonedegrees_block_filter($content, null);
         $this->assertEquals("text ... null", $rendered);
     }
@@ -101,6 +103,7 @@ class RenderTests extends TestCase {
     public function testBlockRender_unknownElement() {
         $service = new FiftyoneService();
         $content = "text ... {Pipeline::get(\"noelement\", \"noproperty\")}";
+        $this->expectExceptionMessage(sprintf(Messages::NO_ELEMENT_DATA, 'noelement', 'testElement,jsonbundler,javascriptbuilder,set-headers'));
         $rendered = $service->fiftyonedegrees_block_filter($content, null);
         $this->assertEquals("text ... null", $rendered);
     }
