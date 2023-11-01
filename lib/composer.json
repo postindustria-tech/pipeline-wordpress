@@ -14,7 +14,7 @@
         ]
     },
     "require": {
-		"51degrees/fiftyone.pipeline.cloudrequestengine": "4.3.*",
+		"51degrees/fiftyone.pipeline.cloudrequestengine": "4.*",
 		"google/apiclient": "^2.10"
     },
     "scripts": {

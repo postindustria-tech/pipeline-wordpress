@@ -356,7 +356,11 @@ class FiftyoneService {
                 $args = str_replace(" ", "", $args);
                 $args = explode(",", $args);
 
-                $value = Pipeline::get($args[0], $args[1]);
+                try {
+                    $value = Pipeline::get($args[0], $args[1]);
+                } catch (\Throwable $exception) {
+                    $value = null;
+                }
 
                 switch (gettype($value)) {
                     case "string":

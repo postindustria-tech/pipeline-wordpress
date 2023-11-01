@@ -205,21 +205,19 @@ class Pipeline
         }
 
         $flowData = $data["flowData"];
-
-        try {
-            if ($flowData->{$engine}->{$key}->hasValue) {
-                return $flowData->{$engine}->{$key}->value;
-            }
-            else {
-                error_log($flowData->{$engine}->{$key}->noValueMessage);
-                return null;
-            }
+        
+        if (
+            isset($flowData->{$engine}->{$key}->hasValue) &&
+            $flowData->{$engine}->{$key}->hasValue
+        ) {
+            return $flowData->{$engine}->{$key}->value;
         }
-        catch (\Exception $e) {
-            error_log($e->getMessage());
-            return null;
+        
+        if (isset($flowData->{$engine}->{$key}->noValueMessage)) {
+            error_log($flowData->{$engine}->{$key}->noValueMessage);
         }
-
+        
+        return null;
     }
 
     /**
