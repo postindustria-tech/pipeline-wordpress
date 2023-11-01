@@ -206,14 +206,11 @@ class Pipeline
 
         $flowData = $data["flowData"];
         
-        if (
-            isset($flowData->{$engine}->{$key}->hasValue) &&
-            $flowData->{$engine}->{$key}->hasValue
-        ) {
+        if ($flowData->{$engine}->{$key}->hasValue ?? false) {
             return $flowData->{$engine}->{$key}->value;
         }
         
-        if (isset($flowData->{$engine}->{$key}->noValueMessage)) {
+        if ($flowData->{$engine}->{$key}->noValueMessage ?? false) {
             error_log($flowData->{$engine}->{$key}->noValueMessage);
         }
         
