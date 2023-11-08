@@ -76,6 +76,11 @@ class PipelineTests extends TestCase {
 
         $result = Pipeline::make_pipeline($resourceKey);
         $this->assertInstanceOf(\fiftyone\pipeline\core\Pipeline::class, $result['pipeline']);
+
+        Functions\expect('get_option')
+            ->once()
+            ->with(Options::PIPELINE)
+            ->andReturn($result['pipeline']);
             
         Pipeline::process();
         $this->assertContains('device', Pipeline::$data['flowData']->pipeline->flowElementsList["cloud"]->flowElementProperties);
