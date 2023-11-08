@@ -70,16 +70,11 @@ class Pipeline
         ]);
 
         $error = null;
+        $cloud = new CloudRequestEngine(array("resourceKey" => $resourceKey));
         try {
-            $cloud = new CloudRequestEngine(array("resourceKey" => $resourceKey));
-        }
-        catch (Exception $e) {
-            $error = $e->getMessage();
-            return array(
-                "pipeline" =>  null,
-                "available_engines" => null,
-                "error" => $error);
-        }
+            // pre-process only this element
+            $cloud->processInternal(null);
+        } catch (Exception $e) {}
         
 
         // Get engines available with the Resource Key
