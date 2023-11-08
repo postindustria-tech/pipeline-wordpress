@@ -80,7 +80,7 @@ class PipelineTests extends TestCase {
         Functions\expect('get_option')
             ->once()
             ->with(Options::PIPELINE)
-            ->andReturn($result['pipeline']);
+            ->andReturn($result);
             
         Pipeline::process();
         $this->assertContains('device', Pipeline::$data['flowData']->pipeline->flowElementsList["cloud"]->flowElementProperties);
