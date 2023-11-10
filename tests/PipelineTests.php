@@ -75,11 +75,15 @@ class PipelineTests extends TestCase {
         }
 
         $result = Pipeline::make_pipeline($resourceKey);
+        $this->assertInstanceOf(\fiftyone\pipeline\core\Pipeline::class, $result['pipeline']);
 
-        $this->assertEquals(
-            get_class($result["pipeline"]),
-            "fiftyone\pipeline\core\Pipeline");
-        $this->assertTrue(in_array('device', $result["available_engines"]));
+        Functions\expect('get_option')
+            ->once()
+            ->with(Options::PIPELINE)
+            ->andReturn($result);
+        
+        Pipeline::process();
+        $this->assertArrayHasKey('device', Pipeline::$data['flowData']->pipeline->flowElementsList["cloud"]->flowElementProperties);
     }
 
     /**
@@ -94,13 +98,19 @@ class PipelineTests extends TestCase {
         $resourceKey = "XXXXXXXXXXXXXX";
         $result = Pipeline::make_pipeline($resourceKey);
 
-        $this->assertEquals(
-            $result["error"],
-            "Error returned from 51Degrees cloud service: ''XXXXXXXXXXXXXX' " .
+        Functions\expect('get_option')
+            ->once()
+            ->with(Options::PIPELINE)
+            ->andReturn($result);
+
+        $errorMessage = "Error returned from 51Degrees cloud service: ''XXXXXXXXXXXXXX' " .
             "is not a valid Resource Key. See " .
             "http://51degrees.com/documentation/_info__error_messages.html#Resource_key_not_valid " .
-            "for more information.'");
+            "for more information.'";
 
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage($errorMessage);
+        Pipeline::process();
     }
 
     /**
