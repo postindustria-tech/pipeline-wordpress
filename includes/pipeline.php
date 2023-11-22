@@ -70,36 +70,23 @@ class Pipeline
         ]);
 
         $error = null;
-        $cloud = new CloudRequestEngine(array("resourceKey" => $resourceKey));
+        try {
+            $cloud = new CloudRequestEngine(array("resourceKey" => $resourceKey));
+        }
+        catch (Exception $e) {
+            $error = $e->getMessage();
+            return array(
+                "pipeline" =>  null,
+                "available_engines" => null,
+                "error" => $error);
+        }
         
-        $pipeline = Pipeline::buildPipelineWithPreprocessedEngine($builder, $cloud);
 
-        return array(
-            "pipeline" =>  $pipeline,
-            "available_engines" => array_keys($cloud->flowElementProperties),
-            "error" => $error);
-    }
-
-    private static function buildPipelineWithPreprocessedEngine($builder, $cloud)
-    {
-        // helper Pipeline
-        $pipeline = $builder->build();
-
-        // pre-process only the CloudRequestEngine element:
-        // ensure CloudRequestEngine is the first element in the pipeline
-        array_unshift($pipeline->flowElements, $cloud);
-        
-        // add CloudRequestEngine to keyed element list
-        $pipeline->flowElementsList[$cloud->dataKey] = $cloud;
-        
-        // process the element with helper FlowData
-        $flowData = $pipeline->createFlowData();
-        $flowData->pipeline->flowElementsList[$cloud->dataKey]->process($flowData);
-
-        $builder->add($cloud);
-
-        // get engines available with the resource Key
+        // Get engines available with the Resource Key
         $engines = array_keys($cloud->flowElementProperties);
+
+        // Add CloudRequestEngine to the pipeline.
+        $builder->add($cloud);
 
         // Add all the engines, accessible via provided
         // resourceKey, to the pipeline
@@ -109,7 +96,13 @@ class Pipeline
             $builder->add($cloudEngine);
         }
 
-        return $builder->build();
+        // Build the pipeline
+        $pipeline = $builder->build();
+
+        return array(
+            "pipeline" =>  $pipeline,
+            "available_engines" => $engines,
+            "error" => $error);
     }
 
     /**
