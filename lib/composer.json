@@ -1,22 +1,22 @@
 {
-  "name": "51degrees/fiftyonedegrees.wordpress",
-  "description": "51Degrees Pipeline API",
-  "authors": [
-    {
-      "name": "Fatima Tariq",
-      "email": "fatima@51degrees.com"
-    }
-  ],
-  "license": "EUPL-1.2",
-  "autoload": {
+    "name": "51degrees/fiftyonedegrees.wordpress",
+    "description": "51Degrees Pipeline API",
+    "authors": [
+        {
+            "name": "Fatima Tariq",
+            "email": "fatima@51degrees.com"
+        }
+    ],
+    "license": "EUPL-1.2",
+    "autoload": {
         "classmap": [
             "../includes/pipeline.php"
         ]
     },
     "require": {
         "php": ">=7.4",
-		"51degrees/fiftyone.pipeline.cloudrequestengine": "4.*",
-		"google/apiclient": "^2.10"
+        "51degrees/fiftyone.pipeline.cloudrequestengine": "4.*",
+        "google/apiclient": "^2.10"
     },
     "scripts": {
         "pre-autoload-dump": "Google\\Task\\Composer::cleanup"
@@ -30,12 +30,13 @@
         ]
     },
     "require-dev": {
-      "brain/monkey": "^2.6",
-      "yoast/phpunit-polyfills": "^1.0"
-  },
-  "config": {
-    "allow-plugins": {
-      "nodejs-php-fallback/nodejs-php-fallback": false
+        "brain/monkey": "^2.6",
+        "yoast/phpunit-polyfills": "^1.0",
+        "friendsofphp/php-cs-fixer": "^3.39"
+    },
+    "config": {
+        "allow-plugins": {
+            "nodejs-php-fallback/nodejs-php-fallback": false
+        }
     }
-  }
 }
