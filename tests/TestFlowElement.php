@@ -1,5 +1,6 @@
 <?php
 
+use fiftyone\pipeline\core\FlowData;
 use fiftyone\pipeline\core\FlowElement;
 use fiftyone\pipeline\core\AspectPropertyValue;
 use fiftyone\pipeline\core\ElementDataDictionary;
@@ -7,8 +8,8 @@ use fiftyone\pipeline\core\BasicListEvidenceKeyFilter;
 
 class TestFlowElement extends FlowElement
 {
-    public $dataKey;
-    public $properties;
+    public string $dataKey;
+    public array $properties;
 
     public function __construct()
     {
@@ -34,7 +35,7 @@ class TestFlowElement extends FlowElement
         );
     }
 
-    public function processInternal($flowData)
+    public function processInternal(FlowData $flowData): void
     {
 		
         $contents = [];
@@ -50,12 +51,12 @@ class TestFlowElement extends FlowElement
         $flowData->setElementData($data);
     }
     
-    public function getEvidenceKeyFilter()
+    public function getEvidenceKeyFilter(): BasicListEvidenceKeyFilter
     {
         return new BasicListEvidenceKeyFilter(["header.user-agent"]);
     }
 
-    public function filterEvidenceKey($key)
+    public function filterEvidenceKey($key): bool
     {
         return true;
     }
