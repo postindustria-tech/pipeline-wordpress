@@ -5,6 +5,10 @@
         {
             "name": "Fatima Tariq",
             "email": "fatima@51degrees.com"
+        },
+        {
+            "name": "51Degrees Engineering",
+            "email": "engineering@51degrees.com"
         }
     ],
     "license": "EUPL-1.2",
