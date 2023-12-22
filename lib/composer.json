@@ -3,10 +3,6 @@
     "description": "51Degrees Pipeline API",
     "authors": [
         {
-            "name": "Fatima Tariq",
-            "email": "fatima@51degrees.com"
-        },
-        {
             "name": "51Degrees Engineering",
             "email": "engineering@51degrees.com"
         }
