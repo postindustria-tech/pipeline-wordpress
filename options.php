@@ -50,7 +50,15 @@ class Options
      * Value is stored as an int as returned by time().
      */
     const SESSION_INVALIDATED = "fiftyonedegrees_session_invalidated";
-    
+
+    /**
+     * Key for storing the admin's choice of which HTTP header to read
+     * the real client IP from (for sites behind a reverse proxy or CDN).
+     * Value is one of: 'disabled', 'cloudflare', 'true-client',
+     * 'x-real-ip', 'x-forwarded', 'client-ip'.
+     */
+    const TRUSTED_PROXY_HEADER = "fiftyonedegrees_trusted_proxy_header";
+
 
     /**
      * Key for storing whether or not Google Analytics tracking is

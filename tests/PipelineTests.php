@@ -28,14 +28,21 @@ use \Brain\Monkey\Filters;
 
 class PipelineTests extends TestCase {
 
+    private $serverBackup;
+    private $getBackup;
+
     public function set_up() {
         Pipeline::reset();
         parent::set_up();
         Brain\Monkey\setUp();
         $_SESSION = null;
+        $this->serverBackup = $_SERVER;
+        $this->getBackup = $_GET;
     }
 
     public function tear_down() {
+        $_SERVER = $this->serverBackup;
+        $_GET = $this->getBackup;
         Brain\Monkey\tearDown();
         parent::tear_down();
     }
@@ -447,5 +454,118 @@ class PipelineTests extends TestCase {
 
         $this->assertNotNull($capturedPipeline);
         $this->assertArrayHasKey('pipeline', $capturedPipeline);
+    }
+
+    /**
+     * Test that on a fresh install (dropdown 'disabled'),
+     * Pipeline::process sets query.client-ip to REMOTE_ADDR.
+     */
+    public function testProcess_SetsResolvedClientIpAsQueryEvidence() {
+        Functions\when('get_site_url')->justReturn('http://localhost/testsite');
+        Functions\when('rest_url')->justReturn('http://localhost/testsite/wp-json/fiftyonedegrees/v4/json');
+
+        $resourceKey = $_ENV["RESOURCEKEY"];
+        if ($resourceKey === "!!YOUR_RESOURCE_KEY!!") {
+            $this->fail("Resource Key required; set RESOURCEKEY env or .env");
+        }
+
+        $_SERVER['REMOTE_ADDR'] = '203.0.113.1';
+        $pipeline = Pipeline::make_pipeline($resourceKey);
+        Functions\when('get_option')->alias(function ($name, $default = null) use ($pipeline) {
+            if ($name === Options::PIPELINE) return $pipeline;
+            if ($name === Options::TRUSTED_PROXY_HEADER) return 'disabled';
+            return $default;
+        });
+
+        Pipeline::process();
+
+        $flowData = Pipeline::$data['flowData'];
+        $this->assertSame('203.0.113.1', $flowData->evidence->get('query.client-ip'));
+        $this->assertSame('203.0.113.1', $flowData->evidence->get('server.client-ip'));
+    }
+
+    /**
+     * Test that a URL-supplied ?client-ip is overwritten by the
+     * resolver, preventing visitors from spoofing the cloud-detected IP.
+     */
+    public function testProcess_QueryStringClientIpIsOverriddenByResolver() {
+        Functions\when('get_site_url')->justReturn('http://localhost/testsite');
+        Functions\when('rest_url')->justReturn('http://localhost/testsite/wp-json/fiftyonedegrees/v4/json');
+
+        $resourceKey = $_ENV["RESOURCEKEY"];
+        if ($resourceKey === "!!YOUR_RESOURCE_KEY!!") {
+            $this->fail("Resource Key required; set RESOURCEKEY env or .env");
+        }
+
+        $_SERVER['REMOTE_ADDR'] = '203.0.113.1';
+        $_GET['client-ip'] = 'attacker.ip.spoof';
+        $pipeline = Pipeline::make_pipeline($resourceKey);
+        Functions\when('get_option')->alias(function ($name, $default = null) use ($pipeline) {
+            if ($name === Options::PIPELINE) return $pipeline;
+            if ($name === Options::TRUSTED_PROXY_HEADER) return 'disabled';
+            return $default;
+        });
+
+        Pipeline::process();
+
+        $flowData = Pipeline::$data['flowData'];
+        $this->assertSame(
+            '203.0.113.1',
+            $flowData->evidence->get('query.client-ip'),
+            'URL-supplied client-ip must not reach the cloud'
+        );
+    }
+
+    /**
+     * Test that when the resolver returns '' (REMOTE_ADDR absent),
+     * Pipeline::process does not set query.client-ip — the cloud
+     * treats an empty client-ip as broken input.
+     */
+    public function testProcess_EmptyResolvedIpDoesNotPollute() {
+        Functions\when('get_site_url')->justReturn('http://localhost/testsite');
+        Functions\when('rest_url')->justReturn('http://localhost/testsite/wp-json/fiftyonedegrees/v4/json');
+
+        $resourceKey = $_ENV["RESOURCEKEY"];
+        if ($resourceKey === "!!YOUR_RESOURCE_KEY!!") {
+            $this->fail("Resource Key required; set RESOURCEKEY env or .env");
+        }
+
+        $_SERVER = [];
+        $_GET = [];
+        $pipeline = Pipeline::make_pipeline($resourceKey);
+        Functions\when('get_option')->alias(function ($name, $default = null) use ($pipeline) {
+            if ($name === Options::PIPELINE) return $pipeline;
+            if ($name === Options::TRUSTED_PROXY_HEADER) return 'disabled';
+            return $default;
+        });
+
+        Pipeline::process();
+
+        $flowData = Pipeline::$data['flowData'];
+        $this->assertNull($flowData->evidence->get('query.client-ip'));
+    }
+
+    /**
+     * Test that changing TRUSTED_PROXY_HEADER via update_option bumps
+     * SESSION_INVALIDATED so the session cache re-processes on the
+     * next request.
+     */
+    public function testUpdateOptionBumpsSessionInvalidationOnHeaderChange() {
+        $bumped = false;
+        Functions\when('update_option')->alias(function ($name, $value) use (&$bumped) {
+            if ($name === Options::SESSION_INVALIDATED && is_int($value)) {
+                $bumped = true;
+            }
+            return true;
+        });
+
+        $service = new FiftyoneService();
+        $service->fiftyonedegrees_update_option(
+            Options::TRUSTED_PROXY_HEADER,
+            'disabled',
+            'cloudflare'
+        );
+
+        $this->assertTrue($bumped, 'SESSION_INVALIDATED was not bumped on header change');
     }
 }

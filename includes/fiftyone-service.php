@@ -166,11 +166,22 @@ class FiftyoneService {
         // This is the Resource Key set by the user to be used to access
         // cloud services.
         add_option(Options::RESOURCE_KEY);
+        // Dropdown selecting which HTTP header (if any) to trust for the
+        // real client IP when the site is behind a reverse proxy or CDN.
+        add_option(Options::TRUSTED_PROXY_HEADER, 'disabled');
 
         // Register the new settings with wordpress.
         register_setting(
             Options::GROUP_KEY,
             Options::RESOURCE_KEY);
+        register_setting(
+            Options::GROUP_KEY,
+            Options::TRUSTED_PROXY_HEADER,
+            [
+                'type' => 'string',
+                'sanitize_callback' => [ClientIpResolver::class, 'sanitizeSource'],
+                'default' => 'disabled',
+            ]);
     }
 
     /**
@@ -279,6 +290,11 @@ class FiftyoneService {
                 delete_option(Options::RESOURCE_KEY_UPDATED);
             }
             
+        }
+
+        if ($option === Options::TRUSTED_PROXY_HEADER &&
+            $new_value !== $old_value) {
+            update_option(Options::SESSION_INVALIDATED, time());
         }
 
         if ($option === Options::GA_TRACKING_ID &&

@@ -67,6 +67,28 @@
                     <input name="<?php echo Options::RESOURCE_KEY; ?>" type="text" id="<?php echo Options::RESOURCE_KEY; ?>" value="<?php echo esc_attr(get_option(Options::RESOURCE_KEY));?>" class="regular-text">
                 </td>
             </tr>
+            <tr>
+                <th scope="row">
+                    <label for="<?php echo Options::TRUSTED_PROXY_HEADER; ?>">Trusted client-IP source</label>
+                </th>
+                <td>
+                    <?php $current = get_option(Options::TRUSTED_PROXY_HEADER, 'disabled'); ?>
+                    <select name="<?php echo Options::TRUSTED_PROXY_HEADER; ?>" id="<?php echo Options::TRUSTED_PROXY_HEADER; ?>">
+                        <option value="disabled"    <?php selected($current, 'disabled');    ?>>Disabled</option>
+                        <option value="cloudflare"  <?php selected($current, 'cloudflare');  ?>>Cloudflare (CF-Connecting-IP)</option>
+                        <option value="true-client" <?php selected($current, 'true-client'); ?>>Akamai / CF Enterprise (True-Client-IP)</option>
+                        <option value="x-real-ip"   <?php selected($current, 'x-real-ip');   ?>>Nginx (X-Real-IP)</option>
+                        <option value="x-forwarded" <?php selected($current, 'x-forwarded'); ?>>Generic (X-Forwarded-For)</option>
+                        <option value="client-ip"   <?php selected($current, 'client-ip');   ?>>Legacy (Client-IP)</option>
+                    </select>
+                    <p class="description">
+                        Most sites don&#39;t need to change this. If your site sits behind Cloudflare, Nginx, Akamai,
+                        or another service that passes traffic through to WordPress, pick the matching option so visitors
+                        are identified by their real IP address rather than the intermediary&#39;s.
+                        If you&#39;re not sure, leave it set to &quot;Disabled&quot;.
+                    </p>
+                </td>
+            </tr>
         </tbody>
     </table>
 
